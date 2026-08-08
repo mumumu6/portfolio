@@ -24,9 +24,14 @@ const kindLabels: Record<EntryKind, string> = {
 
 const author = authors[entry.author];
 const external = entry.href?.startsWith('http');
-const sourceLabel = external && entry.href
-  ? new URL(entry.href).hostname.replace(/^www\./, '')
-  : 'mumumu6.net';
+const sourceUrl = entry.href
+  ? external
+    ? new URL(entry.href)
+    : new URL(entry.href, 'https://mumumu6.net')
+  : undefined;
+const sourceLabel = sourceUrl
+  ? `${sourceUrl.hostname.replace(/^www\./, '')}${sourceUrl.pathname.replace(/\/$/, '')}`
+  : undefined;
 ---
 
 <article class:list={['feed-entry', `feed-entry--${entry.kind}`, `feed-entry--author-${entry.author}`]}>
@@ -60,6 +65,17 @@ const sourceLabel = external && entry.href
 
       <p class="entry-body">{entry.body}</p>
 
+      {entry.href && sourceLabel && (
+        <a
+          class="entry-source"
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
+          <span aria-hidden="true">{external ? '↗' : '→'}</span> {sourceLabel}
+        </a>
+      )}
+
       {entry.image && entry.href && (
         <a
           class="ogp-preview"
@@ -76,7 +92,6 @@ const sourceLabel = external && entry.href
             loading="lazy"
             decoding="async"
           />
-          <span>{sourceLabel} <i aria-hidden="true">{external ? '↗' : '→'}</i></span>
         </a>
       )}
 

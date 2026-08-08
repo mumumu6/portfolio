@@ -11,8 +11,7 @@ import { works } from '../data/content';
     title="Works"
     description="作ったものと、そのとき考えていたこと。AIがたまに横からコメントします。"
   />
-  <div class="feed-list">
+  <div class="feed-list feed-list--compact">
     {works.map((entry) => <FeedEntry entry={entry} />)}
   </div>
 </BaseLayout>
-

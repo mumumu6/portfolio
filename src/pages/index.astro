@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProfileHeader from '../components/ProfileHeader.astro';
 import FeedEntry from '../components/FeedEntry.astro';
-import { homeFeed } from '../data/content';
+import { blogPosts, works } from '../data/content';
 ---
 
 <BaseLayout
@@ -11,17 +11,31 @@ import { homeFeed } from '../data/content';
 >
   <ProfileHeader />
 
-  <section class="feed-section" aria-labelledby="latest-heading">
-    <header class="feed-heading">
+  <section class="feed-section" aria-labelledby="works-heading">
+    <header class="feed-heading feed-heading--compact">
       <div>
-        <p class="eyebrow">ACTIVITY STREAM</p>
-        <h2 id="latest-heading">Latest<span>.</span></h2>
+        <p class="eyebrow">SELECTED PROJECTS</p>
+        <h2 id="works-heading">Works<span>.</span></h2>
       </div>
-      <p><span></span> 最近作ったものと、書いたもの。</p>
+      <a class="section-more" href="/works">すべて見る →</a>
     </header>
 
-    <div class="feed-list">
-      {homeFeed.map((entry) => <FeedEntry entry={entry} showReplies={false} />)}
+    <div class="feed-list feed-list--compact">
+      {works.slice(0, 2).map((entry) => <FeedEntry entry={entry} showReplies={false} />)}
+    </div>
+  </section>
+
+  <section class="feed-section" aria-labelledby="blog-heading">
+    <header class="feed-heading feed-heading--compact feed-heading--blog">
+      <div>
+        <p class="eyebrow">LATEST WRITING</p>
+        <h2 id="blog-heading">Blog<span>.</span></h2>
+      </div>
+      <a class="section-more" href="/blog">すべて見る →</a>
+    </header>
+
+    <div class="feed-list feed-list--compact">
+      {blogPosts.slice(0, 3).map((entry) => <FeedEntry entry={entry} showReplies={false} />)}
     </div>
   </section>
 </BaseLayout>

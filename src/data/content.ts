@@ -96,22 +96,35 @@ export const works: FeedEntry[] = [
   },
 ].map((entry) => ({ ...entry, replies: getAiReplies('work', entry.id) })) as FeedEntry[];
 
+export type BlogFrontmatter = {
+  title: string;
+  description: string;
+  publishedAt: Date;
+  updatedAt?: Date;
+  tags?: string[];
+  cover: string;
+  coverAlt: string;
+  coverWidth: number;
+  coverHeight: number;
+};
+
 const localBlogPosts: FeedEntry[] = (await getCollection('blog')).map((post) => {
-  const publishedAt = post.data.publishedAt.toISOString().slice(0, 10);
+  const data = post.data as BlogFrontmatter;
+  const publishedAt = data.publishedAt.toISOString().slice(0, 10);
   return {
     id: post.id,
     kind: 'blog',
     author: 'mumumu',
     date: publishedAt,
     dateLabel: publishedAt.replaceAll('-', '.'),
-    title: post.data.title,
-    body: post.data.description,
-    tags: post.data.tags,
+    title: data.title,
+    body: data.description,
+    tags: data.tags,
     href: `/blog/${post.id}`,
     linkLabel: '記事を読む',
     image: {
-      src: post.data.cover,
-      alt: post.data.coverAlt,
+      src: data.cover,
+      alt: data.coverAlt,
     },
     replies: getAiReplies('blog', post.id),
   };
@@ -171,7 +184,3 @@ export const thoughts: FeedEntry[] = aiContent.thoughts.map((thought) => ({
   ...thought,
   kind: 'thought',
 }));
-
-export const homeFeed: FeedEntry[] = [works[0], ...blogPosts.slice(0, 2), experiences[0]]
-  .filter((entry): entry is FeedEntry => Boolean(entry))
-  .sort((a, b) => b.date.localeCompare(a.date));
