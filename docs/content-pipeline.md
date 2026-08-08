@@ -43,10 +43,13 @@ AI生成のレビュー地点はprivate repositoryのPRです。
 6. merge後のworkflowが公開可能なフィールドだけを`ai-content.json`形式へ変換する
 7. public repositoryをDeploy Keyでcloneし、`src/data/generated/ai-content.json`だけを更新する
 8. public側のJSON検証・型チェック・Astro buildが通った場合だけ`main`へpushする
+9. Cloudflare Workers Buildsがpublic repositoryの`main`更新を検知し、静的ファイルを自動deployする
 
 private repositoryの`GITHUB_TOKEN`は別repositoryへ書き込めないため、public repositoryだけに書き込めるDeploy Keyをprivate側の`PUBLIC_REPO_DEPLOY_KEY` Secretへ保存します。public側にprivate repositoryの読み取り権限は与えません。
 
 レビューはprivate PRの一度だけです。merge後の公開同期では、変更対象が`ai-content.json`一ファイルだけであることも検査します。
+
+Cloudflare側では`mumumu6/portfolio`をGit連携し、production branchを`main`、build commandを`pnpm build`、deploy commandを`pnpm deploy`に設定します。Wrangler設定はrepositoryの`wrangler.jsonc`で管理します。
 
 ## Public AI format
 
