@@ -1,0 +1,175 @@
+[
+  {
+    "id": "trap-2974",
+    "date": "2026-07-16",
+    "dateLabel": "2026.07.16",
+    "title": "【完全無料】オンラインビンゴサイトを作りました！",
+    "body": "春ハッカソン7班です。僕たちの班ではオンラインで遊べるビンゴを作成しました。 既存のオンラインビンゴサービスの中には月額5000円ほどかかるものもあり、traPでも忘年会で利用するために課金したことがあります。デジタル創作サークルがビンゴに5000円も払うなんて！ということで開発…",
+    "tags": [
+      "ハッカソン26spring",
+      "ハッカソン",
+      "Web",
+      "作品紹介"
+    ],
+    "href": "https://trap.jp/post/2974/",
+    "linkLabel": "記事を読む",
+    "image": {
+      "src": "/images/blog/trap-2974-1024.webp",
+      "srcset": [
+        {
+          "src": "/images/blog/trap-2974-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/images/blog/trap-2974-1024.webp",
+          "width": 1024
+        }
+      ],
+      "source": "https://trap.jp/content/images/2026/07/----------2026-07-14-210106.png",
+      "alt": "【完全無料】オンラインビンゴサイトを作りました！"
+    }
+  },
+  {
+    "id": "trap-2756",
+    "date": "2025-12-18",
+    "dateLabel": "2025.12.18",
+    "title": "ネイティブアプリでoauthがしたい！",
+    "body": "今回はOauthでちょっとしたアプリを作ってみたのでその際に面白かったOauthの仕様について紹介します できるだけ間違いがないように参考文献を付けながら話していきます。何度かRFCという言葉が登場しますがこれはOauthの仕様を定めた文書のことです。",
+    "tags": [
+      "アドベントカレンダー2025",
+      "OAuth 2.0",
+      "SysAd班"
+    ],
+    "href": "https://trap.jp/post/2756/",
+    "linkLabel": "記事を読む",
+    "image": {
+      "src": "/images/blog/trap-2756-1024.webp",
+      "srcset": [
+        {
+          "src": "/images/blog/trap-2756-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/images/blog/trap-2756-1024.webp",
+          "width": 1024
+        }
+      ],
+      "source": "https://trap.jp/content/images/2025/12/chatgpt-image-2025-12-14--23_49_39.png",
+      "alt": "ネイティブアプリでoauthがしたい！"
+    }
+  },
+  {
+    "id": "trap-2712",
+    "date": "2025-10-17",
+    "dateLabel": "2025.10.17",
+    "title": "TeXからTypstへ変えた際にやったこと",
+    "body": "TeXからTypstへ変えたのでその際に行ったことを書きました。フォーマットなどの環境構築から、 表紙やコードブロック、定理環境などの作成まで行いました。",
+    "tags": [
+      "Typst"
+    ],
+    "href": "https://trap.jp/post/2712/",
+    "linkLabel": "記事を読む",
+    "image": {
+      "src": "/images/blog/trap-2712-1024.webp",
+      "srcset": [
+        {
+          "src": "/images/blog/trap-2712-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/images/blog/trap-2712-1024.webp",
+          "width": 1024
+        }
+      ],
+      "source": "https://trap.jp/content/images/2025/10/----------2025-10-17-022935.png",
+      "alt": "TeXからTypstへ変えた際にやったこと"
+    }
+  },
+  {
+    "id": "trap-2606",
+    "date": "2025-06-27",
+    "dateLabel": "2025.06.27",
+    "title": "部内情報をAIでスマート検索！MCPを活用したAIチャットサービス「asQ」を作りました！",
+    "body": "2025年春ハッカソン5班「asQ」です。 今回私たちは、部内SNSやイベント情報、wikiなどの情報を言語モデルに渡すこ",
+    "tags": [
+      "ハッカソン",
+      "ハッカソン25spring",
+      "Web",
+      "MCP"
+    ],
+    "href": "https://trap.jp/post/2606/",
+    "linkLabel": "記事を読む",
+    "image": {
+      "src": "/images/blog/trap-2606-1024.webp",
+      "srcset": [
+        {
+          "src": "/images/blog/trap-2606-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/images/blog/trap-2606-1024.webp",
+          "width": 1024
+        }
+      ],
+      "source": "https://trap.jp/content/images/2025/06/upload_a9817a7a3e7df8bd8735ac6c7f2a3c2e-1.jpg",
+      "alt": "部内情報をAIでスマート検索！MCPを活用したAIチャットサービス「asQ」を作りました！"
+    }
+  },
+  {
+    "id": "trap-2502",
+    "date": "2025-03-12",
+    "dateLabel": "2025.03.12",
+    "title": "サークル旅行のためだけにアプリをこしらえる人たち",
+    "body": "この記事は新歓ブログリレー6日目の記事です。 こんにちは！ この記事では、今年の冬ハッカソンで開発した合",
+    "tags": [
+      "ハッカソン24winter",
+      "新歓ブログリレー2025",
+      "合宿"
+    ],
+    "href": "https://trap.jp/post/2502/",
+    "linkLabel": "記事を読む",
+    "image": {
+      "src": "/images/blog/trap-2502-1024.webp",
+      "srcset": [
+        {
+          "src": "/images/blog/trap-2502-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/images/blog/trap-2502-1024.webp",
+          "width": 1024
+        }
+      ],
+      "source": "https://trap.jp/content/images/2025/03/----------2025-03-04-11.44.19-1.png",
+      "alt": "サークル旅行のためだけにアプリをこしらえる人たち"
+    }
+  },
+  {
+    "id": "trap-2363",
+    "date": "2024-09-19",
+    "dateLabel": "2024.09.19",
+    "title": "Web開発初心者4人組が1ヶ月でSNSを作るまで",
+    "body": "この記事は 夏のブログリレー 32日目の記事です。 こんにちは！ 24Bのきつねでございます。今年traPで新たに企画さ",
+    "tags": [
+      "1-Monthon",
+      "夏のブログリレー"
+    ],
+    "href": "https://trap.jp/post/2363/",
+    "linkLabel": "記事を読む",
+    "image": {
+      "src": "/images/blog/trap-2363-1024.webp",
+      "srcset": [
+        {
+          "src": "/images/blog/trap-2363-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/images/blog/trap-2363-1024.webp",
+          "width": 1024
+        }
+      ],
+      "source": "https://trap.jp/content/images/2024/09/----------2024-09-15-19.44.14.png",
+      "alt": "Web開発初心者4人組が1ヶ月でSNSを作るまで"
+    }
+  }
+]

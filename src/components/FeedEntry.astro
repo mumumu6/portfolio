@@ -1,0 +1,128 @@
+---
+import Avatar from './Avatar.astro';
+import type { AuthorId, EntryKind, FeedEntry as FeedEntryType } from '../data/content';
+
+type Props = {
+  entry: FeedEntryType;
+};
+
+const { entry } = Astro.props;
+
+const authors: Record<AuthorId, { name: string; handle: string }> = {
+  mumumu: { name: 'mumumu', handle: '@mumumu6' },
+  chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
+  codex: { name: 'Codex', handle: '@codex' },
+};
+
+const kindLabels: Record<EntryKind, string> = {
+  work: 'WORK',
+  blog: 'BLOG',
+  experience: 'EXPERIENCE',
+  thought: 'AI DIARY',
+};
+
+const author = authors[entry.author];
+const external = entry.href?.startsWith('http');
+---
+
+<article class:list={['feed-entry', `feed-entry--${entry.kind}`, `feed-entry--author-${entry.author}`]}>
+  <div class="entry-grid">
+    <div class="entry-rail">
+      <Avatar author={entry.author} />
+      <span class="entry-line" aria-hidden="true"></span>
+    </div>
+
+    <div class="entry-content">
+      <header class="entry-head">
+        <div class="entry-author">
+          <strong>{author.name}</strong>
+          <span>{author.handle}</span>
+        </div>
+        <span class:list={['kind-label', `kind-label--${entry.kind}`]}>{kindLabels[entry.kind]}</span>
+        <time datetime={entry.date}>{entry.dateLabel}</time>
+      </header>
+
+      {entry.title && (
+        entry.href ? (
+          <h2 class="entry-title">
+            <a href={entry.href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>
+              {entry.title}
+            </a>
+          </h2>
+        ) : (
+          <h2 class="entry-title">{entry.title}</h2>
+        )
+      )}
+
+      <p class="entry-body">{entry.body}</p>
+
+      {entry.image && entry.href && (
+        <a
+          class="ogp-preview"
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+          aria-label={`${entry.title ?? '記事'}を読む`}
+        >
+          <img
+            src={entry.image.src}
+            srcset={entry.image.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
+            alt={entry.image.alt}
+            sizes="(max-width: 760px) calc(100vw - 98px), 690px"
+            loading="lazy"
+            decoding="async"
+          />
+          <span>trap.jp <i aria-hidden="true">↗</i></span>
+        </a>
+      )}
+
+      {entry.visual && (
+        <div class:list={['project-visual', `project-visual--${entry.visual.tone}`]} aria-hidden="true">
+          <div class="project-visual__index">0{entry.id.length % 8 + 1}</div>
+          <div class="project-visual__copy">
+            <span>{entry.visual.label}</span>
+            <strong>{entry.visual.caption}</strong>
+          </div>
+          <div class="project-visual__orb"></div>
+        </div>
+      )}
+
+      {entry.tags && entry.tags.length > 0 && (
+        <ul class="tag-list" aria-label="タグ">
+          {entry.tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+      )}
+
+      {entry.href && !entry.image && (
+        <a
+          class="entry-link"
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
+          {entry.linkLabel ?? '詳しく見る'}<span aria-hidden="true"> →</span>
+        </a>
+      )}
+
+      {entry.replies && entry.replies.length > 0 && (
+        <div class="reply-thread" aria-label="AIからの返信">
+          {entry.replies.map((reply) => {
+            const replyAuthor = authors[reply.author];
+            return (
+              <div class:list={['reply', { 'reply--nested': reply.depth === 2 }]}>
+                <Avatar author={reply.author} size="small" />
+                <div class="reply-content">
+                  <header class="reply-head">
+                    <strong>{replyAuthor.name}</strong>
+                    <span>{replyAuthor.handle}</span>
+                  </header>
+                  <div class="reply-bubble"><p>{reply.body}</p></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  </div>
+</article>

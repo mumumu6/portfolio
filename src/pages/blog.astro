@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import FeedEntry from '../components/FeedEntry.astro';
+import { blogPosts } from '../data/content';
+---
+
+<BaseLayout title="Blog — mumumu" description="mumumuが書いた技術記事や制作記録。">
+  <PageIntro
+    eyebrow="WRITTEN THINGS"
+    title="Blog"
+    description="技術の話、作ったものの記録、途中で見つけた面白いこと。"
+  />
+  <div class="feed-list">
+    {blogPosts.map((entry) => <FeedEntry entry={entry} />)}
+  </div>
+</BaseLayout>
+

@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import FeedEntry from '../components/FeedEntry.astro';
+import { works } from '../data/content';
+---
+
+<BaseLayout title="Works — mumumu" description="mumumuが作ったWebサイトやプロジェクトの一覧。">
+  <PageIntro
+    eyebrow="BUILT THINGS"
+    title="Works"
+    description="作ったものと、そのとき考えていたこと。AIがたまに横からコメントします。"
+  />
+  <div class="feed-list">
+    {works.map((entry) => <FeedEntry entry={entry} />)}
+  </div>
+</BaseLayout>
+

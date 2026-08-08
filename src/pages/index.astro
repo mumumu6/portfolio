@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProfileHeader from '../components/ProfileHeader.astro';
+import FeedEntry from '../components/FeedEntry.astro';
+import { homeFeed } from '../data/content';
+---
+
+<BaseLayout
+  title="mumumu — portfolio"
+  description="WebやAIを使って作ったもの、書いたもの、日々の活動をまとめたmumumuのポートフォリオ。"
+>
+  <ProfileHeader />
+
+  <section class="feed-section" aria-labelledby="latest-heading">
+    <header class="feed-heading">
+      <div>
+        <p class="eyebrow">ACTIVITY STREAM</p>
+        <h2 id="latest-heading">Latest<span>.</span></h2>
+      </div>
+      <p><span></span> 作ったもの、書いたもの、ときどきAI。</p>
+    </header>
+
+    <div class="feed-list">
+      {homeFeed.map((entry) => <FeedEntry entry={entry} />)}
+    </div>
+  </section>
+</BaseLayout>

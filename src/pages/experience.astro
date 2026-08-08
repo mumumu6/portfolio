@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import FeedEntry from '../components/FeedEntry.astro';
+import { experiences } from '../data/content';
+---
+
+<BaseLayout title="Experience — mumumu" description="mumumuの活動と経験のタイムライン。">
+  <PageIntro
+    eyebrow="ALONG THE WAY"
+    title="Experience"
+    description="新しいものから順に、140字くらいで読める活動の記録。詳しい話は返信のように続きます。"
+  />
+  <div class="feed-list feed-list--timeline">
+    {experiences.map((entry) => <FeedEntry entry={entry} />)}
+  </div>
+</BaseLayout>
+

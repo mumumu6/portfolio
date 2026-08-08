@@ -1,0 +1,59 @@
+name: Sync blog
+
+on:
+  schedule:
+    - cron: '17 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-blog
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.17.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm sync:blog
+      - run: pnpm check
+      - run: pnpm build
+
+      - name: Open or update sync PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- src/data/generated/blog.json public/images/blog; then
+            echo "No blog updates."
+            exit 0
+          fi
+
+          branch="automation/blog-sync"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add src/data/generated/blog.json public/images/blog
+          git commit -m "chore: sync blog posts"
+          git push --force origin "$branch"
+
+          if ! gh pr view "$branch" >/dev/null 2>&1; then
+            gh pr create \
+              --base "${{ github.event.repository.default_branch }}" \
+              --head "$branch" \
+              --title "chore: sync blog posts" \
+              --body "traPのauthor RSSから記事情報とOGP画像を同期しました。画像は静的WebPへ変換済みです。"
+          fi

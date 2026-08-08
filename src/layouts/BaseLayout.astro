@@ -1,0 +1,116 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import SiteHeader from '../components/SiteHeader.astro';
+
+type Props = {
+  title: string;
+  description: string;
+};
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/webp" href="/favicon.webp" />
+    <ClientRouter />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        const theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">本文へ移動</a>
+    <SiteHeader />
+    <main class="site-shell" id="main-content">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div>
+        <span class="footer-sign">mumumu<span>.</span></span>
+        <span>made with Astro / mostly HTML / occasionally haunted by AI</span>
+      </div>
+    </footer>
+
+    <script>
+      const applyTheme = (theme: 'light' | 'dark') => {
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        localStorage.setItem('theme', theme);
+      };
+
+      const closeMenu = () => {
+        const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+        const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+        if (!menuButton || !menu) return;
+        menu.hidden = true;
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.setAttribute('aria-label', 'メニューを開く');
+      };
+
+      const setupUi = () => {
+        document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
+          if (button.dataset.bound === 'true') return;
+          button.dataset.bound = 'true';
+          button.addEventListener('click', () => {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+          });
+        });
+
+        document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]').forEach((link) => {
+          const href = link.getAttribute('href') ?? '';
+          const active = href !== '/' && (location.pathname === href || location.pathname.startsWith(`${href}/`));
+          link.classList.toggle('active', active);
+          if (active) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
+        });
+
+        const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+        const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+        if (!menuButton || !menu || menuButton.dataset.bound === 'true') return;
+
+        menuButton.dataset.bound = 'true';
+        menuButton.addEventListener('click', () => {
+          const willOpen = menu.hidden;
+          menu.hidden = !willOpen;
+          menuButton.setAttribute('aria-expanded', String(willOpen));
+          menuButton.setAttribute('aria-label', willOpen ? 'メニューを閉じる' : 'メニューを開く');
+        });
+      };
+
+      document.addEventListener('astro:before-swap', (event) => {
+        const theme = localStorage.getItem('theme')
+          || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        event.newDocument.documentElement.dataset.theme = theme;
+        event.newDocument.documentElement.style.colorScheme = theme;
+      });
+
+      document.addEventListener('astro:page-load', () => {
+        closeMenu();
+        setupUi();
+      });
+      setupUi();
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMenu();
+      });
+    </script>
+  </body>
+</html>

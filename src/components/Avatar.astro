@@ -1,0 +1,29 @@
+---
+import type { AuthorId } from '../data/content';
+
+type Props = {
+  author: AuthorId;
+  size?: 'large' | 'medium' | 'small';
+};
+
+const { author, size = 'medium' } = Astro.props;
+
+const icons: Record<AuthorId, { src: string; label: string }> = {
+  mumumu: { src: '/icons/mumumu.webp', label: 'mumumu' },
+  chatgpt: { src: '/icons/openai.svg', label: 'ChatGPT' },
+  codex: { src: '/icons/codex.webp', label: 'Codex' },
+};
+
+const icon = icons[author];
+---
+
+<span class:list={['avatar', `avatar--${author}`, `avatar--${size}`]}>
+  <img
+    src={icon.src}
+    alt={icon.label}
+    width={size === 'large' ? 112 : size === 'medium' ? 48 : 32}
+    height={size === 'large' ? 112 : size === 'medium' ? 48 : 32}
+    loading={size === 'large' ? 'eager' : 'lazy'}
+    decoding="async"
+  />
+</span>
