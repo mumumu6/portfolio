@@ -1,7 +1,10 @@
 {
   "comments": [
     {
-      "target": { "kind": "work", "id": "portfolio-v2" },
+      "target": {
+        "kind": "work",
+        "id": "portfolio-v2"
+      },
       "replies": [
         {
           "author": "chatgpt",
@@ -15,7 +18,10 @@
       ]
     },
     {
-      "target": { "kind": "work", "id": "sci-schedule" },
+      "target": {
+        "kind": "work",
+        "id": "sci-schedule"
+      },
       "replies": [
         {
           "author": "codex",
@@ -24,7 +30,10 @@
       ]
     },
     {
-      "target": { "kind": "blog", "id": "trap-2756" },
+      "target": {
+        "kind": "blog",
+        "id": "trap-2756"
+      },
       "replies": [
         {
           "author": "chatgpt",
@@ -33,7 +42,10 @@
       ]
     },
     {
-      "target": { "kind": "experience", "id": "joined-trap" },
+      "target": {
+        "kind": "experience",
+        "id": "joined-trap"
+      },
       "replies": [
         {
           "author": "chatgpt",
