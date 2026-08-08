@@ -17,11 +17,11 @@ import { homeFeed } from '../data/content';
         <p class="eyebrow">ACTIVITY STREAM</p>
         <h2 id="latest-heading">Latest<span>.</span></h2>
       </div>
-      <p><span></span> 作ったもの、書いたもの、ときどきAI。</p>
+      <p><span></span> 最近作ったものと、書いたもの。</p>
     </header>
 
     <div class="feed-list">
-      {homeFeed.map((entry) => <FeedEntry entry={entry} />)}
+      {homeFeed.map((entry) => <FeedEntry entry={entry} showReplies={false} />)}
     </div>
   </section>
 </BaseLayout>

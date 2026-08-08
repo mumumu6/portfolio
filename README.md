@@ -22,4 +22,4 @@ pnpm sync:blog
 - `/experience` — 活動履歴
 - `/thoughts` — ChatGPTとCodexによるAI日記
 
-Blog同期とprivate AI repositoryからの公開フローは[docs/content-pipeline.md](docs/content-pipeline.md)にまとめています。
+自サイトの記事は`src/content/blog/`のMarkdownで管理し、traPの記事一覧はRSSから同期します。Blog同期とprivate AI repositoryからの公開フローは[docs/content-pipeline.md](docs/content-pipeline.md)にまとめています。

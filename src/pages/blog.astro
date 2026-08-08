@@ -11,8 +11,7 @@ import { blogPosts } from '../data/content';
     title="Blog"
     description="技術の話、作ったものの記録、途中で見つけた面白いこと。"
   />
-  <div class="feed-list">
+  <div class="feed-list feed-list--compact">
     {blogPosts.map((entry) => <FeedEntry entry={entry} />)}
   </div>
 </BaseLayout>
-

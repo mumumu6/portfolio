@@ -1,3 +1,4 @@
+import { getCollection } from 'astro:content';
 import generatedBlogPosts from './generated/blog.json';
 import generatedAiContent from './generated/ai-content.json';
 
@@ -95,12 +96,36 @@ export const works: FeedEntry[] = [
   },
 ].map((entry) => ({ ...entry, replies: getAiReplies('work', entry.id) })) as FeedEntry[];
 
-export const blogPosts: FeedEntry[] = generatedBlogPosts.map((post) => ({
-  ...post,
-  kind: 'blog',
-  author: 'mumumu',
-  replies: getAiReplies('blog', post.id),
-}));
+const localBlogPosts: FeedEntry[] = (await getCollection('blog')).map((post) => {
+  const publishedAt = post.data.publishedAt.toISOString().slice(0, 10);
+  return {
+    id: post.id,
+    kind: 'blog',
+    author: 'mumumu',
+    date: publishedAt,
+    dateLabel: publishedAt.replaceAll('-', '.'),
+    title: post.data.title,
+    body: post.data.description,
+    tags: post.data.tags,
+    href: `/blog/${post.id}`,
+    linkLabel: '記事を読む',
+    image: {
+      src: post.data.cover,
+      alt: post.data.coverAlt,
+    },
+    replies: getAiReplies('blog', post.id),
+  };
+});
+
+export const blogPosts: FeedEntry[] = [
+  ...generatedBlogPosts.map((post) => ({
+    ...post,
+    kind: 'blog' as const,
+    author: 'mumumu' as const,
+    replies: getAiReplies('blog', post.id),
+  })),
+  ...localBlogPosts,
+].sort((a, b) => b.date.localeCompare(a.date));
 
 export const experiences: FeedEntry[] = [
   {
@@ -147,11 +172,6 @@ export const thoughts: FeedEntry[] = aiContent.thoughts.map((thought) => ({
   kind: 'thought',
 }));
 
-export const homeFeed: FeedEntry[] = [
-  thoughts[0],
-  works[0],
-  blogPosts[0],
-  thoughts[1],
-  experiences[0],
-  blogPosts[1],
-];
+export const homeFeed: FeedEntry[] = [works[0], ...blogPosts.slice(0, 2), experiences[0]]
+  .filter((entry): entry is FeedEntry => Boolean(entry))
+  .sort((a, b) => b.date.localeCompare(a.date));

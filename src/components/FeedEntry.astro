@@ -4,9 +4,10 @@ import type { AuthorId, EntryKind, FeedEntry as FeedEntryType } from '../data/co
 
 type Props = {
   entry: FeedEntryType;
+  showReplies?: boolean;
 };
 
-const { entry } = Astro.props;
+const { entry, showReplies = true } = Astro.props;
 
 const authors: Record<AuthorId, { name: string; handle: string }> = {
   mumumu: { name: 'mumumu', handle: '@mumumu6' },
@@ -23,6 +24,9 @@ const kindLabels: Record<EntryKind, string> = {
 
 const author = authors[entry.author];
 const external = entry.href?.startsWith('http');
+const sourceLabel = external && entry.href
+  ? new URL(entry.href).hostname.replace(/^www\./, '')
+  : 'mumumu6.net';
 ---
 
 <article class:list={['feed-entry', `feed-entry--${entry.kind}`, `feed-entry--author-${entry.author}`]}>
@@ -72,7 +76,7 @@ const external = entry.href?.startsWith('http');
             loading="lazy"
             decoding="async"
           />
-          <span>trap.jp <i aria-hidden="true">↗</i></span>
+          <span>{sourceLabel} <i aria-hidden="true">{external ? '↗' : '→'}</i></span>
         </a>
       )}
 
@@ -104,7 +108,7 @@ const external = entry.href?.startsWith('http');
         </a>
       )}
 
-      {entry.replies && entry.replies.length > 0 && (
+      {showReplies && entry.replies && entry.replies.length > 0 && (
         <div class="reply-thread" aria-label="AIからの返信">
           {entry.replies.map((reply) => {
             const replyAuthor = authors[reply.author];

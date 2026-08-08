@@ -1,0 +1,65 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+type Props = { post: CollectionEntry<'blog'> };
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const publishedAt = post.data.publishedAt.toISOString().slice(0, 10);
+const dateLabel = publishedAt.replaceAll('-', '.');
+---
+
+<BaseLayout
+  title={`${post.data.title} — mumumu`}
+  description={post.data.description}
+  image={post.data.cover}
+  type="article"
+  publishedTime={publishedAt}
+>
+  <article class="article-page">
+    <header class="article-header">
+      <a class="article-back" href="/blog">← Blog</a>
+      <p class="eyebrow">MUMUMU'S BLOG</p>
+      <h1>{post.data.title}</h1>
+      <p class="article-lead">{post.data.description}</p>
+      <div class="article-meta">
+        <time datetime={publishedAt}>{dateLabel}</time>
+        <ul aria-label="タグ">
+          {post.data.tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+      </div>
+    </header>
+
+    <img
+      class="article-cover"
+      src={post.data.cover}
+      alt={post.data.coverAlt}
+      width={post.data.coverWidth}
+      height={post.data.coverHeight}
+      decoding="async"
+      fetchpriority="high"
+    />
+
+    <div class="article-layout">
+      {headings.length > 2 && (
+        <nav class="article-toc" aria-label="目次">
+          <strong>Contents</strong>
+          <ol>
+            {headings.filter((heading) => heading.depth <= 3).map((heading) => (
+              <li class:list={[`article-toc--depth-${heading.depth}`]}>
+                <a href={`#${heading.slug}`}>{heading.text}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      <div class="article-prose"><Content /></div>
+    </div>
+  </article>
+</BaseLayout>
