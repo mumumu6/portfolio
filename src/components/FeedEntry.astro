@@ -26,6 +26,9 @@ const sourceUrl = entry.href
 const sourceLabel = sourceUrl
   ? `${sourceUrl.hostname.replace(/^www\./, '')}${sourceUrl.pathname.replace(/\/$/, '')}`
   : undefined;
+const imageSizes = entry.kind === 'blog'
+  ? '(max-width: 480px) calc(100vw - 76px), (max-width: 760px) calc(100vw - 82px), 280px'
+  : '(max-width: 480px) 92px, (max-width: 760px) 145px, 280px';
 ---
 
 <article class:list={['feed-entry', `feed-entry--${entry.kind}`, `feed-entry--author-${entry.author}`]}>
@@ -85,7 +88,7 @@ const sourceLabel = sourceUrl
               alt={entry.image.alt}
               width={entry.image.width}
               height={entry.image.height}
-              sizes="(max-width: 480px) 92px, (max-width: 760px) 145px, 280px"
+              sizes={imageSizes}
               loading="lazy"
               decoding="async"
             />
@@ -98,7 +101,7 @@ const sourceLabel = sourceUrl
               alt={entry.image.alt}
               width={entry.image.width}
               height={entry.image.height}
-              sizes="(max-width: 480px) 92px, (max-width: 760px) 145px, 280px"
+              sizes={imageSizes}
               loading="lazy"
               decoding="async"
             />
