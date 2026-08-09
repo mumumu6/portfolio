@@ -34,7 +34,7 @@ const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', 
       const replyTo = reply.replyTo ?? (reply.depth === 2 ? replies[index - 1]?.author : undefined);
       const dateLabel = formatReplyDate(reply.createdAt);
       return (
-        <div class="reply">
+        <div class="reply" style={`--reply-index: ${index}`}>
           <Avatar author={reply.author} size="small" />
           <div class="reply-content">
             <header class="reply-head">

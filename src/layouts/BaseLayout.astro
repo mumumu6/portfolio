@@ -90,16 +90,38 @@ const socialImageType = image.endsWith('.png') ? 'image/png' : image.endsWith('.
         localStorage.setItem('theme', theme);
       };
 
-      const closeMenu = () => {
+      let menuHideTimer = 0;
+      let menuFrame = 0;
+
+      const setMenuOpen = (open: boolean, immediate = false) => {
         const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
         const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
         const header = document.querySelector<HTMLElement>('.site-header');
         if (!menuButton || !menu) return;
-        menu.hidden = true;
-        menuButton.setAttribute('aria-expanded', 'false');
-        menuButton.setAttribute('aria-label', 'メニューを開く');
+
+        window.clearTimeout(menuHideTimer);
+        cancelAnimationFrame(menuFrame);
+        if (open) {
+          menu.hidden = false;
+          menuFrame = requestAnimationFrame(() => {
+            menu.dataset.open = 'true';
+          });
+        } else {
+          delete menu.dataset.open;
+          if (immediate) menu.hidden = true;
+          else {
+            menuHideTimer = window.setTimeout(() => {
+              if (menu.dataset.open !== 'true') menu.hidden = true;
+            }, 190);
+          }
+        }
+
+        menuButton.setAttribute('aria-expanded', String(open));
+        menuButton.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
         header?.removeAttribute('data-hidden');
       };
+
+      const closeMenu = (immediate = false) => setMenuOpen(false, immediate);
 
       const setupHeaderScroll = () => {
         const header = document.querySelector<HTMLElement>('.site-header');
@@ -153,11 +175,8 @@ const socialImageType = image.endsWith('.png') ? 'image/png' : image.endsWith('.
 
         menuButton.dataset.bound = 'true';
         menuButton.addEventListener('click', () => {
-          const willOpen = menu.hidden;
-          document.querySelector<HTMLElement>('.site-header')?.removeAttribute('data-hidden');
-          menu.hidden = !willOpen;
-          menuButton.setAttribute('aria-expanded', String(willOpen));
-          menuButton.setAttribute('aria-label', willOpen ? 'メニューを閉じる' : 'メニューを開く');
+          const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+          setMenuOpen(!isOpen);
         });
       };
 
@@ -168,7 +187,7 @@ const socialImageType = image.endsWith('.png') ? 'image/png' : image.endsWith('.
       });
 
       document.addEventListener('astro:page-load', () => {
-        closeMenu();
+        closeMenu(true);
         setupUi();
       });
       setupUi();
