@@ -1074,12 +1074,12 @@ summary:focus-visible {
   fill: currentColor;
 }
 
-.reply-disclosure__icon--minus,
-.reply-disclosure[open] .reply-disclosure__icon--plus {
+.reply-disclosure__icon--up,
+.reply-disclosure[open] .reply-disclosure__icon--down {
   display: none;
 }
 
-.reply-disclosure[open] .reply-disclosure__icon--minus {
+.reply-disclosure[open] .reply-disclosure__icon--up {
   display: block;
 }
 

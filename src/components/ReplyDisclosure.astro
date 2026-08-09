@@ -1,6 +1,6 @@
 ---
 import Avatar from './Avatar.astro';
-import { mdiMinus, mdiPlus } from '@mdi/js';
+import { mdiChevronDown, mdiChevronUp } from '@mdi/js';
 import type { Reply } from '../data/content';
 
 type Props = {
@@ -28,11 +28,11 @@ const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', 
     <span>{label}</span>
     <span class="reply-disclosure__count">{replies.length}</span>
     <span class="reply-disclosure__indicator" aria-hidden="true">
-      <svg class="reply-disclosure__icon reply-disclosure__icon--plus" viewBox="0 0 24 24">
-        <path d={mdiPlus}></path>
+      <svg class="reply-disclosure__icon reply-disclosure__icon--down" viewBox="0 0 24 24">
+        <path d={mdiChevronDown}></path>
       </svg>
-      <svg class="reply-disclosure__icon reply-disclosure__icon--minus" viewBox="0 0 24 24">
-        <path d={mdiMinus}></path>
+      <svg class="reply-disclosure__icon reply-disclosure__icon--up" viewBox="0 0 24 24">
+        <path d={mdiChevronUp}></path>
       </svg>
     </span>
   </summary>
