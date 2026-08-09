@@ -25,6 +25,8 @@ export type FeedEntry = {
   image?: {
     src: string;
     alt: string;
+    width?: number;
+    height?: number;
     srcset?: Array<{ src: string; width: number }>;
     source?: string;
   };
@@ -53,7 +55,7 @@ export const profile = {
   handle: '@mumumu6',
   bio: 'Webサイトを作って遊んでいます。競プロや機械学習、Kaggleにも興味があります。',
   affiliations: ['東京科学大学 情報理工学院', 'デジタル創作同好会 traP'],
-  interests: ['プログラミング', 'バドミントン'],
+  interests: ['プログラミング'],
   links: [
     { label: 'GitHub', href: 'https://github.com/mumumu6' },
     { label: 'X', href: 'https://twitter.com/mumumu_no_mu66' },
@@ -125,6 +127,8 @@ const localBlogPosts: FeedEntry[] = (await getCollection('blog')).map((post) => 
     image: {
       src: data.cover,
       alt: data.coverAlt,
+      width: data.coverWidth,
+      height: data.coverHeight,
     },
     replies: getAiReplies('blog', post.id),
   };

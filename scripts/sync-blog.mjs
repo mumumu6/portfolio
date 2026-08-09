@@ -61,13 +61,15 @@ const downloadImage = async (url, id) => {
   const largeName = `trap-${id}-1024.webp`;
   const pipeline = sharp(source).rotate();
 
-  await Promise.all([
+  const [, large] = await Promise.all([
     pipeline.clone().resize({ width: 480, withoutEnlargement: true }).webp({ quality: 78, effort: 5 }).toFile(path.join(imageDirectory, smallName)),
     pipeline.clone().resize({ width: 1024, withoutEnlargement: true }).webp({ quality: 82, effort: 5 }).toFile(path.join(imageDirectory, largeName)),
   ]);
 
   return {
     src: `/images/blog/${largeName}`,
+    width: large.width,
+    height: large.height,
     srcset: [
       { src: `/images/blog/${smallName}`, width: 480 },
       { src: `/images/blog/${largeName}`, width: 1024 },
@@ -86,6 +88,12 @@ const feed = parser.parse(await response.text());
 const items = asArray(feed?.rss?.channel?.item).slice(0, MAX_POSTS);
 const previousPosts = await readPreviousPosts();
 const previousById = new Map(previousPosts.map((post) => [post.id, post]));
+
+const withImageDimensions = async (image) => {
+  if (image.width && image.height) return image;
+  const metadata = await sharp(path.join(root, 'public', image.src.replace(/^\//, ''))).metadata();
+  return { ...image, width: metadata.width, height: metadata.height };
+};
 
 await mkdir(path.dirname(outputFile), { recursive: true });
 await mkdir(imageDirectory, { recursive: true });
@@ -108,7 +116,7 @@ for (const item of items) {
     const expectedFiles = [`trap-${postId}-480.webp`, `trap-${postId}-1024.webp`];
     const existingFiles = new Set(await readdir(imageDirectory));
     const canReuse = previousImage?.source === imageUrl && expectedFiles.every((file) => existingFiles.has(file));
-    const generated = canReuse ? previousImage : await downloadImage(imageUrl, postId);
+    const generated = canReuse ? await withImageDimensions(previousImage) : await downloadImage(imageUrl, postId);
     image = { ...generated, alt: cleanText(item.title) };
   }
 

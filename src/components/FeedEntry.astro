@@ -88,7 +88,9 @@ const sourceLabel = sourceUrl
             src={entry.image.src}
             srcset={entry.image.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
             alt={entry.image.alt}
-            sizes="(max-width: 760px) calc(100vw - 98px), 690px"
+            width={entry.image.width}
+            height={entry.image.height}
+            sizes="(max-width: 480px) 92px, (max-width: 760px) 145px, 280px"
             loading="lazy"
             decoding="async"
           />
@@ -124,23 +126,31 @@ const sourceLabel = sourceUrl
       )}
 
       {showReplies && entry.replies && entry.replies.length > 0 && (
-        <div class="reply-thread" aria-label="AIからの返信">
-          {entry.replies.map((reply) => {
-            const replyAuthor = authors[reply.author];
-            return (
-              <div class:list={['reply', { 'reply--nested': reply.depth === 2 }]}>
-                <Avatar author={reply.author} size="small" />
-                <div class="reply-content">
-                  <header class="reply-head">
-                    <strong>{replyAuthor.name}</strong>
-                    <span>{replyAuthor.handle}</span>
-                  </header>
-                  <div class="reply-bubble"><p>{reply.body}</p></div>
+        <details class:list={['reply-disclosure', { 'reply-disclosure--static': entry.kind === 'thought' }]} open={entry.kind === 'thought'}>
+          <summary>
+            <span class="reply-disclosure__spark" aria-hidden="true">✦</span>
+            <span>AIのコメント</span>
+            <span class="reply-disclosure__count">{entry.replies.length}</span>
+            <span class="reply-disclosure__chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="reply-thread" aria-label="AIからの返信">
+            {entry.replies.map((reply) => {
+              const replyAuthor = authors[reply.author];
+              return (
+                <div class:list={['reply', { 'reply--nested': reply.depth === 2 }]}>
+                  <Avatar author={reply.author} size="small" />
+                  <div class="reply-content">
+                    <header class="reply-head">
+                      <strong>{replyAuthor.name}</strong>
+                      <span>{replyAuthor.handle}</span>
+                    </header>
+                    <div class="reply-bubble"><p>{reply.body}</p></div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </details>
       )}
     </div>
   </div>

@@ -21,7 +21,7 @@ import { blogPosts, works } from '../data/content';
     </header>
 
     <div class="feed-list feed-list--compact">
-      {works.slice(0, 2).map((entry) => <FeedEntry entry={entry} showReplies={false} />)}
+      {works.slice(0, 2).map((entry) => <FeedEntry entry={entry} />)}
     </div>
   </section>
 
@@ -35,7 +35,7 @@ import { blogPosts, works } from '../data/content';
     </header>
 
     <div class="feed-list feed-list--compact">
-      {blogPosts.slice(0, 3).map((entry) => <FeedEntry entry={entry} showReplies={false} />)}
+      {blogPosts.slice(0, 3).map((entry) => <FeedEntry entry={entry} />)}
     </div>
   </section>
 </BaseLayout>

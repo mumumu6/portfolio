@@ -25,8 +25,8 @@ const dateLabel = publishedAt.replaceAll('-', '.');
   publishedTime={publishedAt}
 >
   <article class="article-page">
-    <div class="reading-progress" aria-hidden="true">
-      <span data-reading-progress></span>
+    <div class="reading-progress" data-reading-progress aria-hidden="true">
+      <span data-reading-progress-label>0%</span>
     </div>
     <header class="article-header">
       <a class="article-back" href="/blog">← Blog</a>
@@ -78,13 +78,13 @@ const dateLabel = publishedAt.replaceAll('-', '.');
   const updateReadingProgress = () => {
     progressFrame = 0;
     const article = document.querySelector<HTMLElement>('.article-page');
-    const bar = document.querySelector<HTMLElement>('[data-reading-progress]');
-    if (!article || !bar) return;
+    const ring = document.querySelector<HTMLElement>('[data-reading-progress]');
+    if (!article || !ring) return;
 
     const start = article.offsetTop;
     const end = Math.max(start + article.offsetHeight - window.innerHeight, start + 1);
     const progress = Math.min(1, Math.max(0, (window.scrollY - start) / (end - start)));
-    bar.style.transform = `scaleX(${progress})`;
+    ring.style.setProperty('--reading-progress', `${progress * 360}deg`);
 
     document.querySelectorAll<HTMLElement>('[data-reading-progress-label]').forEach((label) => {
       label.textContent = `${Math.round(progress * 100)}%`;
