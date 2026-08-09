@@ -1060,19 +1060,27 @@ summary:focus-visible {
 }
 
 .reply-disclosure__indicator {
-  width: 0.8rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  line-height: 1;
-  text-align: center;
+  width: 14px;
+  height: 14px;
+  display: grid;
+  place-items: center;
 }
 
-.reply-disclosure__indicator::before {
-  content: '+';
+.reply-disclosure__icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  grid-area: 1 / 1;
+  fill: currentColor;
 }
 
-.reply-disclosure[open] .reply-disclosure__indicator::before {
-  content: '\2212';
+.reply-disclosure__icon--minus,
+.reply-disclosure[open] .reply-disclosure__icon--plus {
+  display: none;
+}
+
+.reply-disclosure[open] .reply-disclosure__icon--minus {
+  display: block;
 }
 
 .reply-thread {
