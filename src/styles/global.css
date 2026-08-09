@@ -1165,16 +1165,11 @@ summary:focus-visible {
   min-height: 26px;
 }
 
-.ai-label {
-  padding: 1px 5px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  color: var(--muted) !important;
-  font-family: var(--font-mono) !important;
-  font-size: 0.52rem !important;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  line-height: 1.35;
+.reply-head time,
+.work-thread-post--reply .work-thread-head time {
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.64rem;
 }
 
 .reply-context,

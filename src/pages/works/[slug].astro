@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import Avatar from '../../components/Avatar.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { authorNames, formatReplyDate, resolveReplyTo } from '../../data/authors';
 import { works as workEntries } from '../../data/content';
 
 export async function getStaticPaths() {
@@ -22,16 +23,6 @@ const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? 
 const makerReplies = [
   ...data.comments.map((comment) => ({ ...comment, date: comment.date ?? data.publishedAt })),
 ];
-const aiAuthors = {
-  chatgpt: { name: 'ChatGPT' },
-  codex: { name: 'Codex' },
-};
-const aiHandles = { mumumu: 'mumumu', chatgpt: 'ChatGPT', codex: 'Codex' } as const;
-const formatReplyDate = (value?: string | Date) => {
-  if (!value) return undefined;
-  const date = value instanceof Date ? value.toISOString() : value;
-  return date.slice(0, 10).replaceAll('-', '.');
-};
 const threadItems = [
   ...makerReplies.map((reply, index) => ({
     kind: 'maker' as const,
@@ -48,7 +39,7 @@ const threadItems = [
     body: reply.body,
     label: undefined,
     date: reply.createdAt ?? publishedAt,
-    replyTo: reply.replyTo ?? (reply.depth === 2 ? aiReplies[index - 1]?.author : undefined),
+    replyTo: resolveReplyTo(aiReplies, index),
     sourceOrder: makerReplies.length + index,
   })),
 ].sort((a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder);
@@ -118,12 +109,11 @@ const threadItems = [
     </section>
 
     {threadItems.map((item, index) => {
-      const author = item.kind === 'ai' ? aiAuthors[item.author] : undefined;
       const replyDate = formatReplyDate(item.date);
       return (
         <section
           class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--ai': item.kind === 'ai' }]}
-          aria-label={item.kind === 'ai' ? `${author?.name}のコメント` : `mumumuの${item.label}`}
+          aria-label={item.kind === 'ai' ? `${authorNames[item.author]}のコメント` : `mumumuの${item.label}`}
         >
           <div class="work-thread-rail">
             <Avatar author={item.author} />
@@ -131,11 +121,11 @@ const threadItems = [
           </div>
           <div class="work-thread-content">
             <header class="work-thread-head">
-              <strong>{item.kind === 'ai' ? author?.name : 'mumumu'}</strong>
-              {item.kind === 'ai' ? <span class="ai-label">AI</span> : <span>{item.label}</span>}
+              <strong>{authorNames[item.author]}</strong>
+              {item.kind === 'maker' && <span>{item.label}</span>}
               {replyDate && <><span aria-hidden="true">·</span><time datetime={item.date}>{replyDate}</time></>}
             </header>
-            {item.replyTo && <p class="work-thread-reply-context">↳ {aiHandles[item.replyTo]}への返信</p>}
+            {item.replyTo && <p class="work-thread-reply-context">↳ {authorNames[item.replyTo]}への返信</p>}
             <p>{item.body}</p>
           </div>
         </section>

@@ -1,6 +1,7 @@
 ---
 import Avatar from './Avatar.astro';
 import { mdiChevronDown } from '@mdi/js';
+import { authorNames, formatReplyDate, resolveReplyTo } from '../data/authors';
 import type { Reply } from '../data/content';
 
 type Props = {
@@ -10,16 +11,6 @@ type Props = {
 };
 
 const { replies, label = 'AIのコメント', open = false } = Astro.props;
-const authors = {
-  chatgpt: { name: 'ChatGPT' },
-  codex: { name: 'Codex' },
-};
-const handles = {
-  mumumu: 'mumumu',
-  chatgpt: 'ChatGPT',
-  codex: 'Codex',
-};
-const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', '.');
 ---
 
 <details class="reply-disclosure" open={open}>
@@ -35,19 +26,17 @@ const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', 
   </summary>
   <div class="reply-thread" aria-label="AIからのコメント">
     {replies.map((reply, index) => {
-      const author = authors[reply.author];
-      const replyTo = reply.replyTo ?? (reply.depth === 2 ? replies[index - 1]?.author : undefined);
+      const replyTo = resolveReplyTo(replies, index);
       const dateLabel = formatReplyDate(reply.createdAt);
       return (
         <div class="reply" style={`--reply-index: ${index}`}>
           <Avatar author={reply.author} size="small" />
           <div class="reply-content">
             <header class="reply-head">
-              <strong>{author.name}</strong>
-              <span class="ai-label">AI</span>
+              <strong>{authorNames[reply.author]}</strong>
               {dateLabel && <><span aria-hidden="true">·</span><time datetime={reply.createdAt}>{dateLabel}</time></>}
             </header>
-            {replyTo && <p class="reply-context">↳ {handles[replyTo]} への返信</p>}
+            {replyTo && <p class="reply-context">↳ {authorNames[replyTo]} への返信</p>}
             <div class="reply-bubble"><p>{reply.body}</p></div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 ---
 import Avatar from './Avatar.astro';
 import ReplyDisclosure from './ReplyDisclosure.astro';
-import type { AuthorId, FeedEntry as FeedEntryType } from '../data/content';
+import { authorNames } from '../data/authors';
+import type { FeedEntry as FeedEntryType } from '../data/content';
 
 type Props = {
   entry: FeedEntryType;
@@ -11,13 +12,6 @@ type Props = {
 
 const { entry, showReplies = true, priority = false } = Astro.props;
 
-const authors: Record<AuthorId, { name: string; ai?: boolean }> = {
-  mumumu: { name: 'mumumu' },
-  chatgpt: { name: 'ChatGPT', ai: true },
-  codex: { name: 'Codex', ai: true },
-};
-
-const author = authors[entry.author];
 const external = entry.href?.startsWith('http');
 const sourceHref = entry.sourceHref ?? entry.href;
 const sourceExternal = sourceHref?.startsWith('http');
@@ -44,8 +38,7 @@ const imageSizes = entry.kind === 'blog'
     <div class="entry-content">
       <header class="entry-head">
         <div class="entry-author">
-          <strong>{author.name}</strong>
-          {author.ai && entry.kind !== 'thought' && <span class="ai-label">AI</span>}
+          <strong>{authorNames[entry.author]}</strong>
           <span aria-hidden="true">·</span>
           <time datetime={entry.date}>{entry.dateLabel}</time>
           {entry.kind === 'blog' && entry.readingMinutes && (
