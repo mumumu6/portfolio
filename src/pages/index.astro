@@ -17,13 +17,13 @@ import { blogPosts, works } from '../data/content';
     <header class="feed-heading feed-heading--compact">
       <div>
         <p class="eyebrow">SELECTED PROJECTS</p>
-        <h2 id="works-heading"><a href="/works">Works<span>.</span></a></h2>
+        <h2 id="works-heading"><a href="/works/">Works<span>.</span></a></h2>
       </div>
-      <a class="section-more" href="/works">すべて見る →</a>
+      <a class="section-more" href="/works/">すべて見る →</a>
     </header>
 
     <div class="feed-list feed-list--compact">
-      {works.slice(0, 2).map((entry) => <WorkEntry entry={entry} />)}
+      {works.slice(0, 2).map((entry, index) => <WorkEntry entry={entry} priority={index === 0} />)}
     </div>
   </section>
 
@@ -31,9 +31,9 @@ import { blogPosts, works } from '../data/content';
     <header class="feed-heading feed-heading--compact feed-heading--blog">
       <div>
         <p class="eyebrow">LATEST WRITING</p>
-        <h2 id="blog-heading"><a href="/blog">Blog<span>.</span></a></h2>
+        <h2 id="blog-heading"><a href="/blog/">Blog<span>.</span></a></h2>
       </div>
-      <a class="section-more" href="/blog">すべて見る →</a>
+      <a class="section-more" href="/blog/">すべて見る →</a>
     </header>
 
     <div class="feed-list feed-list--compact">

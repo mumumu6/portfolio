@@ -6,25 +6,28 @@ import type { AuthorId, FeedEntry as FeedEntryType } from '../data/content';
 type Props = {
   entry: FeedEntryType;
   showReplies?: boolean;
+  priority?: boolean;
 };
 
-const { entry, showReplies = true } = Astro.props;
+const { entry, showReplies = true, priority = false } = Astro.props;
 
-const authors: Record<AuthorId, { name: string; handle?: string }> = {
+const authors: Record<AuthorId, { name: string; ai?: boolean }> = {
   mumumu: { name: 'mumumu' },
-  chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
-  codex: { name: 'Codex', handle: '@codex' },
+  chatgpt: { name: 'ChatGPT', ai: true },
+  codex: { name: 'Codex', ai: true },
 };
 
 const author = authors[entry.author];
 const external = entry.href?.startsWith('http');
-const sourceUrl = entry.href
-  ? external
-    ? new URL(entry.href)
-    : new URL(entry.href, 'https://mumumu6.net')
+const sourceHref = entry.sourceHref ?? entry.href;
+const sourceExternal = sourceHref?.startsWith('http');
+const sourceUrl = sourceHref
+  ? sourceExternal
+    ? new URL(sourceHref)
+    : new URL(sourceHref, 'https://mumumu6.net')
   : undefined;
 const sourceLabel = sourceUrl
-  ? `${sourceUrl.hostname.replace(/^www\./, '')}${sourceUrl.pathname.replace(/\/$/, '')}`
+  ? entry.sourceLabel ?? `${sourceUrl.hostname.replace(/^www\./, '')}${sourceUrl.pathname.replace(/\/$/, '')}`
   : undefined;
 const imageSizes = entry.kind === 'blog'
   ? '(max-width: 480px) calc(100vw - 76px), (max-width: 760px) calc(100vw - 82px), 280px'
@@ -42,9 +45,12 @@ const imageSizes = entry.kind === 'blog'
       <header class="entry-head">
         <div class="entry-author">
           <strong>{author.name}</strong>
-          {author.handle && <span>{author.handle}</span>}
+          {author.ai && entry.kind !== 'thought' && <span class="ai-label">AI</span>}
           <span aria-hidden="true">·</span>
           <time datetime={entry.date}>{entry.dateLabel}</time>
+          {entry.kind === 'blog' && entry.readingMinutes && (
+            <><span aria-hidden="true">·</span><span aria-label={`推定読了時間 約${entry.readingMinutes}分`}>約{entry.readingMinutes}分</span></>
+          )}
         </div>
       </header>
 
@@ -62,14 +68,14 @@ const imageSizes = entry.kind === 'blog'
 
       <p class="entry-body">{entry.body}</p>
 
-      {entry.href && sourceLabel && (
+      {sourceHref && sourceLabel && (
         <a
           class="entry-source"
-          href={entry.href}
-          target={external ? '_blank' : undefined}
-          rel={external ? 'noreferrer' : undefined}
+          href={sourceHref}
+          target={sourceExternal ? '_blank' : undefined}
+          rel={sourceExternal ? 'noreferrer' : undefined}
         >
-          <span aria-hidden="true">{external ? '↗' : '→'}</span> {sourceLabel}
+          <span aria-hidden="true">{sourceExternal ? '↗' : '→'}</span> {sourceLabel}
         </a>
       )}
 
@@ -89,8 +95,9 @@ const imageSizes = entry.kind === 'blog'
               width={entry.image.width}
               height={entry.image.height}
               sizes={imageSizes}
-              loading="lazy"
+              loading={priority ? 'eager' : 'lazy'}
               decoding="async"
+              fetchpriority={priority ? 'high' : undefined}
             />
           </a>
         ) : (
@@ -102,8 +109,9 @@ const imageSizes = entry.kind === 'blog'
               width={entry.image.width}
               height={entry.image.height}
               sizes={imageSizes}
-              loading="lazy"
+              loading={priority ? 'eager' : 'lazy'}
               decoding="async"
+              fetchpriority={priority ? 'high' : undefined}
             />
           </div>
         )

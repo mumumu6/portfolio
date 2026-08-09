@@ -16,23 +16,42 @@ const { Content } = await render(work);
 const data = work.data;
 const publishedAt = data.publishedAt.toISOString().slice(0, 10);
 const dateLabel = publishedAt.slice(0, 7).replace('-', '.');
-const statusLabels = { active: 'ACTIVE', paused: 'PAUSED', archived: 'ARCHIVED' } as const;
+const statusLabels = { active: '公開中', paused: '更新停止中', archived: '旧版' } as const;
 const statusLabel = statusLabels[data.status];
 const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? [];
 const makerReplies = [
-  { label: '制作メモ', body: data.note, date: data.publishedAt },
-  ...data.updates.map((update) => ({ ...update, date: update.date ?? data.publishedAt })),
+  ...data.comments.map((comment) => ({ ...comment, date: comment.date ?? data.publishedAt })),
 ];
 const aiAuthors = {
-  chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
-  codex: { name: 'Codex', handle: '@codex' },
+  chatgpt: { name: 'ChatGPT' },
+  codex: { name: 'Codex' },
 };
-const aiHandles = { mumumu: '@mumumu', chatgpt: '@chatgpt', codex: '@codex' } as const;
+const aiHandles = { mumumu: 'mumumu', chatgpt: 'ChatGPT', codex: 'Codex' } as const;
 const formatReplyDate = (value?: string | Date) => {
   if (!value) return undefined;
   const date = value instanceof Date ? value.toISOString() : value;
   return date.slice(0, 10).replaceAll('-', '.');
 };
+const threadItems = [
+  ...makerReplies.map((reply, index) => ({
+    kind: 'maker' as const,
+    author: 'mumumu' as const,
+    body: reply.body,
+    label: reply.label,
+    date: reply.date.toISOString().slice(0, 10),
+    replyTo: undefined,
+    sourceOrder: index,
+  })),
+  ...aiReplies.map((reply, index) => ({
+    kind: 'ai' as const,
+    author: reply.author,
+    body: reply.body,
+    label: undefined,
+    date: reply.createdAt ?? publishedAt,
+    replyTo: reply.replyTo ?? (reply.depth === 2 ? aiReplies[index - 1]?.author : undefined),
+    sourceOrder: makerReplies.length + index,
+  })),
+].sort((a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder);
 ---
 
 <BaseLayout
@@ -48,7 +67,7 @@ const formatReplyDate = (value?: string | Date) => {
   tags={data.tags}
 >
   <article class="work-thread-page">
-    <a class="article-back" href="/works">← Works</a>
+    <a class="article-back" href="/works/">← Works</a>
 
     <section class="work-thread-post work-thread-post--root" aria-labelledby="work-title">
       <div class="work-thread-rail">
@@ -68,9 +87,11 @@ const formatReplyDate = (value?: string | Date) => {
         <img
           class="work-thread-cover"
           src={data.cover.src}
+          srcset={data.cover.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
           alt={data.cover.alt}
           width={data.cover.width}
           height={data.cover.height}
+          sizes="(max-width: 760px) calc(100vw - 92px), 680px"
           decoding="async"
           fetchpriority="high"
         />
@@ -96,57 +117,37 @@ const formatReplyDate = (value?: string | Date) => {
       </div>
     </section>
 
-    {makerReplies.map((reply) => (
-      <section class="work-thread-post work-thread-post--reply" aria-label={`mumumuの${reply.label}`}>
-        <div class="work-thread-rail">
-          <Avatar author="mumumu" />
-          <span class="work-thread-line" aria-hidden="true"></span>
-        </div>
-        <div class="work-thread-content">
-          <header class="work-thread-head">
-            <strong>mumumu</strong>
-            <span>{reply.label}</span>
-            <span aria-hidden="true">·</span>
-            <time datetime={reply.date.toISOString().slice(0, 10)}>{formatReplyDate(reply.date)}</time>
-          </header>
-          <p>{reply.body}</p>
-        </div>
-      </section>
-    ))}
-
-    {aiReplies.map((reply, index) => {
-      const author = aiAuthors[reply.author];
-      const replyTo = reply.replyTo ?? (reply.depth === 2 ? aiReplies[index - 1]?.author : undefined);
-      const replyDate = formatReplyDate(reply.createdAt);
+    {threadItems.map((item, index) => {
+      const author = item.kind === 'ai' ? aiAuthors[item.author] : undefined;
+      const replyDate = formatReplyDate(item.date);
       return (
-        <section class="work-thread-post work-thread-post--reply" aria-label={`${author.name}のコメント`}>
+        <section
+          class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--ai': item.kind === 'ai' }]}
+          aria-label={item.kind === 'ai' ? `${author?.name}のコメント` : `mumumuの${item.label}`}
+        >
           <div class="work-thread-rail">
-            <Avatar author={reply.author} />
-            <span class="work-thread-line" aria-hidden="true"></span>
+            <Avatar author={item.author} />
+            {index < threadItems.length - 1 && <span class="work-thread-line" aria-hidden="true"></span>}
           </div>
           <div class="work-thread-content">
             <header class="work-thread-head">
-              <strong>{author.name}</strong>
-              <span>{author.handle}</span>
-              {replyDate && <><span aria-hidden="true">·</span><time datetime={reply.createdAt}>{replyDate}</time></>}
+              <strong>{item.kind === 'ai' ? author?.name : 'mumumu'}</strong>
+              {item.kind === 'ai' ? <span class="ai-label">AI</span> : <span>{item.label}</span>}
+              {replyDate && <><span aria-hidden="true">·</span><time datetime={item.date}>{replyDate}</time></>}
             </header>
-            {replyTo && <p class="work-thread-reply-context">↳ {aiHandles[replyTo]} への返信</p>}
-            <p>{reply.body}</p>
+            {item.replyTo && <p class="work-thread-reply-context">↳ {aiHandles[item.replyTo]}への返信</p>}
+            <p>{item.body}</p>
           </div>
         </section>
       );
     })}
 
-    <section class="work-thread-post work-thread-post--details" aria-label="作品の詳細">
-      <div class="work-thread-rail">
-        <Avatar author="mumumu" />
-      </div>
-      <div class="work-thread-content">
-        <header class="work-thread-head">
-          <strong>mumumu</strong>
-          <span>詳細</span>
-        </header>
-
+    <section class="work-details" aria-labelledby="work-details-title">
+      <header class="work-details__head">
+        <p class="eyebrow">PROJECT NOTES</p>
+        <h2 id="work-details-title">作品について</h2>
+      </header>
+      <div class="work-details__body">
         <div class="article-prose work-thread-prose"><Content /></div>
 
         {data.highlights.length > 0 && (

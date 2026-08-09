@@ -11,6 +11,10 @@ const workImage = z.object({
   alt: z.string(),
   width: z.number().int().positive(),
   height: z.number().int().positive(),
+  srcset: z.array(z.object({
+    src: z.string(),
+    width: z.number().int().positive(),
+  })).optional(),
   caption: z.string().optional(),
 });
 
@@ -28,12 +32,11 @@ const works = defineCollection({
       label: z.string(),
       href: z.string(),
     })).default([]),
-    note: z.string(),
-    updates: z.array(z.object({
+    comments: z.array(z.object({
       label: z.string(),
       date: z.coerce.date().optional(),
       body: z.string(),
-    })).default([]),
+    })).min(1),
     highlights: z.array(z.string()).default([]),
     warning: z.string().optional(),
   }),

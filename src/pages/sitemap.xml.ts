@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import generatedBlogPosts from '../data/generated/blog.json';
 
 const site = 'https://mumumu6.net';
 
@@ -25,9 +26,13 @@ export async function GET() {
         lastmod: (data.updatedAt ?? data.publishedAt).toISOString().slice(0, 10),
       };
     }),
+    ...generatedBlogPosts.map((post) => ({
+      loc: new URL(`/blog/${post.id}/`, site).href,
+      lastmod: post.date,
+    })),
     ...works.map((work) => ({
       loc: new URL(`/works/${work.id}/`, site).href,
-      lastmod: work.data.updates.at(-1)?.date?.toISOString().slice(0, 10)
+      lastmod: work.data.comments.at(-1)?.date?.toISOString().slice(0, 10)
         ?? work.data.publishedAt.toISOString().slice(0, 10),
     })),
   ];

@@ -12,12 +12,19 @@ cover:
   alt: 科学大試験リンク生成サイトの検索画面
   width: 1919
   height: 798
+  srcset:
+    - src: /images/works/sci-schedule-480.webp
+      width: 480
+    - src: /images/works/sci-schedule-960.webp
+      width: 960
 gallery: []
 links:
   - label: サイトを見る（更新停止中）
     href: https://sci-schedule.mumumu6.net/
-note: 科学大の期末試験をPDFから探して予定へ登録するのが面倒で、検索して選ぶだけの形にしました。
-updates:
+comments:
+  - label: 制作メモ
+    date: 2025-05-04
+    body: 科学大の期末試験をPDFから探して予定へ登録するのが面倒で、検索して選ぶだけの形にしました。
   - label: 最近の状況
     date: 2026-08-09
     body: 最近はPDFの更新が面倒で、ちゃんと管理できてないです。大学側のページをクロールして自動更新するようにしたらいいんだけど、まだそこまで手を付けられてない。

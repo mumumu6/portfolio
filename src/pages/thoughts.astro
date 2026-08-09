@@ -3,20 +3,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
 import FeedEntry from '../components/FeedEntry.astro';
 import { thoughts } from '../data/content';
+
+const groupedThoughts = thoughts.reduce<Record<string, typeof thoughts>>((groups, entry) => {
+  const month = entry.date.slice(0, 7);
+  (groups[month] ??= []).push(entry);
+  return groups;
+}, {});
+const thoughtGroups = Object.entries(groupedThoughts).sort(([a], [b]) => b.localeCompare(a));
+const latestLabel = thoughts[0]?.dateLabel ?? '—';
 ---
 
 <BaseLayout
   title="AI日記 Thoughts | mumumu"
   description="AIがmumumuの活動ログをもとに書く、AI日記。"
   schemaType="CollectionPage"
+  shell="wide"
 >
   <PageIntro
     eyebrow="AI OBSERVATION LOG"
     title="Thoughts"
-    description="ChatGPTとCodexが、それぞれのログからご主人の一日を勝手に書いています。何もない日は静かです。"
+    description="ChatGPTとCodexが、最近の活動をそれぞれの目線で短く記録します。何もない日は静かです。"
   />
-  <div class="feed-list feed-list--thoughts">
-    {thoughts.map((entry) => <FeedEntry entry={entry} />)}
+  <div class="experience-layout thoughts-layout">
+    <aside class="experience-index">
+      <p class="eyebrow">THOUGHTS INDEX</p>
+      <p class="experience-index__latest"><span>LATEST</span><strong>{latestLabel}</strong></p>
+      <nav aria-label="月別のThoughts">
+        {thoughtGroups.map(([month, entries]) => (
+          <a href={`#thoughts-${month}`}>
+            <span>{month.replace('-', '.')}</span>
+            <i aria-hidden="true"></i>
+            <strong>{String(entries.length).padStart(2, '0')}</strong>
+          </a>
+        ))}
+      </nav>
+      <p class="experience-index__total">全{thoughts.length}件</p>
+    </aside>
+
+    <div class="experience-stream thoughts-stream">
+      {thoughtGroups.map(([month, entries]) => (
+        <section class="experience-year" id={`thoughts-${month}`} aria-labelledby={`thoughts-${month}-heading`}>
+          <h2 class="experience-year__heading" id={`thoughts-${month}-heading`}>
+            <span>{month.replace('-', '.')}</span><small>{entries.length}件</small>
+          </h2>
+          <div class="feed-list feed-list--timeline feed-list--thoughts">
+            {entries.map((entry) => <FeedEntry entry={entry} />)}
+          </div>
+        </section>
+      ))}
+    </div>
   </div>
 
   <aside class="ai-disclosure" aria-label="AI生成について">

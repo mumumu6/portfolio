@@ -1,22 +1,19 @@
 ---
-type Props = {
-  wide?: boolean;
-};
+import { mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
 
-const { wide = false } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
-  { href: '/works', label: 'Works' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/experience', label: 'Experience' },
-  { href: '/thoughts', label: 'Thoughts' },
+  { href: '/works/', label: 'Works' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/experience/', label: 'Experience' },
+  { href: '/thoughts/', label: 'Thoughts' },
 ];
 
-const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+const isActive = (href: string) => pathname === href || pathname.startsWith(href);
 ---
 
 <header class="site-header" transition:persist="site-header" transition:animate="none">
-  <div class:list={['header-inner', { 'header-inner--wide': wide }]}>
+  <div class="header-inner">
     <a class="site-name" href="/" data-astro-prefetch aria-label="mumumu ホーム">
       <span>mumumu<em>.</em></span>
     </a>
@@ -36,8 +33,11 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(`${h
     </nav>
 
     <div class="header-actions">
-      <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="テーマを切り替える">
-        <span class="theme-icon" aria-hidden="true">☼</span>
+      <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="ライトテーマに切り替える" aria-pressed="false">
+        <span class="theme-icon" aria-hidden="true">
+          <svg class="theme-icon__sun" viewBox="0 0 24 24"><path d={mdiWeatherSunny}></path></svg>
+          <svg class="theme-icon__moon" viewBox="0 0 24 24"><path d={mdiWeatherNight}></path></svg>
+        </span>
       </button>
       <button
         class="icon-button menu-toggle"
@@ -53,7 +53,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(`${h
     </div>
   </div>
 
-  <div class:list={['mobile-menu', { 'mobile-menu--wide': wide }]} id="mobile-menu" data-mobile-menu hidden>
+  <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
     <nav aria-label="モバイルナビゲーション">
       {navItems.map((item) => (
         <a

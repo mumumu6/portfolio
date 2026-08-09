@@ -5,10 +5,11 @@ import type { WorkEntry as WorkEntryType } from '../data/content';
 
 type Props = {
   entry: WorkEntryType;
+  priority?: boolean;
 };
 
-const { entry } = Astro.props;
-const statusLabels = { active: 'ACTIVE', paused: 'PAUSED', archived: 'ARCHIVED' } as const;
+const { entry, priority = false } = Astro.props;
+const statusLabels = { active: '公開中', paused: '更新停止中', archived: '旧版' } as const;
 const statusLabel = statusLabels[entry.status];
 ---
 
@@ -37,12 +38,14 @@ const statusLabel = statusLabels[entry.status];
       <a class="ogp-preview ogp-preview--work" href={entry.href} aria-label={`${entry.title}の詳細を見る`}>
         <img
           src={entry.image.src}
+          srcset={entry.image.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
           alt={entry.image.alt}
           width={entry.image.width}
           height={entry.image.height}
           sizes="(max-width: 480px) calc(100vw - 92px), (max-width: 760px) 145px, 280px"
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
           decoding="async"
+          fetchpriority={priority ? 'high' : undefined}
         />
       </a>
 
@@ -50,11 +53,11 @@ const statusLabel = statusLabels[entry.status];
         {entry.tags?.map((tag) => <li>{tag}</li>)}
       </ul>
 
-      <a class="work-note-preview" href={entry.href} aria-label={`${entry.title}の制作メモを読む`}>
+      <a class="work-note-preview" href={entry.href} aria-label={`${entry.title}のコメントを読む`}>
         <Avatar author="mumumu" size="small" />
         <span>
-          <strong>制作メモ</strong>
-          <span>{entry.note}</span>
+          <strong>{entry.comment.label}{entry.comment.date && ` · ${entry.comment.date.replaceAll('-', '.')}`}</strong>
+          <span>{entry.comment.body}</span>
         </span>
       </a>
 

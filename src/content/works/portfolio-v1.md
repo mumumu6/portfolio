@@ -14,6 +14,11 @@ cover:
   alt: Portfolio v1のプロフィール画面
   width: 1910
   height: 789
+  srcset:
+    - src: /images/works/portfolio-480.webp
+      width: 480
+    - src: /images/works/portfolio-960.webp
+      width: 960
 gallery:
   - src: /images/works/portfolio1.webp
     alt: Portfolio v1のトップページ
@@ -23,7 +28,10 @@ gallery:
 links:
   - label: 旧サイトを見る
     href: https://2024.mumumu6.net
-note: Ghostを使う機会がありそうで触っていたら、そのまま自分のサイトを作れそうだと思って形にしました。
+comments:
+  - label: 制作メモ
+    date: 2025-04-29
+    body: Ghostを使う機会がありそうで触っていたら、そのまま自分のサイトを作れそうだと思って形にしました。
 highlights:
   - Ghost CMSによるブログコンテンツ管理
   - Next.jsによるフロントエンド

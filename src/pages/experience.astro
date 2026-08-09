@@ -22,7 +22,7 @@ const latestLabel = experiences[0]?.dateLabel ?? '—';
   <PageIntro
     eyebrow="ALONG THE WAY"
     title="Experience"
-    description="新しいものから順に、140字くらいで読める活動の記録。詳しい話は返信のように続きます。"
+    description="活動の節目を、新しいものから順にまとめています。"
   />
   <div class="experience-layout">
     <aside class="experience-index">
@@ -37,14 +37,14 @@ const latestLabel = experiences[0]?.dateLabel ?? '—';
           </a>
         ))}
       </nav>
-      <p class="experience-index__total">{experiences.length} records</p>
+      <p class="experience-index__total">全{experiences.length}件</p>
     </aside>
 
     <div class="experience-stream">
       {experienceGroups.map(([year, entries]) => (
         <section class="experience-year" id={`experience-${year}`} aria-labelledby={`experience-${year}-heading`}>
           <h2 class="experience-year__heading" id={`experience-${year}-heading`}>
-            <span>{year}</span><small>{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</small>
+            <span>{year}</span><small>{entries.length}件</small>
           </h2>
           <div class="feed-list feed-list--timeline">
             {entries.map((entry) => <FeedEntry entry={entry} />)}

@@ -16,6 +16,6 @@ import { works } from '../data/content';
     description="作ったものと、そのとき考えていたこと。制作メモと一緒に記録しています。"
   />
   <div class="feed-list feed-list--compact">
-    {works.map((entry) => <WorkEntry entry={entry} />)}
+    {works.map((entry, index) => <WorkEntry entry={entry} priority={index === 0} />)}
   </div>
 </BaseLayout>

@@ -2,17 +2,57 @@
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import type { BlogFrontmatter } from '../../data/content';
+import ReplyDisclosure from '../../components/ReplyDisclosure.astro';
+import generatedBlogPosts from '../../data/generated/blog.json';
+import { estimateReadingMinutes, getAiReplies, type BlogFrontmatter } from '../../data/content';
+
+type ExternalPost = (typeof generatedBlogPosts)[number];
+type Props =
+  | { kind: 'local'; post: CollectionEntry<'blog'> }
+  | { kind: 'external'; post: ExternalPost };
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const localPosts = await getCollection('blog');
+  return [
+    ...localPosts.map((post) => ({ params: { slug: post.id }, props: { kind: 'local' as const, post } })),
+    ...generatedBlogPosts.map((post) => ({ params: { slug: post.id }, props: { kind: 'external' as const, post } })),
+  ];
 }
 
-type Props = { post: CollectionEntry<'blog'> };
-const { post }: Props = Astro.props;
-const { Content, headings } = await render(post);
-const data = post.data as BlogFrontmatter;
+const props: Props = Astro.props;
+const isExternal = props.kind === 'external';
+const id = props.post.id;
+const aiReplies = getAiReplies('blog', id) ?? [];
+
+let Content: Awaited<ReturnType<typeof render>>['Content'] | undefined;
+let headings: Awaited<ReturnType<typeof render>>['headings'] = [];
+let data: BlogFrontmatter;
+let externalUrl: string | undefined;
+let imageSrcset: Array<{ src: string; width: number }> | undefined;
+let readingMinutes: number;
+
+if (props.kind === 'local') {
+  const rendered = await render(props.post);
+  Content = rendered.Content;
+  headings = rendered.headings;
+  data = props.post.data as BlogFrontmatter;
+  readingMinutes = estimateReadingMinutes(props.post.body ?? data.description);
+} else {
+  externalUrl = props.post.href;
+  imageSrcset = props.post.image?.srcset;
+  readingMinutes = props.post.readingMinutes;
+  data = {
+    title: props.post.title,
+    description: props.post.body,
+    publishedAt: new Date(`${props.post.date}T00:00:00+09:00`),
+    tags: props.post.tags,
+    cover: props.post.image?.src ?? '/og/default.png',
+    coverAlt: props.post.image?.alt ?? `${props.post.title}のカバー画像`,
+    coverWidth: props.post.image?.width ?? 1200,
+    coverHeight: props.post.image?.height ?? 630,
+  };
+}
+
 const publishedAt = data.publishedAt.toISOString().slice(0, 10);
 const updatedAt = data.updatedAt?.toISOString().slice(0, 10);
 const dateLabel = publishedAt.replaceAll('-', '.');
@@ -22,58 +62,102 @@ const dateLabel = publishedAt.replaceAll('-', '.');
   title={`${data.title} — mumumu`}
   description={data.description}
   image={data.cover}
-  imageAlt={`${data.title}のカバー画像`}
+  imageAlt={data.coverAlt}
+  imageWidth={data.coverWidth}
+  imageHeight={data.coverHeight}
   type="article"
   publishedTime={publishedAt}
   updatedTime={updatedAt}
   schemaType="BlogPosting"
   tags={data.tags}
+  readingMinutes={readingMinutes}
 >
-  <article class="article-page">
-    <div class="reading-progress" data-reading-progress aria-hidden="true">
-      <span data-reading-progress-label>0%</span>
-    </div>
+  <article class:list={['article-page', { 'article-page--external': isExternal }]}>
+    {!isExternal && (
+      <div class="reading-progress" data-reading-progress aria-hidden="true">
+        <span data-reading-progress-label>0%</span>
+      </div>
+    )}
     <header class="article-header">
-      <a class="article-back" href="/blog">← Blog</a>
-      <p class="eyebrow">MUMUMU'S BLOG</p>
+      <a class="article-back" href="/blog/">← Blog</a>
+      <p class="eyebrow">{isExternal ? 'FROM traP BLOG' : "MUMUMU'S BLOG"}</p>
       <h1>{data.title}</h1>
       <p class="article-lead">{data.description}</p>
       <div class="article-meta">
         <time datetime={publishedAt}>{dateLabel}</time>
+        <span aria-label={`推定読了時間 約${readingMinutes}分`}>約{readingMinutes}分</span>
         <ul aria-label="タグ">
           {data.tags?.map((tag) => <li>{tag}</li>)}
         </ul>
       </div>
     </header>
 
-    <img
-      class="article-cover"
-      src={data.cover}
-      alt={data.coverAlt}
-      width={data.coverWidth}
-      height={data.coverHeight}
-      decoding="async"
-      fetchpriority="high"
-    />
+    {externalUrl ? (
+      <a class="article-cover-link" href={externalUrl} target="_blank" rel="noreferrer" aria-label="traP Blogで本文を読む">
+        <img
+          class="article-cover"
+          src={data.cover}
+          srcset={imageSrcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
+          sizes="(max-width: 760px) calc(100vw - 32px), 780px"
+          alt={data.coverAlt}
+          width={data.coverWidth}
+          height={data.coverHeight}
+          decoding="async"
+          fetchpriority="high"
+        />
+      </a>
+    ) : (
+      <img
+        class="article-cover"
+        src={data.cover}
+        alt={data.coverAlt}
+        width={data.coverWidth}
+        height={data.coverHeight}
+        decoding="async"
+        fetchpriority="high"
+      />
+    )}
 
-    <div class="article-layout">
-      {headings.length > 2 && (
-        <nav class="article-toc" aria-label="目次">
-          <div class="article-toc__head">
-            <strong>Contents</strong>
-            <span data-reading-progress-label>0%</span>
-          </div>
-          <ol>
-            {headings.filter((heading) => heading.depth <= 3).map((heading) => (
-              <li class:list={[`article-toc--depth-${heading.depth}`]}>
-                <a href={`#${heading.slug}`}>{heading.text}</a>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
-      <div class="article-prose"><Content /></div>
-    </div>
+    {isExternal ? (
+      <div class="external-article-body">
+        <a class="article-source-link" href={externalUrl} target="_blank" rel="noreferrer">
+          <span>
+            <strong>traP Blogで本文を読む</strong>
+            <small>trap.jp</small>
+          </span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    ) : (
+      <div class="article-layout">
+        {headings.length > 2 && (
+          <nav class="article-toc" aria-label="目次">
+            <div class="article-toc__head">
+              <strong>目次</strong>
+              <span data-reading-progress-label>0%</span>
+            </div>
+            <ol>
+              {headings.filter((heading) => heading.depth <= 3).map((heading) => (
+                <li class:list={[`article-toc--depth-${heading.depth}`]}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+        <div class="article-prose">{Content && <Content />}</div>
+      </div>
+    )}
+
+    {aiReplies.length > 0 && (
+      <section class="article-comments" aria-labelledby="article-comments-title">
+        <div class="article-comments__head">
+          <p class="eyebrow">MARGIN NOTES</p>
+          <h2 id="article-comments-title">AIのコメント</h2>
+        </div>
+        <ReplyDisclosure replies={aiReplies} label="コメント" open />
+      </section>
+    )}
   </article>
 </BaseLayout>
 
@@ -82,7 +166,7 @@ const dateLabel = publishedAt.replaceAll('-', '.');
 
   const updateReadingProgress = () => {
     progressFrame = 0;
-    const article = document.querySelector<HTMLElement>('.article-page');
+    const article = document.querySelector<HTMLElement>('.article-page:not(.article-page--external)');
     const ring = document.querySelector<HTMLElement>('[data-reading-progress]');
     if (!article || !ring) return;
 

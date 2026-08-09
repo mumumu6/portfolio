@@ -11,13 +11,13 @@ type Props = {
 
 const { replies, label = 'AIのコメント', open = false } = Astro.props;
 const authors = {
-  chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
-  codex: { name: 'Codex', handle: '@codex' },
+  chatgpt: { name: 'ChatGPT' },
+  codex: { name: 'Codex' },
 };
 const handles = {
-  mumumu: '@mumumu',
-  chatgpt: '@chatgpt',
-  codex: '@codex',
+  mumumu: 'mumumu',
+  chatgpt: 'ChatGPT',
+  codex: 'Codex',
 };
 const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', '.');
 ---
@@ -44,7 +44,7 @@ const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', 
           <div class="reply-content">
             <header class="reply-head">
               <strong>{author.name}</strong>
-              <span>{author.handle}</span>
+              <span class="ai-label">AI</span>
               {dateLabel && <><span aria-hidden="true">·</span><time datetime={reply.createdAt}>{dateLabel}</time></>}
             </header>
             {replyTo && <p class="reply-context">↳ {handles[replyTo]} への返信</p>}

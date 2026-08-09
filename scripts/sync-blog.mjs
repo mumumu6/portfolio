@@ -6,6 +6,7 @@ import sharp from 'sharp';
 
 const RSS_URL = 'https://trap.jp/author/mumumu/rss/';
 const MAX_POSTS = 20;
+const IMAGE_TRANSFORM_VERSION = 2;
 const root = fileURLToPath(new URL('..', import.meta.url));
 const outputFile = path.join(root, 'src/data/generated/blog.json');
 const imageDirectory = path.join(root, 'public/images/blog');
@@ -28,8 +29,24 @@ const cleanText = (value) => asText(value)
 
 const excerpt = (value, limit = 140) => {
   const characters = [...cleanText(value)];
-  const text = characters.slice(0, limit).join('').replace(/[.…]+$/u, '');
+  const clipped = characters.slice(0, limit).join('');
+  const sentenceEnds = [...clipped.matchAll(/[。！？!?]/gu)];
+  const lastSentenceEnd = sentenceEnds.at(-1)?.index;
+  const text = (lastSentenceEnd !== undefined && lastSentenceEnd >= 48
+    ? clipped.slice(0, lastSentenceEnd + 1)
+    : clipped
+  ).replace(/[.…]+$/u, '');
   return text ? `${text}…` : '';
+};
+
+const estimateReadingMinutes = (value) => {
+  const text = cleanText(value);
+  const japaneseCharacters = text.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu)?.length ?? 0;
+  const otherWords = text
+    .replace(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.ceil(japaneseCharacters / 500 + otherWords / 200));
 };
 
 const formatDate = (value) => {
@@ -63,8 +80,8 @@ const downloadImage = async (url, id) => {
   const pipeline = sharp(source).rotate();
 
   const [, large] = await Promise.all([
-    pipeline.clone().resize({ width: 480, withoutEnlargement: true }).webp({ quality: 78, effort: 5 }).toFile(path.join(imageDirectory, smallName)),
-    pipeline.clone().resize({ width: 1024, withoutEnlargement: true }).webp({ quality: 82, effort: 5 }).toFile(path.join(imageDirectory, largeName)),
+    pipeline.clone().resize({ width: 480, withoutEnlargement: true }).webp({ quality: 84, effort: 5 }).toFile(path.join(imageDirectory, smallName)),
+    pipeline.clone().resize({ width: 1024, withoutEnlargement: true }).webp({ quality: 88, effort: 5 }).toFile(path.join(imageDirectory, largeName)),
   ]);
 
   return {
@@ -76,6 +93,7 @@ const downloadImage = async (url, id) => {
       { src: `/images/blog/${largeName}`, width: 1024 },
     ],
     source: url,
+    transformVersion: IMAGE_TRANSFORM_VERSION,
   };
 };
 
@@ -116,18 +134,25 @@ for (const item of items) {
   if (imageUrl) {
     const expectedFiles = [`trap-${postId}-480.webp`, `trap-${postId}-1024.webp`];
     const existingFiles = new Set(await readdir(imageDirectory));
-    const canReuse = previousImage?.source === imageUrl && expectedFiles.every((file) => existingFiles.has(file));
+    const canReuse = previousImage?.source === imageUrl
+      && previousImage?.transformVersion === IMAGE_TRANSFORM_VERSION
+      && expectedFiles.every((file) => existingFiles.has(file));
     const generated = canReuse ? await withImageDimensions(previousImage) : await downloadImage(imageUrl, postId);
     image = { ...generated, alt: cleanText(item.title) };
   }
 
   const date = formatDate(item.pubDate);
+  const description = cleanText(item.description);
+  const excerptSource = /[。！？.!?]$/u.test(description)
+    ? description
+    : item['content:encoded'] ?? item.description;
   posts.push({
     id,
     date,
     dateLabel: date.replaceAll('-', '.'),
     title: cleanText(item.title),
-    body: excerpt(item.description),
+    body: excerpt(excerptSource),
+    readingMinutes: estimateReadingMinutes(item['content:encoded'] ?? item.description),
     tags: asArray(item.category).map(cleanText).filter(Boolean).slice(0, 4),
     href,
     linkLabel: '記事を読む',

@@ -15,6 +15,7 @@ type Props = {
   updatedTime?: string;
   schemaType?: 'WebPage' | 'ProfilePage' | 'CollectionPage' | 'BlogPosting' | 'CreativeWork';
   tags?: string[];
+  readingMinutes?: number;
   shell?: 'default' | 'wide';
 };
 
@@ -30,6 +31,7 @@ const {
   updatedTime,
   schemaType = 'WebPage',
   tags = [],
+  readingMinutes,
   shell = 'default',
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
@@ -83,6 +85,7 @@ const structuredData = {
       ...(schemaType === 'ProfilePage' ? { mainEntity: { '@id': personId } } : {}),
       ...(publishedTime ? { datePublished: publishedTime } : {}),
       ...(updatedTime ? { dateModified: updatedTime } : {}),
+      ...(readingMinutes ? { timeRequired: `PT${readingMinutes}M` } : {}),
       ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
     },
   ],
@@ -138,7 +141,7 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u00
   </head>
   <body>
     <a class="skip-link" href="#main-content">本文へ移動</a>
-    <SiteHeader wide={shell === 'wide'} />
+    <SiteHeader />
     <main class:list={['site-shell', { 'site-shell--wide': shell === 'wide' }]} id="main-content">
       <slot />
     </main>
@@ -148,6 +151,33 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u00
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
         localStorage.setItem('theme', theme);
+        document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
+          const dark = theme === 'dark';
+          button.setAttribute('aria-pressed', String(dark));
+          button.setAttribute('aria-label', dark ? 'ライトテーマに切り替える' : 'ダークテーマに切り替える');
+        });
+      };
+
+      const animateThemeChange = (theme: 'light' | 'dark') => {
+        const root = document.documentElement;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const transitionDocument = document as Document & {
+          startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+        };
+
+        if (reducedMotion || !transitionDocument.startViewTransition) {
+          applyTheme(theme);
+          return;
+        }
+
+        if (root.hasAttribute('data-theme-transitioning')) return;
+
+        root.setAttribute('data-theme-transitioning', '');
+
+        const transition = transitionDocument.startViewTransition(() => applyTheme(theme));
+        transition.finished.finally(() => {
+          root.removeAttribute('data-theme-transitioning');
+        });
       };
 
       let menuHideTimer = 0;
@@ -254,14 +284,18 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u00
         document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
           if (button.dataset.bound === 'true') return;
           button.dataset.bound = 'true';
+          const dark = document.documentElement.dataset.theme === 'dark';
+          button.setAttribute('aria-pressed', String(dark));
+          button.setAttribute('aria-label', dark ? 'ライトテーマに切り替える' : 'ダークテーマに切り替える');
           button.addEventListener('click', () => {
-            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+            const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            animateThemeChange(nextTheme);
           });
         });
 
         document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]').forEach((link) => {
           const href = link.getAttribute('href') ?? '';
-          const active = href !== '/' && (location.pathname === href || location.pathname.startsWith(`${href}/`));
+          const active = href !== '/' && (location.pathname === href || location.pathname.startsWith(href));
           link.classList.toggle('active', active);
           if (active) link.setAttribute('aria-current', 'page');
           else link.removeAttribute('aria-current');

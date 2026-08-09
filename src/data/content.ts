@@ -25,6 +25,9 @@ export type FeedEntry = {
   tags?: string[];
   href?: string;
   linkLabel?: string;
+  sourceHref?: string;
+  sourceLabel?: string;
+  readingMinutes?: number;
   image?: {
     src: string;
     alt: string;
@@ -42,7 +45,11 @@ export type WorkEntry = FeedEntry & {
   href: string;
   image: NonNullable<FeedEntry['image']>;
   status: 'active' | 'paused' | 'archived';
-  note: string;
+  comment: {
+    label: string;
+    body: string;
+    date?: string;
+  };
 };
 
 type PublishedAiContent = {
@@ -58,7 +65,22 @@ const asExcerpt = (value: string) => {
   const text = value.trim().replace(/[.…]+$/u, '');
   return text ? `${text}…` : '';
 };
-const getAiReplies = (kind: Exclude<EntryKind, 'thought'>, id: string) =>
+export const estimateReadingMinutes = (value: string) => {
+  const text = value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`*_>#~|-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const japaneseCharacters = text.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu)?.length ?? 0;
+  const otherWords = text
+    .replace(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.ceil(japaneseCharacters / 500 + otherWords / 200));
+};
+export const getAiReplies = (kind: Exclude<EntryKind, 'thought'>, id: string) =>
   aiContent.comments.find((comment) => comment.target.kind === kind && comment.target.id === id)?.replies;
 
 export const profile = {
@@ -85,11 +107,17 @@ export const works: WorkEntry[] = workDocuments
       title: work.data.title,
       body: work.data.summary,
       tags: work.data.tags,
-      href: `/works/${work.id}`,
+      href: `/works/${work.id}/`,
       linkLabel: '詳細を見る',
       image: work.data.cover,
       status: work.data.status,
-      note: work.data.updates.at(-1)?.body ?? work.data.note,
+      comment: work.data.comments.at(-1)
+        ? {
+            label: work.data.comments.at(-1)?.label ?? 'コメント',
+            body: work.data.comments.at(-1)?.body ?? '',
+            date: work.data.comments.at(-1)?.date?.toISOString().slice(0, 10),
+          }
+        : { label: 'コメント', body: '', date: publishedAt },
       replies: getAiReplies('work', work.id),
     };
   })
@@ -118,9 +146,11 @@ const localBlogPosts: FeedEntry[] = (await getCollection('blog')).map((post) => 
     dateLabel: publishedAt.replaceAll('-', '.'),
     title: data.title,
     body: data.description,
+    readingMinutes: estimateReadingMinutes(post.body ?? data.description),
     tags: data.tags,
-    href: `/blog/${post.id}`,
+    href: `/blog/${post.id}/`,
     linkLabel: '記事を読む',
+    sourceLabel: 'この記事を読む',
     image: {
       src: data.cover,
       alt: data.coverAlt,
@@ -137,6 +167,9 @@ export const blogPosts: FeedEntry[] = [
     body: asExcerpt(post.body),
     kind: 'blog' as const,
     author: 'mumumu' as const,
+    href: `/blog/${post.id}/`,
+    sourceHref: post.href,
+    sourceLabel: 'traP Blogで読む',
     replies: getAiReplies('blog', post.id),
   })),
   ...localBlogPosts,
