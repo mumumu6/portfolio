@@ -1,4 +1,9 @@
 ---
+type Props = {
+  wide?: boolean;
+};
+
+const { wide = false } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
   { href: '/works', label: 'Works' },
@@ -11,7 +16,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(`${h
 ---
 
 <header class="site-header" transition:persist="site-header" transition:animate="none">
-  <div class="header-inner">
+  <div class:list={['header-inner', { 'header-inner--wide': wide }]}>
     <a class="site-name" href="/" data-astro-prefetch aria-label="mumumu ホーム">
       <span>mumumu<em>.</em></span>
     </a>
@@ -48,7 +53,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(`${h
     </div>
   </div>
 
-  <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+  <div class:list={['mobile-menu', { 'mobile-menu--wide': wide }]} id="mobile-menu" data-mobile-menu hidden>
     <nav aria-label="モバイルナビゲーション">
       {navItems.map((item) => (
         <a
@@ -59,7 +64,6 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(`${h
           data-astro-prefetch="tap"
         >
           <span>{item.label}</span>
-          <span aria-hidden="true">↗</span>
         </a>
       ))}
     </nav>

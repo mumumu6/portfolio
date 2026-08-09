@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/PageIntro.astro';
-import FeedEntry from '../components/FeedEntry.astro';
+import WorkEntry from '../components/WorkEntry.astro';
 import { works } from '../data/content';
 ---
 
@@ -9,9 +9,9 @@ import { works } from '../data/content';
   <PageIntro
     eyebrow="BUILT THINGS"
     title="Works"
-    description="作ったものと、そのとき考えていたこと。AIがたまに横からコメントします。"
+    description="作ったものと、そのとき考えていたこと。制作メモと一緒に記録しています。"
   />
   <div class="feed-list feed-list--compact">
-    {works.map((entry) => <FeedEntry entry={entry} />)}
+    {works.map((entry) => <WorkEntry entry={entry} />)}
   </div>
 </BaseLayout>

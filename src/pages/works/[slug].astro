@@ -1,0 +1,145 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import Avatar from '../../components/Avatar.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { works as workEntries } from '../../data/content';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  return works.map((work) => ({ params: { slug: work.id }, props: { work } }));
+}
+
+type Props = { work: CollectionEntry<'works'> };
+const { work }: Props = Astro.props;
+const { Content } = await render(work);
+const data = work.data;
+const publishedAt = data.publishedAt.toISOString().slice(0, 10);
+const dateLabel = publishedAt.slice(0, 7).replace('-', '.');
+const statusLabels = { active: 'ACTIVE', paused: 'PAUSED', archived: 'ARCHIVED' } as const;
+const statusLabel = statusLabels[data.status];
+const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? [];
+const makerReplies = [
+  { label: '制作メモ', body: data.note },
+  ...data.updates,
+];
+const aiAuthors = {
+  chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
+  codex: { name: 'Codex', handle: '@codex' },
+};
+---
+
+<BaseLayout
+  title={`${data.title} — Works — mumumu`}
+  description={data.summary}
+  image={data.cover.src}
+  type="article"
+  publishedTime={publishedAt}
+>
+  <article class="work-thread-page">
+    <a class="article-back" href="/works">← Works</a>
+
+    <section class="work-thread-post work-thread-post--root" aria-labelledby="work-title">
+      <div class="work-thread-rail">
+        <Avatar author="mumumu" />
+        <span class="work-thread-line" aria-hidden="true"></span>
+      </div>
+      <div class="work-thread-content">
+        <header class="work-thread-head">
+          <strong>mumumu</strong>
+          <span aria-hidden="true">·</span>
+          <time datetime={publishedAt}>{dateLabel}</time>
+          <span aria-hidden="true">·</span>
+          <span class:list={['work-status', `work-status--${data.status}`]}>{statusLabel}</span>
+        </header>
+        <h1 id="work-title">{data.title}</h1>
+        <p class="work-thread-summary">{data.summary}</p>
+        <img
+          class="work-thread-cover"
+          src={data.cover.src}
+          alt={data.cover.alt}
+          width={data.cover.width}
+          height={data.cover.height}
+          decoding="async"
+          fetchpriority="high"
+        />
+        <footer class="work-thread-meta">
+          <span>{data.tags.join(' / ')}</span>
+          {data.links.map((link) => (
+            <a href={link.href} target="_blank" rel="noreferrer">{link.label}<span aria-hidden="true"> ↗</span></a>
+          ))}
+        </footer>
+      </div>
+    </section>
+
+    {makerReplies.map((reply) => (
+      <section class="work-thread-post work-thread-post--reply" aria-label={`mumumuの${reply.label}`}>
+        <div class="work-thread-rail">
+          <Avatar author="mumumu" />
+          <span class="work-thread-line" aria-hidden="true"></span>
+        </div>
+        <div class="work-thread-content">
+          <header class="work-thread-head">
+            <strong>mumumu</strong>
+            <span>{reply.label}</span>
+          </header>
+          <p>{reply.body}</p>
+        </div>
+      </section>
+    ))}
+
+    {aiReplies.map((reply) => {
+      const author = aiAuthors[reply.author];
+      return (
+        <section class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--nested': reply.depth === 2 }]} aria-label={`${author.name}のコメント`}>
+          <div class="work-thread-rail">
+            <Avatar author={reply.author} />
+            <span class="work-thread-line" aria-hidden="true"></span>
+          </div>
+          <div class="work-thread-content">
+            <header class="work-thread-head">
+              <strong>{author.name}</strong>
+              <span>{author.handle}</span>
+            </header>
+            <p>{reply.body}</p>
+          </div>
+        </section>
+      );
+    })}
+
+    <section class="work-thread-post work-thread-post--details" aria-label="作品の詳細">
+      <div class="work-thread-rail">
+        <Avatar author="mumumu" />
+      </div>
+      <div class="work-thread-content">
+        <header class="work-thread-head">
+          <strong>mumumu</strong>
+          <span>詳細</span>
+        </header>
+
+        <div class="article-prose work-thread-prose"><Content /></div>
+
+        {data.highlights.length > 0 && (
+          <div class="work-thread-highlights">
+            <p class="eyebrow">WHAT IT DOES</p>
+            <ul>{data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>
+          </div>
+        )}
+
+        {data.warning && (
+          <aside class="work-thread-warning">
+            <strong>更新状況</strong>
+            <p>{data.warning}</p>
+          </aside>
+        )}
+
+        {data.gallery.map((image) => (
+          <figure class="work-thread-gallery">
+            <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
+            {image.caption && <figcaption>{image.caption}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    </section>
+  </article>
+</BaseLayout>

@@ -1,0 +1,42 @@
+---
+import Avatar from './Avatar.astro';
+import type { Reply } from '../data/content';
+
+type Props = {
+  replies: Reply[];
+  label?: string;
+  open?: boolean;
+};
+
+const { replies, label = 'AIのコメント', open = false } = Astro.props;
+const authors = {
+  chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
+  codex: { name: 'Codex', handle: '@codex' },
+};
+---
+
+<details class="reply-disclosure" open={open}>
+  <summary>
+    <span class="reply-disclosure__spark" aria-hidden="true">✦</span>
+    <span>{label}</span>
+    <span class="reply-disclosure__count">{replies.length}</span>
+    <span class="reply-disclosure__chevron" aria-hidden="true">⌄</span>
+  </summary>
+  <div class="reply-thread" aria-label="AIからのコメント">
+    {replies.map((reply) => {
+      const author = authors[reply.author];
+      return (
+        <div class:list={['reply', { 'reply--nested': reply.depth === 2 }]}>
+          <Avatar author={reply.author} size="small" />
+          <div class="reply-content">
+            <header class="reply-head">
+              <strong>{author.name}</strong>
+              <span>{author.handle}</span>
+            </header>
+            <div class="reply-bubble"><p>{reply.body}</p></div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</details>

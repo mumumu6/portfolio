@@ -1,6 +1,7 @@
 ---
 import Avatar from './Avatar.astro';
-import type { AuthorId, EntryKind, FeedEntry as FeedEntryType } from '../data/content';
+import ReplyDisclosure from './ReplyDisclosure.astro';
+import type { AuthorId, FeedEntry as FeedEntryType } from '../data/content';
 
 type Props = {
   entry: FeedEntryType;
@@ -9,17 +10,10 @@ type Props = {
 
 const { entry, showReplies = true } = Astro.props;
 
-const authors: Record<AuthorId, { name: string; handle: string }> = {
-  mumumu: { name: 'mumumu', handle: '@mumumu6' },
+const authors: Record<AuthorId, { name: string; handle?: string }> = {
+  mumumu: { name: 'mumumu' },
   chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
   codex: { name: 'Codex', handle: '@codex' },
-};
-
-const kindLabels: Record<EntryKind, string> = {
-  work: 'WORK',
-  blog: 'BLOG',
-  experience: 'EXPERIENCE',
-  thought: 'AI DIARY',
 };
 
 const author = authors[entry.author];
@@ -45,10 +39,10 @@ const sourceLabel = sourceUrl
       <header class="entry-head">
         <div class="entry-author">
           <strong>{author.name}</strong>
-          <span>{author.handle}</span>
+          {author.handle && <span>{author.handle}</span>}
+          <span aria-hidden="true">·</span>
+          <time datetime={entry.date}>{entry.dateLabel}</time>
         </div>
-        <span class:list={['kind-label', `kind-label--${entry.kind}`]}>{kindLabels[entry.kind]}</span>
-        <time datetime={entry.date}>{entry.dateLabel}</time>
       </header>
 
       {entry.title && (
@@ -76,36 +70,40 @@ const sourceLabel = sourceUrl
         </a>
       )}
 
-      {entry.image && entry.href && (
-        <a
-          class="ogp-preview"
-          href={entry.href}
-          target={external ? '_blank' : undefined}
-          rel={external ? 'noreferrer' : undefined}
-          aria-label={`${entry.title ?? '記事'}を読む`}
-        >
-          <img
-            src={entry.image.src}
-            srcset={entry.image.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
-            alt={entry.image.alt}
-            width={entry.image.width}
-            height={entry.image.height}
-            sizes="(max-width: 480px) 92px, (max-width: 760px) 145px, 280px"
-            loading="lazy"
-            decoding="async"
-          />
-        </a>
-      )}
-
-      {entry.visual && (
-        <div class:list={['project-visual', `project-visual--${entry.visual.tone}`]} aria-hidden="true">
-          <div class="project-visual__index">0{entry.id.length % 8 + 1}</div>
-          <div class="project-visual__copy">
-            <span>{entry.visual.label}</span>
-            <strong>{entry.visual.caption}</strong>
+      {entry.image && (
+        entry.href ? (
+          <a
+            class:list={['ogp-preview', `ogp-preview--${entry.kind}`]}
+            href={entry.href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noreferrer' : undefined}
+            aria-label={`${entry.title ?? '記事'}を開く`}
+          >
+            <img
+              src={entry.image.src}
+              srcset={entry.image.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
+              alt={entry.image.alt}
+              width={entry.image.width}
+              height={entry.image.height}
+              sizes="(max-width: 480px) 92px, (max-width: 760px) 145px, 280px"
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+        ) : (
+          <div class:list={['ogp-preview', `ogp-preview--${entry.kind}`]}>
+            <img
+              src={entry.image.src}
+              srcset={entry.image.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
+              alt={entry.image.alt}
+              width={entry.image.width}
+              height={entry.image.height}
+              sizes="(max-width: 480px) 92px, (max-width: 760px) 145px, 280px"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
-          <div class="project-visual__orb"></div>
-        </div>
+        )
       )}
 
       {entry.tags && entry.tags.length > 0 && (
@@ -126,31 +124,7 @@ const sourceLabel = sourceUrl
       )}
 
       {showReplies && entry.replies && entry.replies.length > 0 && (
-        <details class:list={['reply-disclosure', { 'reply-disclosure--static': entry.kind === 'thought' }]} open={entry.kind === 'thought'}>
-          <summary>
-            <span class="reply-disclosure__spark" aria-hidden="true">✦</span>
-            <span>AIのコメント</span>
-            <span class="reply-disclosure__count">{entry.replies.length}</span>
-            <span class="reply-disclosure__chevron" aria-hidden="true">⌄</span>
-          </summary>
-          <div class="reply-thread" aria-label="AIからの返信">
-            {entry.replies.map((reply) => {
-              const replyAuthor = authors[reply.author];
-              return (
-                <div class:list={['reply', { 'reply--nested': reply.depth === 2 }]}>
-                  <Avatar author={reply.author} size="small" />
-                  <div class="reply-content">
-                    <header class="reply-head">
-                      <strong>{replyAuthor.name}</strong>
-                      <span>{replyAuthor.handle}</span>
-                    </header>
-                    <div class="reply-bubble"><p>{reply.body}</p></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </details>
+        <ReplyDisclosure replies={entry.replies} label={entry.kind === 'thought' ? '返信' : 'AIのコメント'} />
       )}
     </div>
   </div>

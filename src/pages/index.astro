@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProfileHeader from '../components/ProfileHeader.astro';
 import FeedEntry from '../components/FeedEntry.astro';
+import WorkEntry from '../components/WorkEntry.astro';
 import { blogPosts, works } from '../data/content';
 ---
 
@@ -15,13 +16,13 @@ import { blogPosts, works } from '../data/content';
     <header class="feed-heading feed-heading--compact">
       <div>
         <p class="eyebrow">SELECTED PROJECTS</p>
-        <h2 id="works-heading">Works<span>.</span></h2>
+        <h2 id="works-heading"><a href="/works">Works<span>.</span></a></h2>
       </div>
       <a class="section-more" href="/works">すべて見る →</a>
     </header>
 
     <div class="feed-list feed-list--compact">
-      {works.slice(0, 2).map((entry) => <FeedEntry entry={entry} />)}
+      {works.slice(0, 2).map((entry) => <WorkEntry entry={entry} />)}
     </div>
   </section>
 
@@ -29,7 +30,7 @@ import { blogPosts, works } from '../data/content';
     <header class="feed-heading feed-heading--compact feed-heading--blog">
       <div>
         <p class="eyebrow">LATEST WRITING</p>
-        <h2 id="blog-heading">Blog<span>.</span></h2>
+        <h2 id="blog-heading"><a href="/blog">Blog<span>.</span></a></h2>
       </div>
       <a class="section-more" href="/blog">すべて見る →</a>
     </header>

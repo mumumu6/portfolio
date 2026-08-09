@@ -30,12 +30,16 @@ export type FeedEntry = {
     srcset?: Array<{ src: string; width: number }>;
     source?: string;
   };
-  visual?: {
-    label: string;
-    caption: string;
-    tone: 'violet' | 'aqua';
-  };
   replies?: Reply[];
+};
+
+export type WorkEntry = FeedEntry & {
+  kind: 'work';
+  title: string;
+  href: string;
+  image: NonNullable<FeedEntry['image']>;
+  status: 'active' | 'paused' | 'archived';
+  note: string;
 };
 
 type PublishedAiContent = {
@@ -52,51 +56,37 @@ const getAiReplies = (kind: Exclude<EntryKind, 'thought'>, id: string) =>
 
 export const profile = {
   name: 'mumumu',
-  handle: '@mumumu6',
   bio: 'Webサイトを作って遊んでいます。競プロや機械学習、Kaggleにも興味があります。',
   affiliations: ['東京科学大学 情報理工学院', 'デジタル創作同好会 traP'],
-  interests: ['プログラミング'],
   links: [
-    { label: 'GitHub', href: 'https://github.com/mumumu6' },
-    { label: 'X', href: 'https://twitter.com/mumumu_no_mu66' },
-    { label: 'AtCoder', href: 'https://atcoder.jp/users/mmumumu' },
+    { label: 'GitHub', icon: 'github', href: 'https://github.com/mumumu6' },
+    { label: 'X', icon: 'x', href: 'https://twitter.com/mumumu_no_mu66' },
   ],
 };
 
-export const works: FeedEntry[] = [
-  {
-    id: 'portfolio-v2',
-    kind: 'work',
-    author: 'mumumu',
-    date: '2026-08-08',
-    dateLabel: '2026.08 · WIP',
-    title: 'Portfolio v2',
-    body: '静的HTMLを中心に、AIたちがときどき横から話しかけてくるポートフォリオサイト。軽さと遊び心の両立を試しています。',
-    tags: ['Astro', 'TypeScript', 'Cloudflare'],
-    visual: {
-      label: 'portfolio / v2',
-      caption: 'static first, playful sometimes',
-      tone: 'violet',
-    },
-  },
-  {
-    id: 'sci-schedule',
-    kind: 'work',
-    author: 'mumumu',
-    date: '2025-07-01',
-    dateLabel: '2025',
-    title: '科学大試験リンク生成サイト',
-    body: '期末試験の日程を検索し、選んだ予定からiCalendarファイルを生成できるサイト。フロントエンドからバックエンドまで一人で構築しました。',
-    tags: ['Vue', 'Go', 'Python'],
-    href: 'https://sci-schedule.mumumu6.net/',
-    linkLabel: 'サイトを見る',
-    visual: {
-      label: 'sci schedule',
-      caption: 'pick exams, export calendar',
-      tone: 'aqua',
-    },
-  },
-].map((entry) => ({ ...entry, replies: getAiReplies('work', entry.id) })) as FeedEntry[];
+const workDocuments = await getCollection('works');
+
+export const works: WorkEntry[] = workDocuments
+  .map((work) => {
+    const publishedAt = work.data.publishedAt.toISOString().slice(0, 10);
+    return {
+      id: work.id,
+      kind: 'work' as const,
+      author: 'mumumu' as const,
+      date: publishedAt,
+      dateLabel: publishedAt.slice(0, 7).replace('-', '.'),
+      title: work.data.title,
+      body: work.data.summary,
+      tags: work.data.tags,
+      href: `/works/${work.id}`,
+      linkLabel: '詳細を見る',
+      image: work.data.cover,
+      status: work.data.status,
+      note: work.data.updates.at(-1)?.body ?? work.data.note,
+      replies: getAiReplies('work', work.id),
+    };
+  })
+  .sort((a, b) => b.date.localeCompare(a.date));
 
 export type BlogFrontmatter = {
   title: string;

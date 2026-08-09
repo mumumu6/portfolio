@@ -9,6 +9,7 @@ type Props = {
   image?: string;
   type?: 'website' | 'article';
   publishedTime?: string;
+  shell?: 'default' | 'wide';
 };
 
 const {
@@ -17,6 +18,7 @@ const {
   image = '/favicon.webp',
   type = 'website',
   publishedTime,
+  shell = 'default',
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
@@ -46,14 +48,14 @@ const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <title>{title}</title>
     <script is:inline>
       (() => {
         const saved = localStorage.getItem('theme');
-        const theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const theme = saved || 'dark';
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
       })();
@@ -61,16 +63,10 @@ const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
   </head>
   <body>
     <a class="skip-link" href="#main-content">本文へ移動</a>
-    <SiteHeader />
-    <main class="site-shell" id="main-content">
+    <SiteHeader wide={shell === 'wide'} />
+    <main class:list={['site-shell', { 'site-shell--wide': shell === 'wide' }]} id="main-content">
       <slot />
     </main>
-    <footer class="site-footer">
-      <div>
-        <span class="footer-sign">mumumu<span>.</span></span>
-        <span>made with Astro / mostly HTML / occasionally haunted by AI</span>
-      </div>
-    </footer>
 
     <script>
       const applyTheme = (theme: 'light' | 'dark') => {
@@ -82,10 +78,39 @@ const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
       const closeMenu = () => {
         const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
         const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+        const header = document.querySelector<HTMLElement>('.site-header');
         if (!menuButton || !menu) return;
         menu.hidden = true;
         menuButton.setAttribute('aria-expanded', 'false');
         menuButton.setAttribute('aria-label', 'メニューを開く');
+        header?.removeAttribute('data-hidden');
+      };
+
+      const setupHeaderScroll = () => {
+        const header = document.querySelector<HTMLElement>('.site-header');
+        if (!header || header.dataset.scrollBound === 'true') return;
+
+        header.dataset.scrollBound = 'true';
+        let previousY = window.scrollY;
+        let frame = 0;
+
+        window.addEventListener('scroll', () => {
+          if (frame) return;
+          frame = requestAnimationFrame(() => {
+            frame = 0;
+            const currentY = window.scrollY;
+            const delta = currentY - previousY;
+            const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+
+            if (currentY <= 24 || delta < -4 || menu?.hidden === false) {
+              header.removeAttribute('data-hidden');
+            } else if (currentY > 96 && delta > 4) {
+              header.dataset.hidden = 'true';
+            }
+
+            if (Math.abs(delta) > 4) previousY = currentY;
+          });
+        }, { passive: true });
       };
 
       const setupUi = () => {
@@ -105,6 +130,8 @@ const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
           else link.removeAttribute('aria-current');
         });
 
+        setupHeaderScroll();
+
         const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
         const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
         if (!menuButton || !menu || menuButton.dataset.bound === 'true') return;
@@ -112,6 +139,7 @@ const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
         menuButton.dataset.bound = 'true';
         menuButton.addEventListener('click', () => {
           const willOpen = menu.hidden;
+          document.querySelector<HTMLElement>('.site-header')?.removeAttribute('data-hidden');
           menu.hidden = !willOpen;
           menuButton.setAttribute('aria-expanded', String(willOpen));
           menuButton.setAttribute('aria-label', willOpen ? 'メニューを閉じる' : 'メニューを開く');
@@ -119,8 +147,7 @@ const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
       };
 
       document.addEventListener('astro:before-swap', (event) => {
-        const theme = localStorage.getItem('theme')
-          || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const theme = localStorage.getItem('theme') || 'dark';
         event.newDocument.documentElement.dataset.theme = theme;
         event.newDocument.documentElement.style.colorScheme = theme;
       });
