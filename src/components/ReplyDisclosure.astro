@@ -26,7 +26,7 @@ const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', 
     <span class="reply-disclosure__spark" aria-hidden="true">✦</span>
     <span>{label}</span>
     <span class="reply-disclosure__count">{replies.length}</span>
-    <span class="reply-disclosure__chevron" aria-hidden="true">⌄</span>
+    <span class="reply-disclosure__indicator" aria-hidden="true"></span>
   </summary>
   <div class="reply-thread" aria-label="AIからのコメント">
     {replies.map((reply, index) => {

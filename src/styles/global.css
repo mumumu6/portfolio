@@ -1024,6 +1024,11 @@ summary:focus-visible {
   margin-top: 10px;
 }
 
+.reply-disclosure[data-animating='true'] {
+  overflow: hidden;
+  will-change: height;
+}
+
 .reply-disclosure > summary {
   width: fit-content;
   display: flex;
@@ -1054,14 +1059,20 @@ summary:focus-visible {
   color: inherit;
 }
 
-.reply-disclosure__chevron {
-  font-size: 0.78rem;
+.reply-disclosure__indicator {
+  width: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   line-height: 1;
-  transition: transform 140ms ease;
+  text-align: center;
 }
 
-.reply-disclosure[open] .reply-disclosure__chevron {
-  transform: rotate(180deg);
+.reply-disclosure__indicator::before {
+  content: '+';
+}
+
+.reply-disclosure[open] .reply-disclosure__indicator::before {
+  content: '\2212';
 }
 
 .reply-thread {
@@ -1730,6 +1741,10 @@ summary:focus-visible {
   .ai-disclosure {
     padding-right: 16px;
     padding-left: 16px;
+  }
+
+  .experience-stream {
+    --timeline-axis: 35px;
   }
 
   .feed-list--compact .entry-content {
