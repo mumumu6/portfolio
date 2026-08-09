@@ -1697,6 +1697,26 @@ summary:focus-visible {
     width: 145px;
   }
 
+  .feed-list--compact .feed-entry--blog .entry-content {
+    display: block;
+  }
+
+  .feed-list--compact .feed-entry--blog .entry-body {
+    min-block-size: 0;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .feed-list--compact .feed-entry--blog .ogp-preview {
+    width: min(100%, 630px);
+    margin-top: 12px;
+  }
+
+  .feed-list--compact .feed-entry--blog .ogp-preview img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
   .work-thread-page {
     width: calc(100% - 32px);
     padding-top: 20px;
@@ -1814,7 +1834,10 @@ summary:focus-visible {
 
   .feed-list--compact .feed-entry--blog .entry-body {
     min-block-size: 0;
-    display: none;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
   }
 
   .experience-year__heading {

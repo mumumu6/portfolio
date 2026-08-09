@@ -28,7 +28,8 @@ const cleanText = (value) => asText(value)
 
 const excerpt = (value, limit = 140) => {
   const characters = [...cleanText(value)];
-  return characters.length > limit ? `${characters.slice(0, limit).join('')}…` : characters.join('');
+  const text = characters.slice(0, limit).join('').replace(/[.…]+$/u, '');
+  return text ? `${text}…` : '';
 };
 
 const formatDate = (value) => {

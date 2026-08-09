@@ -54,6 +54,10 @@ type PublishedAiContent = {
 };
 
 const aiContent = generatedAiContent as PublishedAiContent;
+const asExcerpt = (value: string) => {
+  const text = value.trim().replace(/[.…]+$/u, '');
+  return text ? `${text}…` : '';
+};
 const getAiReplies = (kind: Exclude<EntryKind, 'thought'>, id: string) =>
   aiContent.comments.find((comment) => comment.target.kind === kind && comment.target.id === id)?.replies;
 
@@ -130,6 +134,7 @@ const localBlogPosts: FeedEntry[] = (await getCollection('blog')).map((post) => 
 export const blogPosts: FeedEntry[] = [
   ...generatedBlogPosts.map((post) => ({
     ...post,
+    body: asExcerpt(post.body),
     kind: 'blog' as const,
     author: 'mumumu' as const,
     replies: getAiReplies('blog', post.id),
