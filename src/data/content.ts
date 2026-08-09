@@ -8,6 +8,9 @@ export type EntryKind = 'work' | 'blog' | 'experience' | 'thought';
 export type Reply = {
   author: Exclude<AuthorId, 'mumumu'>;
   body: string;
+  createdAt?: string;
+  replyTo?: AuthorId;
+  /** Legacy nesting hint retained while older generated content is migrated. */
   depth?: 1 | 2;
 };
 

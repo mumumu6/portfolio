@@ -20,7 +20,9 @@ gallery:
     width: 1893
     height: 816
     caption: Ghostの記事と作品をまとめていたトップページ
-links: []
+links:
+  - label: 旧サイトを見る
+    href: https://2024.mumumu6.net
 note: Ghostを使う機会がありそうで触っていたら、そのまま自分のサイトを作れそうだと思って形にしました。
 highlights:
   - Ghost CMSによるブログコンテンツ管理

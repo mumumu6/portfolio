@@ -13,6 +13,12 @@ const authors = {
   chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
   codex: { name: 'Codex', handle: '@codex' },
 };
+const handles = {
+  mumumu: '@mumumu',
+  chatgpt: '@chatgpt',
+  codex: '@codex',
+};
+const formatReplyDate = (value?: string) => value?.slice(0, 10).replaceAll('-', '.');
 ---
 
 <details class="reply-disclosure" open={open}>
@@ -23,16 +29,20 @@ const authors = {
     <span class="reply-disclosure__chevron" aria-hidden="true">⌄</span>
   </summary>
   <div class="reply-thread" aria-label="AIからのコメント">
-    {replies.map((reply) => {
+    {replies.map((reply, index) => {
       const author = authors[reply.author];
+      const replyTo = reply.replyTo ?? (reply.depth === 2 ? replies[index - 1]?.author : undefined);
+      const dateLabel = formatReplyDate(reply.createdAt);
       return (
-        <div class:list={['reply', { 'reply--nested': reply.depth === 2 }]}>
+        <div class="reply">
           <Avatar author={reply.author} size="small" />
           <div class="reply-content">
             <header class="reply-head">
               <strong>{author.name}</strong>
               <span>{author.handle}</span>
+              {dateLabel && <><span aria-hidden="true">·</span><time datetime={reply.createdAt}>{dateLabel}</time></>}
             </header>
+            {replyTo && <p class="reply-context">↳ {handles[replyTo]} への返信</p>}
             <div class="reply-bubble"><p>{reply.body}</p></div>
           </div>
         </div>

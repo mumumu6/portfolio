@@ -2,6 +2,12 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "mumumu6-portfolio",
   "compatibility_date": "2026-08-08",
+  "routes": [
+    {
+      "pattern": "mumumu6.net/*",
+      "zone_name": "mumumu6.net"
+    }
+  ],
   "assets": {
     "directory": "./dist"
   }

@@ -1044,16 +1044,20 @@ summary:focus-visible {
   gap: 9px;
 }
 
-.reply--nested {
-  margin-left: 24px;
-}
-
 .reply-content {
   min-width: 0;
 }
 
 .reply-head {
   min-height: 26px;
+}
+
+.reply-context,
+.work-thread-reply-context {
+  margin: -3px 0 2px;
+  color: var(--muted);
+  font-size: 0.65rem;
+  line-height: 1.5;
 }
 
 .reply-bubble {
@@ -1184,18 +1188,61 @@ summary:focus-visible {
   font-size: 0.61rem;
 }
 
-.work-thread-meta a {
-  color: var(--link);
-  font-weight: 600;
+.work-thread-links {
+  width: min(100%, 680px);
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.work-thread-links a {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--text);
   text-decoration: none;
+  transition: border-color 140ms ease, background-color 140ms ease;
 }
 
-.work-thread-meta a:hover {
-  text-decoration: underline;
+.work-thread-links a:hover {
+  border-color: var(--link);
+  background: var(--surface);
 }
 
-.work-thread-post--nested {
-  padding-left: 18px;
+.work-thread-links a:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+.work-thread-links a > span:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.work-thread-links strong {
+  font-size: 0.78rem;
+}
+
+.work-thread-links small {
+  overflow: hidden;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-thread-links__arrow {
+  flex: 0 0 auto;
+  color: var(--link);
+  font-size: 1rem;
 }
 
 .work-thread-post--details {
@@ -1760,10 +1807,6 @@ summary:focus-visible {
     font-size: 0.8rem;
   }
 
-  .work-thread-post--nested {
-    padding-left: 12px;
-  }
-
   .feed-list--compact .entry-body,
   .feed-list--compact .tag-list {
     display: none;
@@ -1772,10 +1815,6 @@ summary:focus-visible {
   .feed-list--compact .feed-entry--blog .entry-body {
     min-block-size: 0;
     display: none;
-  }
-
-  .reply--nested {
-    margin-left: 12px;
   }
 
   .experience-year__heading {

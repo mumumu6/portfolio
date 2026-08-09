@@ -31,6 +31,7 @@ const works = defineCollection({
     note: z.string(),
     updates: z.array(z.object({
       label: z.string(),
+      date: z.coerce.date().optional(),
       body: z.string(),
     })).default([]),
     highlights: z.array(z.string()).default([]),

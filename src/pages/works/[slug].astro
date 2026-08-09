@@ -20,12 +20,18 @@ const statusLabels = { active: 'ACTIVE', paused: 'PAUSED', archived: 'ARCHIVED' 
 const statusLabel = statusLabels[data.status];
 const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? [];
 const makerReplies = [
-  { label: '制作メモ', body: data.note },
-  ...data.updates,
+  { label: '制作メモ', body: data.note, date: data.publishedAt },
+  ...data.updates.map((update) => ({ ...update, date: update.date ?? data.publishedAt })),
 ];
 const aiAuthors = {
   chatgpt: { name: 'ChatGPT', handle: '@chatgpt' },
   codex: { name: 'Codex', handle: '@codex' },
+};
+const aiHandles = { mumumu: '@mumumu', chatgpt: '@chatgpt', codex: '@codex' } as const;
+const formatReplyDate = (value?: string | Date) => {
+  if (!value) return undefined;
+  const date = value instanceof Date ? value.toISOString() : value;
+  return date.slice(0, 10).replaceAll('-', '.');
 };
 ---
 
@@ -33,6 +39,9 @@ const aiAuthors = {
   title={`${data.title} — Works — mumumu`}
   description={data.summary}
   image={data.cover.src}
+  imageAlt={data.cover.alt}
+  imageWidth={data.cover.width}
+  imageHeight={data.cover.height}
   type="article"
   publishedTime={publishedAt}
 >
@@ -65,10 +74,23 @@ const aiAuthors = {
         />
         <footer class="work-thread-meta">
           <span>{data.tags.join(' / ')}</span>
-          {data.links.map((link) => (
-            <a href={link.href} target="_blank" rel="noreferrer">{link.label}<span aria-hidden="true"> ↗</span></a>
-          ))}
         </footer>
+        {data.links.length > 0 && (
+          <nav class="work-thread-links" aria-label="作品へのリンク">
+            {data.links.map((link) => {
+              const hostname = new URL(link.href).hostname;
+              return (
+                <a href={link.href} target="_blank" rel="noreferrer">
+                  <span>
+                    <strong>{link.label}</strong>
+                    <small>{hostname}</small>
+                  </span>
+                  <span class="work-thread-links__arrow" aria-hidden="true">↗</span>
+                </a>
+              );
+            })}
+          </nav>
+        )}
       </div>
     </section>
 
@@ -82,16 +104,20 @@ const aiAuthors = {
           <header class="work-thread-head">
             <strong>mumumu</strong>
             <span>{reply.label}</span>
+            <span aria-hidden="true">·</span>
+            <time datetime={reply.date.toISOString().slice(0, 10)}>{formatReplyDate(reply.date)}</time>
           </header>
           <p>{reply.body}</p>
         </div>
       </section>
     ))}
 
-    {aiReplies.map((reply) => {
+    {aiReplies.map((reply, index) => {
       const author = aiAuthors[reply.author];
+      const replyTo = reply.replyTo ?? (reply.depth === 2 ? aiReplies[index - 1]?.author : undefined);
+      const replyDate = formatReplyDate(reply.createdAt);
       return (
-        <section class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--nested': reply.depth === 2 }]} aria-label={`${author.name}のコメント`}>
+        <section class="work-thread-post work-thread-post--reply" aria-label={`${author.name}のコメント`}>
           <div class="work-thread-rail">
             <Avatar author={reply.author} />
             <span class="work-thread-line" aria-hidden="true"></span>
@@ -100,7 +126,9 @@ const aiAuthors = {
             <header class="work-thread-head">
               <strong>{author.name}</strong>
               <span>{author.handle}</span>
+              {replyDate && <><span aria-hidden="true">·</span><time datetime={reply.createdAt}>{replyDate}</time></>}
             </header>
+            {replyTo && <p class="work-thread-reply-context">↳ {aiHandles[replyTo]} への返信</p>}
             <p>{reply.body}</p>
           </div>
         </section>

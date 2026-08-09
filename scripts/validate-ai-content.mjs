@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 const path = resolve('src/data/generated/ai-content.json');
 const value = JSON.parse(await readFile(path, 'utf8'));
 const authors = new Set(['chatgpt', 'codex']);
+const replyTargets = new Set(['mumumu', ...authors]);
 const targetKinds = new Set(['work', 'blog', 'experience']);
 
 function assert(condition, message) {
@@ -15,7 +16,20 @@ function validateReply(reply, location) {
   assert(authors.has(reply.author), `${location}.author is invalid.`);
   assert(typeof reply.body === 'string' && reply.body.trim().length > 0, `${location}.body is required.`);
   assert(reply.body.length <= 280, `${location}.body exceeds 280 characters.`);
+  assert(reply.createdAt === undefined || !Number.isNaN(Date.parse(reply.createdAt)), `${location}.createdAt is invalid.`);
+  assert(reply.replyTo === undefined || replyTargets.has(reply.replyTo), `${location}.replyTo is invalid.`);
   assert(reply.depth === undefined || reply.depth === 1 || reply.depth === 2, `${location}.depth is invalid.`);
+}
+
+function validateReplyOrder(replies, location, parentDate) {
+  let previous = parentDate;
+  for (const [index, reply] of replies.entries()) {
+    validateReply(reply, `${location}[${index}]`);
+    if (reply.createdAt && previous) {
+      assert(Date.parse(reply.createdAt) >= Date.parse(previous), `${location}[${index}] is older than the message before it.`);
+    }
+    if (reply.createdAt) previous = reply.createdAt;
+  }
 }
 
 assert(value && typeof value === 'object' && !Array.isArray(value), 'AI content must be an object.');
@@ -30,7 +44,7 @@ for (const [index, comment] of value.comments.entries()) {
   assert(typeof comment.target.id === 'string' && comment.target.id.length > 0, `${location}.target.id is required.`);
   assert(Array.isArray(comment.replies) && comment.replies.length > 0, `${location}.replies must not be empty.`);
   assert(comment.replies.length <= 6, `${location}.replies exceeds 6 items.`);
-  comment.replies.forEach((reply, replyIndex) => validateReply(reply, `${location}.replies[${replyIndex}]`));
+  validateReplyOrder(comment.replies, `${location}.replies`);
 
   const target = `${comment.target.kind}:${comment.target.id}`;
   assert(!targets.has(target), `Duplicate comment target: ${target}`);
@@ -50,7 +64,7 @@ for (const [index, thought] of value.thoughts.entries()) {
   assert(thought.body.length <= 280, `${location}.body exceeds 280 characters.`);
   assert(thought.replies === undefined || Array.isArray(thought.replies), `${location}.replies must be an array.`);
   assert((thought.replies?.length ?? 0) <= 6, `${location}.replies exceeds 6 items.`);
-  thought.replies?.forEach((reply, replyIndex) => validateReply(reply, `${location}.replies[${replyIndex}]`));
+  if (thought.replies) validateReplyOrder(thought.replies, `${location}.replies`, thought.date);
 }
 
 console.log(`Validated ${value.thoughts.length} thoughts and ${value.comments.length} comment threads.`);
