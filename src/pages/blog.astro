@@ -5,7 +5,11 @@ import FeedEntry from '../components/FeedEntry.astro';
 import { blogPosts } from '../data/content';
 ---
 
-<BaseLayout title="Blog — mumumu" description="mumumuが書いた技術記事や制作記録。">
+<BaseLayout
+  title="技術ブログ・制作記録 | mumumu"
+  description="mumumuが書いた技術記事と制作記録。"
+  schemaType="CollectionPage"
+>
   <PageIntro
     eyebrow="WRITTEN THINGS"
     title="Blog"

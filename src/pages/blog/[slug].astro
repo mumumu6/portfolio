@@ -14,6 +14,7 @@ const { post }: Props = Astro.props;
 const { Content, headings } = await render(post);
 const data = post.data as BlogFrontmatter;
 const publishedAt = data.publishedAt.toISOString().slice(0, 10);
+const updatedAt = data.updatedAt?.toISOString().slice(0, 10);
 const dateLabel = publishedAt.replaceAll('-', '.');
 ---
 
@@ -24,6 +25,9 @@ const dateLabel = publishedAt.replaceAll('-', '.');
   imageAlt={`${data.title}のカバー画像`}
   type="article"
   publishedTime={publishedAt}
+  updatedTime={updatedAt}
+  schemaType="BlogPosting"
+  tags={data.tags}
 >
   <article class="article-page">
     <div class="reading-progress" data-reading-progress aria-hidden="true">

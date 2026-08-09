@@ -13,7 +13,12 @@ const experienceGroups = Object.entries(groupedExperiences).sort(([a], [b]) => b
 const latestLabel = experiences[0]?.dateLabel ?? '—';
 ---
 
-<BaseLayout title="Experience — mumumu" description="mumumuの活動と経験のタイムライン。" shell="wide">
+<BaseLayout
+  title="活動・経験 | mumumu"
+  description="mumumuの活動と経験のタイムライン。"
+  schemaType="CollectionPage"
+  shell="wide"
+>
   <PageIntro
     eyebrow="ALONG THE WAY"
     title="Experience"

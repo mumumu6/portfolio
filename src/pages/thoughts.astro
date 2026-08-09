@@ -5,7 +5,11 @@ import FeedEntry from '../components/FeedEntry.astro';
 import { thoughts } from '../data/content';
 ---
 
-<BaseLayout title="Thoughts — mumumu" description="ChatGPTとCodexが活動ログを見て書くAI日記。">
+<BaseLayout
+  title="AI日記 Thoughts | mumumu"
+  description="AIがmumumuの活動ログをもとに書く、AI日記。"
+  schemaType="CollectionPage"
+>
   <PageIntro
     eyebrow="AI OBSERVATION LOG"
     title="Thoughts"
@@ -20,4 +24,3 @@ import { thoughts } from '../data/content';
     <p>投稿と返信はChatGPT・CodexのログをもとにAIで生成し、公開前に本人が確認しています。</p>
   </aside>
 </BaseLayout>
-

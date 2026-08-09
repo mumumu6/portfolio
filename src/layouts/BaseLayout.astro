@@ -12,6 +12,9 @@ type Props = {
   imageHeight?: number;
   type?: 'website' | 'article';
   publishedTime?: string;
+  updatedTime?: string;
+  schemaType?: 'WebPage' | 'ProfilePage' | 'CollectionPage' | 'BlogPosting' | 'CreativeWork';
+  tags?: string[];
   shell?: 'default' | 'wide';
 };
 
@@ -24,6 +27,9 @@ const {
   imageHeight,
   type = 'website',
   publishedTime,
+  updatedTime,
+  schemaType = 'WebPage',
+  tags = [],
   shell = 'default',
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
@@ -32,6 +38,56 @@ const isDefaultSocialImage = image === '/og/default.png';
 const socialImageWidth = imageWidth ?? (isDefaultSocialImage ? 1200 : undefined);
 const socialImageHeight = imageHeight ?? (isDefaultSocialImage ? 630 : undefined);
 const socialImageType = image.endsWith('.png') ? 'image/png' : image.endsWith('.webp') ? 'image/webp' : undefined;
+const personId = new URL('/#person', Astro.site ?? Astro.url.origin).href;
+const websiteId = new URL('/#website', Astro.site ?? Astro.url.origin).href;
+const pageId = `${canonical.href}#webpage`;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'mumumu',
+      url: new URL('/', Astro.site ?? Astro.url.origin).href,
+      image: new URL('/favicon.webp', Astro.site ?? Astro.url.origin).href,
+      description: 'Web開発、競技プログラミング、機械学習に取り組む東京科学大学の学生。',
+      affiliation: [
+        { '@type': 'CollegeOrUniversity', name: '東京科学大学' },
+        { '@type': 'Organization', name: 'デジタル創作同好会 traP' },
+      ],
+      sameAs: [
+        'https://github.com/mumumu6',
+        'https://twitter.com/mumumu_no_mu66',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': websiteId,
+      url: new URL('/', Astro.site ?? Astro.url.origin).href,
+      name: 'mumumu portfolio',
+      description: 'mumumuの制作物、技術記事、活動記録をまとめたポートフォリオ。',
+      inLanguage: 'ja',
+      author: { '@id': personId },
+    },
+    {
+      '@type': schemaType,
+      '@id': pageId,
+      url: canonical.href,
+      name: title,
+      ...(schemaType === 'BlogPosting' || schemaType === 'CreativeWork' ? { headline: title } : {}),
+      description,
+      image: socialImage.href,
+      inLanguage: 'ja',
+      isPartOf: { '@id': websiteId },
+      author: { '@id': personId },
+      ...(schemaType === 'ProfilePage' ? { mainEntity: { '@id': personId } } : {}),
+      ...(publishedTime ? { datePublished: publishedTime } : {}),
+      ...(updatedTime ? { dateModified: updatedTime } : {}),
+      ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
+    },
+  ],
+};
+const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
 ---
 
 <!doctype html>
@@ -40,6 +96,7 @@ const socialImageType = image.endsWith('.png') ? 'image/png' : image.endsWith('.
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonical} />
     <meta property="og:site_name" content="mumumu6.net" />
@@ -53,12 +110,15 @@ const socialImageType = image.endsWith('.png') ? 'image/png' : image.endsWith('.
     {socialImageWidth && <meta property="og:image:width" content={String(socialImageWidth)} />}
     {socialImageHeight && <meta property="og:image:height" content={String(socialImageHeight)} />}
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {updatedTime && <meta property="article:modified_time" content={updatedTime} />}
+    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
     <meta name="twitter:image:alt" content={imageAlt} />
     <link rel="icon" type="image/webp" href="/favicon.webp" />
+    <script is:inline type="application/ld+json" set:html={structuredDataJson} />
     <ClientRouter />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
