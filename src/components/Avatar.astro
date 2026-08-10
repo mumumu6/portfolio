@@ -8,21 +8,30 @@ type Props = {
 
 const { author, size = 'medium' } = Astro.props;
 
-const icons: Record<AuthorId, { src: string }> = {
-  mumumu: { src: '/icons/mumumu.webp' },
+const icons: Record<AuthorId, { src: string; srcset?: string }> = {
+  mumumu: {
+    src: '/icons/mumumu-256.webp',
+    srcset: '/icons/mumumu-64.webp 64w, /icons/mumumu-128.webp 128w, /icons/mumumu-256.webp 256w',
+  },
   chatgpt: { src: '/icons/openai.svg' },
-  codex: { src: '/icons/codex.webp' },
+  codex: {
+    src: '/icons/codex-256.webp',
+    srcset: '/icons/codex-64.webp 64w, /icons/codex-128.webp 128w, /icons/codex-256.webp 256w',
+  },
 };
 
 const icon = icons[author];
+const dimension = size === 'large' ? 112 : size === 'medium' ? 48 : 32;
 ---
 
 <span class:list={['avatar', `avatar--${author}`, `avatar--${size}`]}>
   <img
     src={icon.src}
+    srcset={icon.srcset}
+    sizes={`${dimension}px`}
     alt=""
-    width={size === 'large' ? 112 : size === 'medium' ? 48 : 32}
-    height={size === 'large' ? 112 : size === 'medium' ? 48 : 32}
+    width={dimension}
+    height={dimension}
     loading={size === 'large' ? 'eager' : 'lazy'}
     decoding="async"
   />
