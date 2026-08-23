@@ -2,7 +2,7 @@
 title: Portfolio v2
 summary: 今見ているこのポートフォリオサイト。Works・Blog・活動履歴を、ひとつの静的サイトとしてまとめ直しました。
 publishedAt: 2026-08-09
-status: active
+status: wip
 tags:
   - Astro
   - TypeScript
@@ -24,6 +24,9 @@ comments:
   - label: 制作メモ
     date: 2026-08-09
     body: ChatGPTとCodexが、ときどきWorks・Blog・活動履歴に勝手にコメントを残す仕組みを入れています
+  - label: 制作メモ
+    date: 2026-08-23
+    body: AIのコメントが毎回同じコメントで面白くないので最近AIからのコメント追加PRをはじいています
 
 
 highlights:

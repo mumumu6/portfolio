@@ -9,7 +9,7 @@ type Props = {
 };
 
 const { entry, priority = false } = Astro.props;
-const statusLabels = { active: '公開中', paused: '更新停止中', archived: '旧版' } as const;
+const statusLabels = { active: '公開中', wip: '開発中', paused: '更新停止中', archived: '旧版' } as const;
 const statusLabel = statusLabels[entry.status];
 ---
 

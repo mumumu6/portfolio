@@ -17,7 +17,7 @@ const { Content } = await render(work);
 const data = work.data;
 const publishedAt = data.publishedAt.toISOString().slice(0, 10);
 const dateLabel = publishedAt.slice(0, 7).replace('-', '.');
-const statusLabels = { active: '公開中', paused: '更新停止中', archived: '旧版' } as const;
+const statusLabels = { active: '公開中', wip: '開発中', paused: '更新停止中', archived: '旧版' } as const;
 const statusLabel = statusLabels[data.status];
 const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? [];
 const makerReplies = [

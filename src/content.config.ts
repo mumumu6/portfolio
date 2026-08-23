@@ -24,7 +24,7 @@ const works = defineCollection({
     title: z.string(),
     summary: z.string(),
     publishedAt: z.coerce.date(),
-    status: z.enum(['active', 'paused', 'archived']),
+    status: z.enum(['active', 'wip', 'paused', 'archived']),
     tags: z.array(z.string()),
     cover: workImage,
     gallery: z.array(workImage).default([]),

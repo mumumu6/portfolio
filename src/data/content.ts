@@ -44,7 +44,7 @@ export type WorkEntry = FeedEntry & {
   title: string;
   href: string;
   image: NonNullable<FeedEntry['image']>;
-  status: 'active' | 'paused' | 'archived';
+  status: 'active' | 'wip' | 'paused' | 'archived';
   comment: {
     label: string;
     body: string;

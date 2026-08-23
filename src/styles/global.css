@@ -1016,6 +1016,7 @@ summary:focus-visible {
 }
 
 .work-status--active,
+.work-status--wip,
 .work-status--paused,
 .work-status--archived {
   color: var(--muted) !important;
