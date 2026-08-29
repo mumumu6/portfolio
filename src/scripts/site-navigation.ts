@@ -13,12 +13,11 @@ const readStoredTheme = (): Theme => {
   }
 };
 
-const syncThemeControls = (theme: Theme) => {
-  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
-    const dark = theme === 'dark';
-    button.setAttribute('aria-pressed', String(dark));
-    button.setAttribute('aria-label', dark ? 'ライトテーマに切り替える' : 'ダークテーマに切り替える');
-  });
+const updateThemeButton = (theme: Theme) => {
+  document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.setAttribute(
+    'aria-pressed',
+    String(theme === 'dark'),
+  );
 };
 
 const applyTheme = (theme: Theme) => {
@@ -33,7 +32,7 @@ const applyTheme = (theme: Theme) => {
   } catch {
     // Keep the in-memory theme when storage is unavailable.
   }
-  syncThemeControls(theme);
+  updateThemeButton(theme);
 };
 
 const animateThemeChange = (theme: Theme) => {
@@ -58,9 +57,7 @@ const animateThemeChange = (theme: Theme) => {
 };
 
 const setupTheme = () => {
-  const theme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
-  syncThemeControls(theme);
-
+  updateThemeButton(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
   document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
     if (button.dataset.bound === 'true') return;
     button.dataset.bound = 'true';

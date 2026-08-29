@@ -52,6 +52,7 @@ const imageSizes = entry.kind === 'blog'
           href={entry.href}
           target={external ? '_blank' : undefined}
           rel={external ? 'noreferrer' : undefined}
+          data-astro-prefetch={!external ? 'hover' : undefined}
         >
           {entry.title}
         </a>
@@ -69,6 +70,7 @@ const imageSizes = entry.kind === 'blog'
       href={sourceHref}
       target={sourceExternal ? '_blank' : undefined}
       rel={sourceExternal ? 'noreferrer' : undefined}
+      data-astro-prefetch={!sourceExternal ? 'hover' : undefined}
     >
       <span aria-hidden="true">{sourceExternal ? '↗' : '→'}</span> {sourceLabel}
     </a>
@@ -94,6 +96,7 @@ const imageSizes = entry.kind === 'blog'
       href={entry.href}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
+      data-astro-prefetch={!external ? 'hover' : undefined}
     >
       {entry.linkLabel ?? '詳しく見る'}<span aria-hidden="true"> →</span>
     </a>

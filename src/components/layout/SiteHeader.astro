@@ -15,7 +15,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 
 <header class="site-header" transition:persist="site-header" transition:animate="none">
   <div class="header-inner">
-    <a class="site-name" href="/" aria-label="mumumu ホーム">
+    <a class="site-name" href="/" aria-label="mumumu ホーム" data-astro-prefetch="hover">
       <span>mumumu<em>.</em></span>
     </a>
 
@@ -26,6 +26,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
           class:list={{ active: isActive(item.href) }}
           aria-current={isActive(item.href) ? 'page' : undefined}
           data-nav-link
+          data-astro-prefetch="hover"
         >
           {item.label}
         </a>
@@ -33,7 +34,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
     </nav>
 
     <div class="header-actions">
-      <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="ライトテーマに切り替える" aria-pressed="false">
+      <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="テーマを切り替える" aria-pressed="true">
         <span class="theme-icon" aria-hidden="true">
           <svg class="theme-icon__sun" viewBox="0 0 24 24"><path d={mdiWeatherSunny}></path></svg>
           <svg class="theme-icon__moon" viewBox="0 0 24 24"><path d={mdiWeatherNight}></path></svg>
@@ -61,6 +62,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
           class:list={{ active: isActive(item.href) }}
           aria-current={isActive(item.href) ? 'page' : undefined}
           data-nav-link
+          data-astro-prefetch="hover"
         >
           <span>{item.label}</span>
         </a>

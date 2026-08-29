@@ -17,7 +17,7 @@ Node.jsのバージョンは`mise.toml`で管理し、pnpmのバージョンは`
 
 本番成果物は`dist/`へ生成されます。Cloudflare Workers Static Assets向けのキャッシュ・セキュリティヘッダーは`public/_headers`で管理しています。
 
-Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox設定で管理し、ビルド時にViteが`dist/sw.js`を生成します。独自のナビゲーションprefetchだけ`src/scripts/navigation-prefetch.ts`に分離しています。
+Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox設定で管理し、ページ遷移のprefetchはAstro標準機能を使います。画像は各`img`要素の`loading`属性で遅延読み込みを制御します。
 
 ## Pages
 

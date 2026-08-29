@@ -56,7 +56,10 @@ export default defineConfig({
       },
     }),
   ],
-  // ClientRouter enables broad tap-prefetching by default. Navigation intent is
-  // handled by our HTML/CSS-only prefetcher so images and fonts stay deferred.
-  prefetch: false,
+  // Prefetch only opted-in pages. The page response is prefetched; images keep
+  // their own loading="lazy"/loading="eager" policy.
+  prefetch: {
+    prefetchAll: false,
+    defaultStrategy: 'hover',
+  },
 });

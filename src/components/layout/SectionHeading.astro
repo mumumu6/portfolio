@@ -15,7 +15,7 @@ const { id, eyebrow, title, href } = Astro.props;
 <header class="feed-heading">
   <div>
     <p class="eyebrow">{eyebrow}</p>
-    <h2 id={id}><a href={href}>{title}<span>.</span></a></h2>
+    <h2 id={id}><a href={href} data-astro-prefetch="hover">{title}<span>.</span></a></h2>
   </div>
-  <a class="section-more" href={href}>すべて見る →</a>
+  <a class="section-more" href={href} data-astro-prefetch="hover">すべて見る →</a>
 </header>

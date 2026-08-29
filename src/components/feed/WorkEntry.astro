@@ -32,7 +32,7 @@ const statusLabel = statusLabels[entry.status];
   </header>
 
   <Heading class="entry-title">
-    <a href={entry.href}>{entry.title}</a>
+    <a href={entry.href} data-astro-prefetch="hover">{entry.title}</a>
   </Heading>
   <p class="entry-body">{entry.body}</p>
 

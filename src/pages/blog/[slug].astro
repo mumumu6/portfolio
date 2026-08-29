@@ -93,7 +93,7 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
       </div>
     )}
     <header class="article-header">
-      <a class="article-back" href="/blog/">← Blog</a>
+      <a class="article-back" href="/blog/" data-astro-prefetch="hover">← Blog</a>
       <p class="eyebrow">{isExternal ? 'FROM traP BLOG' : "MUMUMU'S BLOG"}</p>
       <h1>{data.title}</h1>
       <p class="article-lead">{data.description}</p>
