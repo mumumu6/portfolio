@@ -3,6 +3,8 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import AstroPWA from '@vite-pwa/astro';
 
+const defaultThemeColor = '#090d12';
+
 const runtimeCaching = [
   {
     urlPattern: ({ request }) =>
@@ -11,8 +13,11 @@ const runtimeCaching = [
       request.headers.get('accept')?.includes('text/html'),
     handler: 'StaleWhileRevalidate',
     options: {
-      cacheName: 'mumumu-portfolio-pages-v5',
-      expiration: { maxEntries: 40 },
+      cacheName: 'mumumu-portfolio-pages',
+      expiration: {
+        maxEntries: 40,
+        maxAgeSeconds: 60 * 60,
+      },
       cacheableResponse: { statuses: [200] },
     },
   },
@@ -44,7 +49,25 @@ export default defineConfig({
       injectRegister: 'auto',
       registerType: 'autoUpdate',
       scope: '/',
-      manifest: false,
+      manifest: {
+        name: 'mumumu portfolio',
+        short_name: 'mumumu',
+        description: 'mumumuの制作物、技術記事、活動記録をまとめたポートフォリオ。',
+        lang: 'ja',
+        start_url: '/',
+        scope: '/',
+        display: 'standalone',
+        theme_color: defaultThemeColor,
+        background_color: defaultThemeColor,
+        icons: [
+          {
+            src: '/icons/mumumu-256.webp',
+            sizes: '256x256',
+            type: 'image/webp',
+            purpose: 'any',
+          },
+        ],
+      },
       workbox: {
         clientsClaim: true,
         cleanupOutdatedCaches: true,
