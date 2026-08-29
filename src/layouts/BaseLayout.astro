@@ -1,7 +1,8 @@
 ---
-import '../styles/global.css';
+import '@/styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import SiteHeader from '../components/SiteHeader.astro';
+import SeoHead from '@/components/layout/SeoHead.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
 
 type Props = {
   title: string;
@@ -19,78 +20,7 @@ type Props = {
   shell?: 'default' | 'wide';
 };
 
-const {
-  title,
-  description,
-  image = '/og/default.png',
-  imageAlt = 'mumumuのポートフォリオのトップページ',
-  imageWidth,
-  imageHeight,
-  type = 'website',
-  publishedTime,
-  updatedTime,
-  schemaType = 'WebPage',
-  tags = [],
-  readingMinutes,
-  shell = 'default',
-} = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
-const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
-const isDefaultSocialImage = image === '/og/default.png';
-const socialImageWidth = imageWidth ?? (isDefaultSocialImage ? 1200 : undefined);
-const socialImageHeight = imageHeight ?? (isDefaultSocialImage ? 630 : undefined);
-const socialImageType = image.endsWith('.png') ? 'image/png' : image.endsWith('.webp') ? 'image/webp' : undefined;
-const personId = new URL('/#person', Astro.site ?? Astro.url.origin).href;
-const websiteId = new URL('/#website', Astro.site ?? Astro.url.origin).href;
-const pageId = `${canonical.href}#webpage`;
-const structuredData = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Person',
-      '@id': personId,
-      name: 'mumumu',
-      url: new URL('/', Astro.site ?? Astro.url.origin).href,
-      image: new URL('/favicon.webp', Astro.site ?? Astro.url.origin).href,
-      description: 'Web開発、競技プログラミング、機械学習に取り組む東京科学大学の学生。',
-      affiliation: [
-        { '@type': 'CollegeOrUniversity', name: '東京科学大学' },
-        { '@type': 'Organization', name: 'デジタル創作同好会 traP' },
-      ],
-      sameAs: [
-        'https://github.com/mumumu6',
-        'https://twitter.com/mumumu_no_mu66',
-      ],
-    },
-    {
-      '@type': 'WebSite',
-      '@id': websiteId,
-      url: new URL('/', Astro.site ?? Astro.url.origin).href,
-      name: 'mumumu portfolio',
-      description: 'mumumuの制作物、技術記事、活動記録をまとめたポートフォリオ。',
-      inLanguage: 'ja',
-      author: { '@id': personId },
-    },
-    {
-      '@type': schemaType,
-      '@id': pageId,
-      url: canonical.href,
-      name: title,
-      ...(schemaType === 'BlogPosting' || schemaType === 'CreativeWork' ? { headline: title } : {}),
-      description,
-      image: socialImage.href,
-      inLanguage: 'ja',
-      isPartOf: { '@id': websiteId },
-      author: { '@id': personId },
-      ...(schemaType === 'ProfilePage' ? { mainEntity: { '@id': personId } } : {}),
-      ...(publishedTime ? { datePublished: publishedTime } : {}),
-      ...(updatedTime ? { dateModified: updatedTime } : {}),
-      ...(readingMinutes ? { timeRequired: `PT${readingMinutes}M` } : {}),
-      ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
-    },
-  ],
-};
-const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
+const { shell = 'default', ...seoProps } = Astro.props;
 ---
 
 <!doctype html>
@@ -98,44 +28,30 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u00
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="generator" content={Astro.generator} />
-    <link rel="canonical" href={canonical} />
-    <meta property="og:site_name" content="mumumu6.net" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={socialImage} />
-    <meta property="og:image:alt" content={imageAlt} />
-    {socialImageType && <meta property="og:image:type" content={socialImageType} />}
-    {socialImageWidth && <meta property="og:image:width" content={String(socialImageWidth)} />}
-    {socialImageHeight && <meta property="og:image:height" content={String(socialImageHeight)} />}
-    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
-    {updatedTime && <meta property="article:modified_time" content={updatedTime} />}
-    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={socialImage} />
-    <meta name="twitter:image:alt" content={imageAlt} />
-    <link rel="icon" type="image/webp" href="/favicon.webp" />
-    <script is:inline type="application/ld+json" set:html={structuredDataJson} />
+    <SeoHead {...seoProps} />
     <ClientRouter />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <title>{title}</title>
+    <title>{seoProps.title}</title>
     <script is:inline>
       (() => {
-        const saved = localStorage.getItem('theme');
+        document.documentElement.classList.add('js');
+        let saved = null;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch {
+          // Storage can be unavailable in privacy-restricted contexts.
+        }
         const theme = saved || 'dark';
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
+        document.querySelector('[data-theme-color]')?.setAttribute(
+          'content',
+          theme === 'dark' ? '#090d12' : '#eef1f4',
+        );
+
+        const connection = navigator.connection;
+        if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? '')) {
+          document.documentElement.dataset.network = 'slow';
+        }
       })();
     </script>
   </head>
@@ -147,198 +63,7 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u00
     </main>
 
     <script>
-      const applyTheme = (theme: 'light' | 'dark') => {
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
-        localStorage.setItem('theme', theme);
-        document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
-          const dark = theme === 'dark';
-          button.setAttribute('aria-pressed', String(dark));
-          button.setAttribute('aria-label', dark ? 'ライトテーマに切り替える' : 'ダークテーマに切り替える');
-        });
-      };
-
-      const animateThemeChange = (theme: 'light' | 'dark') => {
-        const root = document.documentElement;
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const transitionDocument = document as Document & {
-          startViewTransition?: (callback: () => void) => { finished: Promise<void> };
-        };
-
-        if (reducedMotion || !transitionDocument.startViewTransition) {
-          applyTheme(theme);
-          return;
-        }
-
-        if (root.hasAttribute('data-theme-transitioning')) return;
-
-        root.setAttribute('data-theme-transitioning', '');
-
-        const transition = transitionDocument.startViewTransition(() => applyTheme(theme));
-        transition.finished.finally(() => {
-          root.removeAttribute('data-theme-transitioning');
-        });
-      };
-
-      let menuHideTimer = 0;
-      let menuFrame = 0;
-      const replyAnimations = new WeakMap<HTMLDetailsElement, Animation>();
-
-      const animateReplyDisclosure = (details: HTMLDetailsElement) => {
-        const summary = details.querySelector<HTMLElement>(':scope > summary');
-        if (!summary) return;
-
-        const pendingTarget = details.dataset.targetOpen;
-        const visuallyOpen = pendingTarget === undefined ? details.open : pendingTarget === 'true';
-        const willOpen = !visuallyOpen;
-        const startHeight = details.getBoundingClientRect().height;
-
-        replyAnimations.get(details)?.cancel();
-        details.dataset.targetOpen = String(willOpen);
-
-        let endHeight: number;
-        if (willOpen) {
-          details.open = true;
-          details.style.height = 'auto';
-          endHeight = details.getBoundingClientRect().height;
-        } else {
-          endHeight = summary.getBoundingClientRect().height;
-        }
-
-        details.style.height = `${startHeight}px`;
-        details.dataset.animating = 'true';
-        const animation = details.animate(
-          { height: [`${startHeight}px`, `${endHeight}px`] },
-          { duration: 220, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-        );
-        replyAnimations.set(details, animation);
-
-        animation.addEventListener('finish', () => {
-          if (replyAnimations.get(details) !== animation) return;
-          details.open = willOpen;
-          details.style.removeProperty('height');
-          delete details.dataset.animating;
-          delete details.dataset.targetOpen;
-          replyAnimations.delete(details);
-        });
-      };
-
-      const setMenuOpen = (open: boolean, immediate = false) => {
-        const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
-        const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
-        const header = document.querySelector<HTMLElement>('.site-header');
-        if (!menuButton || !menu) return;
-
-        window.clearTimeout(menuHideTimer);
-        cancelAnimationFrame(menuFrame);
-        if (open) {
-          menu.hidden = false;
-          menuFrame = requestAnimationFrame(() => {
-            menu.dataset.open = 'true';
-          });
-        } else {
-          delete menu.dataset.open;
-          if (immediate) menu.hidden = true;
-          else {
-            menuHideTimer = window.setTimeout(() => {
-              if (menu.dataset.open !== 'true') menu.hidden = true;
-            }, 190);
-          }
-        }
-
-        menuButton.setAttribute('aria-expanded', String(open));
-        menuButton.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
-        header?.removeAttribute('data-hidden');
-      };
-
-      const closeMenu = (immediate = false) => setMenuOpen(false, immediate);
-
-      const setupHeaderScroll = () => {
-        const header = document.querySelector<HTMLElement>('.site-header');
-        if (!header || header.dataset.scrollBound === 'true') return;
-
-        header.dataset.scrollBound = 'true';
-        let previousY = window.scrollY;
-        let frame = 0;
-
-        window.addEventListener('scroll', () => {
-          if (frame) return;
-          frame = requestAnimationFrame(() => {
-            frame = 0;
-            const currentY = window.scrollY;
-            const delta = currentY - previousY;
-            const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
-
-            if (currentY <= 24 || delta < -4 || menu?.hidden === false) {
-              header.removeAttribute('data-hidden');
-            } else if (currentY > 96 && delta > 4) {
-              header.dataset.hidden = 'true';
-            }
-
-            if (Math.abs(delta) > 4) previousY = currentY;
-          });
-        }, { passive: true });
-      };
-
-      const setupUi = () => {
-        document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
-          if (button.dataset.bound === 'true') return;
-          button.dataset.bound = 'true';
-          const dark = document.documentElement.dataset.theme === 'dark';
-          button.setAttribute('aria-pressed', String(dark));
-          button.setAttribute('aria-label', dark ? 'ライトテーマに切り替える' : 'ダークテーマに切り替える');
-          button.addEventListener('click', () => {
-            const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-            animateThemeChange(nextTheme);
-          });
-        });
-
-        document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]').forEach((link) => {
-          const href = link.getAttribute('href') ?? '';
-          const active = href !== '/' && (location.pathname === href || location.pathname.startsWith(href));
-          link.classList.toggle('active', active);
-          if (active) link.setAttribute('aria-current', 'page');
-          else link.removeAttribute('aria-current');
-        });
-
-        setupHeaderScroll();
-
-        const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
-        const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
-        if (!menuButton || !menu || menuButton.dataset.bound === 'true') return;
-
-        menuButton.dataset.bound = 'true';
-        menuButton.addEventListener('click', () => {
-          const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
-          setMenuOpen(!isOpen);
-        });
-      };
-
-      document.addEventListener('astro:before-swap', (event) => {
-        const theme = localStorage.getItem('theme') || 'dark';
-        event.newDocument.documentElement.dataset.theme = theme;
-        event.newDocument.documentElement.style.colorScheme = theme;
-      });
-
-      document.addEventListener('astro:page-load', () => {
-        closeMenu(true);
-        setupUi();
-      });
-      setupUi();
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') closeMenu();
-      });
-
-      document.addEventListener('click', (event) => {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        if (!(event.target instanceof Element)) return;
-        const summary = event.target.closest<HTMLElement>('.reply-disclosure > summary');
-        const details = summary?.parentElement;
-        if (!(details instanceof HTMLDetailsElement)) return;
-        event.preventDefault();
-        animateReplyDisclosure(details);
-      });
+      import '@/scripts/site-ui';
     </script>
   </body>
 </html>

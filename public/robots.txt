@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mumumu6.net/sitemap.xml
+Sitemap: https://mumumu6.net/sitemap-index.xml

@@ -1,0 +1,50 @@
+img[data-progressive-image] {
+  background-color: var(--surface-soft);
+  transition: opacity 180ms ease;
+}
+
+html.js img[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error']) {
+  background-image: linear-gradient(
+    105deg,
+    transparent 22%,
+    color-mix(in srgb, var(--text) 10%, transparent) 42%,
+    transparent 62%
+  );
+  background-size: 220% 100%;
+  opacity: 0.68;
+  animation: image-skeleton 1.35s ease-in-out infinite;
+}
+
+img[data-progressive-image][data-image-state='loaded'] {
+  background-image: none;
+  opacity: 1;
+  animation: none;
+}
+
+img[data-progressive-image][data-image-state='error'] {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 10px,
+    color-mix(in srgb, var(--text) 5%, transparent) 10px 20px
+  );
+  opacity: 1;
+  animation: none;
+}
+
+@keyframes image-skeleton {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -120% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js img[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error']) {
+    background-image: none;
+    opacity: 0.82;
+    animation: none;
+  }
+}

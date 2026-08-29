@@ -1,0 +1,239 @@
+.work-thread-page {
+  width: min(calc(100% - 40px), 860px);
+  margin: 0 auto;
+  padding: 28px 0 60px;
+  background: var(--surface);
+}
+
+.work-thread-page > .article-back {
+  margin-bottom: 12px;
+}
+
+.work-thread-post {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.work-thread-rail {
+  position: relative;
+}
+
+.work-thread-line {
+  position: absolute;
+  top: 38px;
+  bottom: -18px;
+  left: 19px;
+  width: 1px;
+  background: var(--line-strong);
+}
+
+.work-thread-post:not(.work-thread-post--root) .work-thread-rail::before {
+  position: absolute;
+  top: -18px;
+  left: 19px;
+  width: 1px;
+  height: 18px;
+  background: var(--line-strong);
+  content: '';
+}
+
+.work-thread-content {
+  min-width: 0;
+}
+
+.work-thread-head {
+  min-height: 38px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.work-thread-head strong {
+  font-size: 0.84rem;
+}
+
+.work-thread-head > span,
+.work-thread-head time {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.work-thread-post--root h1 {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 4vw, 1.9rem);
+  line-height: 1.25;
+  letter-spacing: -0.045em;
+}
+
+.work-thread-summary,
+.work-thread-post--reply .work-thread-content > p {
+  max-width: 650px;
+  margin: 7px 0 0;
+  color: var(--text-soft);
+  font-size: 0.84rem;
+  line-height: 1.75;
+}
+
+.work-thread-cover {
+  width: min(100%, 680px);
+  height: auto;
+  display: block;
+  margin-top: 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+}
+
+.work-thread-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px 16px;
+  margin-top: 11px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+}
+
+.work-thread-links {
+  width: min(100%, 680px);
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.work-thread-prose {
+  margin-top: 0;
+  font-size: 0.88rem;
+}
+
+.work-thread-prose h2 {
+  font-size: 1.2rem;
+}
+
+.work-thread-highlights {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.work-thread-highlights ul {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.work-thread-highlights li {
+  color: var(--text-soft);
+  font-size: 0.8rem;
+}
+
+.work-thread-highlights li::before {
+  padding-right: 9px;
+  color: var(--muted);
+  content: '→';
+}
+
+.work-thread-warning {
+  margin-top: 22px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--warning);
+  background: var(--surface-soft);
+}
+
+.work-thread-warning strong {
+  color: var(--warning);
+  font-size: 0.7rem;
+}
+
+.work-thread-warning p {
+  margin: 3px 0 0;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  line-height: 1.65;
+}
+
+.work-thread-gallery {
+  margin: 26px 0 0;
+}
+
+.work-thread-gallery img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+}
+
+.work-thread-gallery figcaption {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 0.66rem;
+}
+
+.work-details {
+  max-width: 680px;
+  margin: 34px 0 0 50px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line-strong);
+}
+
+.work-details__head h2 {
+  margin: 5px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  letter-spacing: -0.04em;
+}
+
+.work-details__body {
+  margin-top: 26px;
+}
+@media (max-width: 760px) {
+  .work-thread-page {
+    width: calc(100% - 32px);
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .work-thread-post {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+    padding: 16px 0;
+  }
+
+  .work-details {
+    margin-left: 44px;
+  }
+
+  .work-thread-line {
+    top: 34px;
+    bottom: -16px;
+    left: 17px;
+  }
+
+  .work-thread-post:not(.work-thread-post--root) .work-thread-rail::before {
+    top: -16px;
+    left: 17px;
+    height: 16px;
+  }
+
+  .work-thread-head {
+    min-height: 34px;
+  }
+
+  .work-thread-post--root h1 {
+    font-size: 1.35rem;
+  }
+
+  .work-thread-summary,
+  .work-thread-post--reply .work-thread-content > p {
+    font-size: 0.8rem;
+  }
+}

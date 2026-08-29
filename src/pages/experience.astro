@@ -1,16 +1,19 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageIntro from '../components/PageIntro.astro';
-import FeedEntry from '../components/FeedEntry.astro';
-import { experiences } from '../data/content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/layout/PageIntro.astro';
+import FeedEntry from '@/components/feed/FeedEntry.astro';
+import TimelineIndex from '@/components/layout/TimelineIndex.astro';
+import TimelineSection from '@/components/layout/TimelineSection.astro';
+import { experiences } from '@/lib/portfolio/timeline';
+import { groupEntriesByPeriod } from '@/lib/portfolio/utils';
 
-const groupedExperiences = experiences.reduce<Record<string, typeof experiences>>((groups, entry) => {
-  const year = entry.date.slice(0, 4);
-  (groups[year] ??= []).push(entry);
-  return groups;
-}, {});
-const experienceGroups = Object.entries(groupedExperiences).sort(([a], [b]) => b.localeCompare(a));
+const experienceGroups = groupEntriesByPeriod(experiences, (entry) => entry.date.slice(0, 4));
 const latestLabel = experiences[0]?.dateLabel ?? '—';
+const timelineGroups = experienceGroups.map(([year, entries]) => ({
+  id: `experience-${year}`,
+  label: year,
+  count: entries.length,
+}));
 ---
 
 <BaseLayout
@@ -25,31 +28,24 @@ const latestLabel = experiences[0]?.dateLabel ?? '—';
     description="活動の節目を、新しいものから順にまとめています。"
   />
   <div class="experience-layout">
-    <aside class="experience-index">
-      <p class="eyebrow">EXPERIENCE INDEX</p>
-      <p class="experience-index__latest"><span>LATEST</span><strong>{latestLabel}</strong></p>
-      <nav aria-label="年別の経歴">
-        {experienceGroups.map(([year, entries]) => (
-          <a href={`#experience-${year}`}>
-            <span>{year}</span>
-            <i aria-hidden="true"></i>
-            <strong>{String(entries.length).padStart(2, '0')}</strong>
-          </a>
-        ))}
-      </nav>
-      <p class="experience-index__total">全{experiences.length}件</p>
-    </aside>
+    <TimelineIndex
+      eyebrow="EXPERIENCE INDEX"
+      latestLabel={latestLabel}
+      groups={timelineGroups}
+      total={experiences.length}
+      navLabel="年別の経歴"
+    />
 
     <div class="experience-stream">
       {experienceGroups.map(([year, entries]) => (
-        <section class="experience-year" id={`experience-${year}`} aria-labelledby={`experience-${year}-heading`}>
-          <h2 class="experience-year__heading" id={`experience-${year}-heading`}>
-            <span>{year}</span><small>{entries.length}件</small>
-          </h2>
-          <div class="feed-list feed-list--timeline">
-            {entries.map((entry) => <FeedEntry entry={entry} />)}
-          </div>
-        </section>
+        <TimelineSection
+          id={`experience-${year}`}
+          headingId={`experience-${year}-heading`}
+          label={year}
+          count={entries.length}
+        >
+          {entries.map((entry) => <FeedEntry entry={entry} headingLevel={3} />)}
+        </TimelineSection>
       ))}
     </div>
   </div>

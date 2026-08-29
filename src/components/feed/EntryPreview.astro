@@ -1,0 +1,52 @@
+---
+import '@/styles/components/entry-preview.css';
+import type { FeedEntry } from '@/lib/portfolio/types';
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
+
+type Props = {
+  image: NonNullable<FeedEntry['image']>;
+  href?: string;
+  label: string;
+  sizes: string;
+  external?: boolean;
+  priority?: boolean;
+  className?: string;
+};
+
+const { image, href, label, sizes, external = false, priority = false, className } = Astro.props;
+const classes = ['ogp-preview', className];
+---
+
+{href ? (
+  <a
+    class:list={classes}
+    href={href}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noreferrer' : undefined}
+    aria-label={label}
+  >
+    <ResponsiveImage
+      src={image.src}
+      variants={image.variants}
+      alt={image.alt}
+      width={image.width}
+      height={image.height}
+      sizes={sizes}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : 'low'}
+    />
+  </a>
+) : (
+  <div class:list={classes}>
+    <ResponsiveImage
+      src={image.src}
+      variants={image.variants}
+      alt={image.alt}
+      width={image.width}
+      height={image.height}
+      sizes={sizes}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : 'low'}
+    />
+  </div>
+)}

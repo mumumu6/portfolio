@@ -15,21 +15,9 @@
     "href": "https://trap.jp/post/2974/",
     "linkLabel": "記事を読む",
     "image": {
-      "src": "/images/blog/trap-2974-1024.webp",
-      "width": 1024,
-      "height": 534,
-      "srcset": [
-        {
-          "src": "/images/blog/trap-2974-480.webp",
-          "width": 480
-        },
-        {
-          "src": "/images/blog/trap-2974-1024.webp",
-          "width": 1024
-        }
-      ],
+      "asset": "trap-2974",
       "source": "https://trap.jp/content/images/2026/07/----------2026-07-14-210106.png",
-      "transformVersion": 2,
+      "transformVersion": 5,
       "alt": "【完全無料】オンラインビンゴサイトを作りました！"
     }
   },
@@ -48,21 +36,9 @@
     "href": "https://trap.jp/post/2756/",
     "linkLabel": "記事を読む",
     "image": {
-      "src": "/images/blog/trap-2756-1024.webp",
-      "width": 1024,
-      "height": 683,
-      "srcset": [
-        {
-          "src": "/images/blog/trap-2756-480.webp",
-          "width": 480
-        },
-        {
-          "src": "/images/blog/trap-2756-1024.webp",
-          "width": 1024
-        }
-      ],
+      "asset": "trap-2756",
       "source": "https://trap.jp/content/images/2025/12/chatgpt-image-2025-12-14--23_49_39.png",
-      "transformVersion": 2,
+      "transformVersion": 5,
       "alt": "ネイティブアプリでoauthがしたい！"
     }
   },
@@ -79,21 +55,9 @@
     "href": "https://trap.jp/post/2712/",
     "linkLabel": "記事を読む",
     "image": {
-      "src": "/images/blog/trap-2712-1024.webp",
-      "width": 1024,
-      "height": 444,
-      "srcset": [
-        {
-          "src": "/images/blog/trap-2712-480.webp",
-          "width": 480
-        },
-        {
-          "src": "/images/blog/trap-2712-1024.webp",
-          "width": 1024
-        }
-      ],
+      "asset": "trap-2712",
       "source": "https://trap.jp/content/images/2025/10/----------2025-10-17-022935.png",
-      "transformVersion": 2,
+      "transformVersion": 5,
       "alt": "TeXからTypstへ変えた際にやったこと"
     }
   },
@@ -113,21 +77,9 @@
     "href": "https://trap.jp/post/2606/",
     "linkLabel": "記事を読む",
     "image": {
-      "src": "/images/blog/trap-2606-1024.webp",
-      "width": 1024,
-      "height": 544,
-      "srcset": [
-        {
-          "src": "/images/blog/trap-2606-480.webp",
-          "width": 480
-        },
-        {
-          "src": "/images/blog/trap-2606-1024.webp",
-          "width": 1024
-        }
-      ],
+      "asset": "trap-2606",
       "source": "https://trap.jp/content/images/2025/06/upload_a9817a7a3e7df8bd8735ac6c7f2a3c2e-1.jpg",
-      "transformVersion": 2,
+      "transformVersion": 5,
       "alt": "部内情報をAIでスマート検索！MCPを活用したAIチャットサービス「asQ」を作りました！"
     }
   },
@@ -146,21 +98,9 @@
     "href": "https://trap.jp/post/2502/",
     "linkLabel": "記事を読む",
     "image": {
-      "src": "/images/blog/trap-2502-1024.webp",
-      "width": 1024,
-      "height": 576,
-      "srcset": [
-        {
-          "src": "/images/blog/trap-2502-480.webp",
-          "width": 480
-        },
-        {
-          "src": "/images/blog/trap-2502-1024.webp",
-          "width": 1024
-        }
-      ],
+      "asset": "trap-2502",
       "source": "https://trap.jp/content/images/2025/03/----------2025-03-04-11.44.19-1.png",
-      "transformVersion": 2,
+      "transformVersion": 5,
       "alt": "サークル旅行のためだけにアプリをこしらえる人たち"
     }
   },
@@ -178,21 +118,9 @@
     "href": "https://trap.jp/post/2363/",
     "linkLabel": "記事を読む",
     "image": {
-      "src": "/images/blog/trap-2363-1024.webp",
-      "width": 1024,
-      "height": 587,
-      "srcset": [
-        {
-          "src": "/images/blog/trap-2363-480.webp",
-          "width": 480
-        },
-        {
-          "src": "/images/blog/trap-2363-1024.webp",
-          "width": 1024
-        }
-      ],
+      "asset": "trap-2363",
       "source": "https://trap.jp/content/images/2024/09/----------2024-09-15-19.44.14.png",
-      "transformVersion": 2,
+      "transformVersion": 5,
       "alt": "Web開発初心者4人組が1ヶ月でSNSを作るまで"
     }
   }

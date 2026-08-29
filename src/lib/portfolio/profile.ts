@@ -1,0 +1,9 @@
+export const profile = {
+  name: 'mumumu',
+  bio: 'Webサイトを作って遊んでいます。競プロや機械学習、Kaggleにも興味があります。',
+  affiliations: ['東京科学大学 情報理工学院', 'デジタル創作同好会 traP'],
+  links: [
+    { label: 'GitHub', icon: 'github', href: 'https://github.com/mumumu6' },
+    { label: 'X', icon: 'x', href: 'https://twitter.com/mumumu_no_mu66' },
+  ],
+};

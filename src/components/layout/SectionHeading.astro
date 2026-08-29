@@ -1,0 +1,21 @@
+---
+import '@/styles/components/section-heading.css';
+import '@/styles/components/eyebrow.css';
+
+type Props = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  href: string;
+};
+
+const { id, eyebrow, title, href } = Astro.props;
+---
+
+<header class="feed-heading">
+  <div>
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id={id}><a href={href}>{title}<span>.</span></a></h2>
+  </div>
+  <a class="section-more" href={href}>すべて見る →</a>
+</header>

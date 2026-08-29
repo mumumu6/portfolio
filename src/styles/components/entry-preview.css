@@ -1,0 +1,25 @@
+.ogp-preview {
+  position: relative;
+  width: min(100%, 630px);
+  display: block;
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: var(--surface-soft);
+  text-decoration: none;
+}
+
+.ogp-preview picture {
+  display: block;
+}
+
+.ogp-preview:hover {
+  border-color: var(--muted);
+}
+
+.ogp-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

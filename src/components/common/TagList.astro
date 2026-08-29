@@ -1,0 +1,16 @@
+---
+import '@/styles/components/tag-list.css';
+
+type Props = {
+  tags?: string[];
+  label?: string;
+};
+
+const { tags, label = 'タグ' } = Astro.props;
+---
+
+{tags && tags.length > 0 && (
+  <ul class="tag-list" aria-label={label}>
+    {tags.map((tag) => <li>{tag}</li>)}
+  </ul>
+)}

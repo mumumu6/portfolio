@@ -1,0 +1,7 @@
+.work-status {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}

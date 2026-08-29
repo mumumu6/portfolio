@@ -9,16 +9,16 @@
 
 The old Next.js site stays on Vercel as the 2024 archive. The current Astro site is generated completely at build time and deployed from `dist/`.
 
-## Current state (2026-08-09)
+## Current state (2026-08-29)
 
-- `mumumu6.net` resolves to Vercel (`76.76.21.21`) and serves the old Next.js site.
-- `2024.mumumu6.net` does not have a DNS record yet.
-- Authoritative DNS is hosted by ConoHa (`a.conoha-dns.com` / `b.conoha-dns.org`), not Cloudflare.
-- `wrangler deploy --dry-run` succeeds for the Astro build.
+- `mumumu6.net` serves the current Astro site through Cloudflare Workers Static Assets.
+- `2024.mumumu6.net` serves the archived Next.js site from Vercel through Cloudflare.
+- `wrangler.jsonc` contains the production route for `mumumu6.net/*`.
+- Updates to `main` are built and deployed by Cloudflare Workers Builds.
 
-Cloudflare Worker Custom Domains require an active Cloudflare zone. Do not add the `mumumu6.net` custom-domain route to `wrangler.jsonc` until the zone has been activated.
+## Migration record
 
-## Safe migration order
+The following sequence was used for the completed migration and is retained for rollback context.
 
 1. In the existing Vercel `homepage` project, add `2024.mumumu6.net` as a domain.
 2. In ConoHa DNS, add the exact CNAME value shown by Vercel for the `2024` host.
@@ -34,22 +34,22 @@ Cloudflare Worker Custom Domains require an active Cloudflare zone. Do not add t
 8. Attach `mumumu6.net` as a Worker Custom Domain. Cloudflare will replace the apex DNS record and provision the certificate.
 9. Check `/`, `/works/`, `/blog/`, and one nested SSG route before removing `mumumu6.net` from the old Vercel project.
 
-Do not remove `mumumu6.net` from Vercel before step 8 succeeds. Until then, rollback is simply keeping or restoring the apex A record to `76.76.21.21`.
+During the migration, `mumumu6.net` remained on Vercel until step 8 succeeded. The former rollback path was restoring the apex A record to `76.76.21.21`.
 
 ## Wrangler domain route
 
-After the Cloudflare zone is Active, add this to `wrangler.jsonc` and deploy:
+The active production route is managed in `wrangler.jsonc`:
 
 ```jsonc
 "routes": [
   {
-    "pattern": "mumumu6.net",
-    "custom_domain": true
+      "pattern": "mumumu6.net/*",
+      "zone_name": "mumumu6.net"
   }
 ]
 ```
 
-The Worker name in Cloudflare must match `name` in `wrangler.jsonc`: `mumumu6-portfolio`.
+The Worker name in Cloudflare must match `name` in `wrangler.jsonc`: `mumumu6-portfolio`. The migration steps above are retained as an operational record; they are no longer pending setup work.
 
 ## Automatic deployment
 

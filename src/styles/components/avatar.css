@@ -1,0 +1,68 @@
+.avatar {
+  flex: none;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface-soft);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.avatar--large {
+  width: 104px;
+  height: 104px;
+  border: 5px solid var(--surface);
+  transform: translateY(-52px);
+}
+
+.avatar--large img {
+  object-position: center 30%;
+}
+
+.avatar--medium {
+  width: 38px;
+  height: 38px;
+}
+
+.avatar--small {
+  width: 30px;
+  height: 30px;
+}
+
+.avatar--chatgpt,
+.avatar--codex {
+  background: #ffffff;
+}
+
+.avatar--chatgpt img {
+  padding: 6px;
+  object-fit: contain;
+}
+
+.avatar--chatgpt.avatar--small img {
+  padding: 4px;
+}
+
+.avatar--codex img {
+  transform: scale(1.24);
+}
+@media (max-width: 760px) {
+  .avatar--large {
+    width: 90px;
+    height: 90px;
+    transform: translateY(-45px);
+  }
+}
+
+@media (max-width: 480px) {
+  .avatar--medium {
+    width: 34px;
+    height: 34px;
+  }
+}

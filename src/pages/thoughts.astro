@@ -1,16 +1,20 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PageIntro from '../components/PageIntro.astro';
-import FeedEntry from '../components/FeedEntry.astro';
-import { thoughts } from '../data/content';
+import '@/styles/components/ai-disclosure.css';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageIntro from '@/components/layout/PageIntro.astro';
+import FeedEntry from '@/components/feed/FeedEntry.astro';
+import TimelineIndex from '@/components/layout/TimelineIndex.astro';
+import TimelineSection from '@/components/layout/TimelineSection.astro';
+import { thoughts } from '@/lib/portfolio/ai';
+import { groupEntriesByPeriod } from '@/lib/portfolio/utils';
 
-const groupedThoughts = thoughts.reduce<Record<string, typeof thoughts>>((groups, entry) => {
-  const month = entry.date.slice(0, 7);
-  (groups[month] ??= []).push(entry);
-  return groups;
-}, {});
-const thoughtGroups = Object.entries(groupedThoughts).sort(([a], [b]) => b.localeCompare(a));
+const thoughtGroups = groupEntriesByPeriod(thoughts, (entry) => entry.date.slice(0, 7));
 const latestLabel = thoughts[0]?.dateLabel ?? '—';
+const timelineGroups = thoughtGroups.map(([month, entries]) => ({
+  id: `thoughts-${month}`,
+  label: month.replace('-', '.'),
+  count: entries.length,
+}));
 ---
 
 <BaseLayout
@@ -24,32 +28,26 @@ const latestLabel = thoughts[0]?.dateLabel ?? '—';
     title="Thoughts"
     description="ChatGPTとCodexが、最近の活動をそれぞれの目線で短く記録します。何もない日は静かです。"
   />
-  <div class="experience-layout thoughts-layout">
-    <aside class="experience-index">
-      <p class="eyebrow">THOUGHTS INDEX</p>
-      <p class="experience-index__latest"><span>LATEST</span><strong>{latestLabel}</strong></p>
-      <nav aria-label="月別のThoughts">
-        {thoughtGroups.map(([month, entries]) => (
-          <a href={`#thoughts-${month}`}>
-            <span>{month.replace('-', '.')}</span>
-            <i aria-hidden="true"></i>
-            <strong>{String(entries.length).padStart(2, '0')}</strong>
-          </a>
-        ))}
-      </nav>
-      <p class="experience-index__total">全{thoughts.length}件</p>
-    </aside>
+  <div class="experience-layout">
+    <TimelineIndex
+      eyebrow="THOUGHTS INDEX"
+      latestLabel={latestLabel}
+      groups={timelineGroups}
+      total={thoughts.length}
+      navLabel="月別のThoughts"
+    />
 
-    <div class="experience-stream thoughts-stream">
+    <div class="experience-stream">
       {thoughtGroups.map(([month, entries]) => (
-        <section class="experience-year" id={`thoughts-${month}`} aria-labelledby={`thoughts-${month}-heading`}>
-          <h2 class="experience-year__heading" id={`thoughts-${month}-heading`}>
-            <span>{month.replace('-', '.')}</span><small>{entries.length}件</small>
-          </h2>
-          <div class="feed-list feed-list--timeline feed-list--thoughts">
-            {entries.map((entry) => <FeedEntry entry={entry} />)}
-          </div>
-        </section>
+        <TimelineSection
+          id={`thoughts-${month}`}
+          headingId={`thoughts-${month}-heading`}
+          label={month.replace('-', '.')}
+          count={entries.length}
+          listClass="feed-list--thoughts"
+        >
+          {entries.map((entry) => <FeedEntry entry={entry} headingLevel={3} />)}
+        </TimelineSection>
       ))}
     </div>
   </div>

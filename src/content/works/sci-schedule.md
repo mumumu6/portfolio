@@ -8,15 +8,10 @@ tags:
   - Go
   - Python
 cover:
-  src: /images/works/sci-schedule.webp
+  src: ./assets/sci-schedule.webp
   alt: 科学大試験リンク生成サイトの検索画面
   width: 1919
   height: 798
-  srcset:
-    - src: /images/works/sci-schedule-480.webp
-      width: 480
-    - src: /images/works/sci-schedule-960.webp
-      width: 960
 gallery: []
 links:
   - label: サイトを見る（更新停止中）

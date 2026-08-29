@@ -1,10 +1,18 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
-import Avatar from '../../components/Avatar.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { authorNames, formatReplyDate, resolveReplyTo } from '../../data/authors';
-import { works as workEntries } from '../../data/content';
+import '@/styles/components/work-detail.css';
+import '@/styles/components/article-prose.css';
+import '@/styles/components/article-nav.css';
+import '@/styles/components/eyebrow.css';
+import '@/styles/components/work-status.css';
+import Avatar from '@/components/common/Avatar.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro';
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
+import { authorNames, formatReplyDate, resolveReplyTo } from '@/lib/portfolio/authors';
+import { statusLabels } from '@/lib/portfolio/constants';
+import { works as workEntries } from '@/lib/portfolio/works';
 
 export async function getStaticPaths() {
   const works = await getCollection('works');
@@ -17,8 +25,8 @@ const { Content } = await render(work);
 const data = work.data;
 const publishedAt = data.publishedAt.toISOString().slice(0, 10);
 const dateLabel = publishedAt.slice(0, 7).replace('-', '.');
-const statusLabels = { active: '公開中', wip: '開発中', paused: '更新停止中', archived: '旧版' } as const;
 const statusLabel = statusLabels[data.status];
+const coverImageSrc = data.cover.src.src;
 const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? [];
 const makerReplies = [
   ...data.comments.map((comment) => ({ ...comment, date: comment.date ?? data.publishedAt })),
@@ -48,7 +56,7 @@ const threadItems = [
 <BaseLayout
   title={`${data.title} — Works — mumumu`}
   description={data.summary}
-  image={data.cover.src}
+  image={coverImageSrc}
   imageAlt={data.cover.alt}
   imageWidth={data.cover.width}
   imageHeight={data.cover.height}
@@ -75,16 +83,15 @@ const threadItems = [
         </header>
         <h1 id="work-title">{data.title}</h1>
         <p class="work-thread-summary">{data.summary}</p>
-        <img
-          class="work-thread-cover"
+        <ResponsiveImage
+          className="work-thread-cover"
           src={data.cover.src}
-          srcset={data.cover.srcset?.map((source) => `${source.src} ${source.width}w`).join(', ')}
           alt={data.cover.alt}
           width={data.cover.width}
           height={data.cover.height}
           sizes="(max-width: 760px) calc(100vw - 92px), 680px"
-          decoding="async"
-          fetchpriority="high"
+          loading="eager"
+          fetchPriority="high"
         />
         <footer class="work-thread-meta">
           <span>{data.tags.join(' / ')}</span>
@@ -94,13 +101,7 @@ const threadItems = [
             {data.links.map((link) => {
               const hostname = new URL(link.href).hostname;
               return (
-                <a href={link.href} target="_blank" rel="noreferrer">
-                  <span>
-                    <strong>{link.label}</strong>
-                    <small>{hostname}</small>
-                  </span>
-                  <span class="work-thread-links__arrow" aria-hidden="true">↗</span>
-                </a>
+                <ExternalLinkCard href={link.href} label={link.label} host={hostname} className="external-card-link--work" />
               );
             })}
           </nav>
@@ -113,7 +114,7 @@ const threadItems = [
       return (
         <section
           class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--ai': item.kind === 'ai' }]}
-          aria-label={item.kind === 'ai' ? `${authorNames[item.author]}のコメント` : `mumumuの${item.label}`}
+          aria-label={item.kind === 'ai' ? `${authorNames[item.author]}のコメント ${index + 1}` : `mumumuの${item.label} ${index + 1}`}
         >
           <div class="work-thread-rail">
             <Avatar author={item.author} />
@@ -156,7 +157,7 @@ const threadItems = [
 
         {data.gallery.map((image) => (
           <figure class="work-thread-gallery">
-            <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
+            <ResponsiveImage src={image.src} alt={image.alt} width={image.width} height={image.height} />
             {image.caption && <figcaption>{image.caption}</figcaption>}
           </figure>
         ))}

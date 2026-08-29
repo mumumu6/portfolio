@@ -6,10 +6,12 @@ import sharp from 'sharp';
 
 const RSS_URL = 'https://trap.jp/author/mumumu/rss/';
 const MAX_POSTS = 20;
-const IMAGE_TRANSFORM_VERSION = 2;
+const IMAGE_TRANSFORM_VERSION = 5;
+const BLOG_IMAGE_WIDTHS = [480, 960, 1440];
+const BLOG_IMAGE_FORMATS = ['avif', 'webp'];
 const root = fileURLToPath(new URL('..', import.meta.url));
 const outputFile = path.join(root, 'src/data/generated/blog.json');
-const imageDirectory = path.join(root, 'public/images/blog');
+const imageDirectory = path.join(root, 'src/assets/images/blog');
 
 const asArray = (value) => value == null ? [] : Array.isArray(value) ? value : [value];
 const asText = (value) => typeof value === 'string' ? value : String(value ?? '');
@@ -75,23 +77,20 @@ const downloadImage = async (url, id) => {
   if (!response.ok) throw new Error(`OGP image fetch failed (${response.status}): ${url}`);
 
   const source = Buffer.from(await response.arrayBuffer());
-  const smallName = `trap-${id}-480.webp`;
-  const largeName = `trap-${id}-1024.webp`;
   const pipeline = sharp(source).rotate();
+  const asset = `trap-${id}`;
 
-  const [, large] = await Promise.all([
-    pipeline.clone().resize({ width: 480, withoutEnlargement: true }).webp({ quality: 84, effort: 5 }).toFile(path.join(imageDirectory, smallName)),
-    pipeline.clone().resize({ width: 1024, withoutEnlargement: true }).webp({ quality: 88, effort: 5 }).toFile(path.join(imageDirectory, largeName)),
-  ]);
+  await Promise.all(BLOG_IMAGE_WIDTHS.flatMap((width) => BLOG_IMAGE_FORMATS.map(async (format) => {
+    const filename = `${asset}-${width}.${format}`;
+    const resized = pipeline.clone().resize({ width, withoutEnlargement: true });
+    const encoded = format === 'avif'
+      ? resized.avif({ quality: 55, effort: 5 })
+      : resized.webp({ quality: width === 1440 ? 88 : 84, effort: 5 });
+    await encoded.toFile(path.join(imageDirectory, filename));
+  })));
 
   return {
-    src: `/images/blog/${largeName}`,
-    width: large.width,
-    height: large.height,
-    srcset: [
-      { src: `/images/blog/${smallName}`, width: 480 },
-      { src: `/images/blog/${largeName}`, width: 1024 },
-    ],
+    asset,
     source: url,
     transformVersion: IMAGE_TRANSFORM_VERSION,
   };
@@ -107,12 +106,6 @@ const feed = parser.parse(await response.text());
 const items = asArray(feed?.rss?.channel?.item).slice(0, MAX_POSTS);
 const previousPosts = await readPreviousPosts();
 const previousById = new Map(previousPosts.map((post) => [post.id, post]));
-
-const withImageDimensions = async (image) => {
-  if (image.width && image.height) return image;
-  const metadata = await sharp(path.join(root, 'public', image.src.replace(/^\//, ''))).metadata();
-  return { ...image, width: metadata.width, height: metadata.height };
-};
 
 await mkdir(path.dirname(outputFile), { recursive: true });
 await mkdir(imageDirectory, { recursive: true });
@@ -132,12 +125,13 @@ for (const item of items) {
   let image;
 
   if (imageUrl) {
-    const expectedFiles = [`trap-${postId}-480.webp`, `trap-${postId}-1024.webp`];
+    const expectedFiles = BLOG_IMAGE_WIDTHS.flatMap((width) =>
+      BLOG_IMAGE_FORMATS.map((format) => `trap-${postId}-${width}.${format}`));
     const existingFiles = new Set(await readdir(imageDirectory));
     const canReuse = previousImage?.source === imageUrl
       && previousImage?.transformVersion === IMAGE_TRANSFORM_VERSION
       && expectedFiles.every((file) => existingFiles.has(file));
-    const generated = canReuse ? await withImageDimensions(previousImage) : await downloadImage(imageUrl, postId);
+    const generated = canReuse ? previousImage : await downloadImage(imageUrl, postId);
     image = { ...generated, alt: cleanText(item.title) };
   }
 
@@ -160,9 +154,13 @@ for (const item of items) {
   });
 }
 
-const activeImages = new Set(posts.flatMap((post) => post.image?.srcset?.map((source) => path.basename(source.src)) ?? []));
+const activeImages = new Set(posts
+  .map((post) => post.image?.asset)
+  .filter(Boolean)
+  .flatMap((asset) => BLOG_IMAGE_WIDTHS.flatMap((width) =>
+    BLOG_IMAGE_FORMATS.map((format) => `${asset}-${width}.${format}`))));
 for (const file of await readdir(imageDirectory)) {
-  if (/^trap-[a-zA-Z0-9-]+-(480|1024)\.webp$/.test(file) && !activeImages.has(file)) {
+  if (/^trap-[a-zA-Z0-9-]+-\d+\.(?:avif|webp)$/.test(file) && !activeImages.has(file)) {
     await rm(path.join(imageDirectory, file));
   }
 }

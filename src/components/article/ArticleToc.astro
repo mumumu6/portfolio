@@ -1,0 +1,48 @@
+---
+type Heading = {
+  depth: number;
+  slug: string;
+  text: string;
+};
+
+type Props = {
+  headings: Heading[];
+  mode: 'mobile' | 'desktop';
+};
+
+const { headings, mode } = Astro.props;
+---
+
+{headings.length > 2 && (
+  mode === 'mobile' ? (
+    <details class="article-toc-mobile">
+      <summary>
+        <span>目次</span>
+        <small>{headings.length}項目</small>
+      </summary>
+      <nav aria-label="目次">
+        <ol>
+          {headings.map((heading) => (
+            <li class:list={[`article-toc--depth-${heading.depth}`]}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </details>
+  ) : (
+    <nav class="article-toc" aria-label="目次">
+      <div class="article-toc__head">
+        <strong>目次</strong>
+        <span data-reading-progress-label>0%</span>
+      </div>
+      <ol>
+        {headings.map((heading) => (
+          <li class:list={[`article-toc--depth-${heading.depth}`]}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+)}

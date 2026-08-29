@@ -1,0 +1,45 @@
+.work-note-preview {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 9px;
+  margin-top: 12px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.work-note-preview > span {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+}
+
+.work-note-preview strong {
+  color: var(--text-soft);
+  font-size: 0.68rem;
+}
+
+.work-note-preview > span > span {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 480px) {
+  .feed-list--compact .ogp-preview--work {
+    width: 100%;
+    grid-column: 1 / -1;
+    grid-row: auto;
+    margin-top: 10px;
+  }
+
+  .feed-list--compact .work-entry .entry-content {
+    display: block;
+  }
+
+  .work-note-preview {
+    margin-top: 13px;
+  }
+}

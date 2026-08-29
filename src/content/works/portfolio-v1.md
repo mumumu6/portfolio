@@ -10,17 +10,12 @@ tags:
   - Ghost CMS
   - Docker
 cover:
-  src: /images/works/portfolio.webp
+  src: ./assets/portfolio.webp
   alt: Portfolio v1のプロフィール画面
   width: 1910
   height: 789
-  srcset:
-    - src: /images/works/portfolio-480.webp
-      width: 480
-    - src: /images/works/portfolio-960.webp
-      width: 960
 gallery:
-  - src: /images/works/portfolio1.webp
+  - src: ./assets/portfolio1.webp
     alt: Portfolio v1のトップページ
     width: 1893
     height: 816

@@ -1,0 +1,59 @@
+---
+import '@/styles/components/work-entry.css';
+import '@/styles/components/work-status.css';
+import EntryFrame from '@/components/feed/EntryFrame.astro';
+import EntryPreview from '@/components/feed/EntryPreview.astro';
+import Avatar from '@/components/common/Avatar.astro';
+import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro';
+import TagList from '@/components/common/TagList.astro';
+import { statusLabels } from '@/lib/portfolio/constants';
+import type { WorkEntry as WorkEntryType } from '@/lib/portfolio/types';
+
+type Props = {
+  entry: WorkEntryType;
+  headingLevel?: 2 | 3;
+  priority?: boolean;
+};
+
+const { entry, headingLevel = 2, priority = false } = Astro.props;
+const Heading = headingLevel === 3 ? 'h3' : 'h2';
+const statusLabel = statusLabels[entry.status];
+---
+
+<EntryFrame author="mumumu" className="work-entry" showAuthorClass={false} showLine={false}>
+  <header class="entry-head">
+    <div class="entry-author">
+      <strong>mumumu</strong>
+      <span aria-hidden="true">·</span>
+      <time datetime={entry.date}>{entry.dateLabel}</time>
+      <span aria-hidden="true">·</span>
+      <span class:list={['work-status', `work-status--${entry.status}`]}>{statusLabel}</span>
+    </div>
+  </header>
+
+  <Heading class="entry-title">
+    <a href={entry.href}>{entry.title}</a>
+  </Heading>
+  <p class="entry-body">{entry.body}</p>
+
+  <EntryPreview
+    image={entry.image}
+    href={entry.href}
+    label={`${entry.title}の詳細を見る`}
+    sizes="(max-width: 480px) calc(100vw - 92px), (max-width: 760px) 145px, 280px"
+    priority={priority}
+    className="ogp-preview--work"
+  />
+
+  <TagList tags={entry.tags} label="使用技術" />
+
+  <div class="work-note-preview">
+    <Avatar author="mumumu" size="small" />
+    <span>
+      <strong>{entry.comment.label}{entry.comment.date && ` · ${entry.comment.date.replaceAll('-', '.')}`}</strong>
+      <span>{entry.comment.body}</span>
+    </span>
+  </div>
+
+  {entry.replies && entry.replies.length > 0 && <ReplyDisclosure replies={entry.replies} />}
+</EntryFrame>

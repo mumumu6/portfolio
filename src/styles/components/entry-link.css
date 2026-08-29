@@ -1,0 +1,12 @@
+.entry-link {
+  display: inline-flex;
+  margin-top: 11px;
+  color: var(--link);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.entry-link:hover {
+  text-decoration: underline;
+}

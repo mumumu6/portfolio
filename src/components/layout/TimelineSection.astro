@@ -1,0 +1,22 @@
+---
+import '@/styles/components/timeline.css';
+
+type Props = {
+  id: string;
+  headingId: string;
+  label: string;
+  count: number;
+  listClass?: string;
+};
+
+const { id, headingId, label, count, listClass } = Astro.props;
+---
+
+<section class="timeline-group" id={id} aria-labelledby={headingId}>
+  <h2 class="timeline-group__heading" id={headingId}>
+    <span>{label}</span><small>{count}件</small>
+  </h2>
+  <div class:list={['feed-list', 'feed-list--timeline', listClass]}>
+    <slot />
+  </div>
+</section>

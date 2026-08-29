@@ -1,33 +1,40 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-const blog = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
+const blogs = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    tags: z.array(z.string()).optional(),
+    cover: image(),
+    coverAlt: z.string(),
+    coverWidth: z.number().int().positive(),
+    coverHeight: z.number().int().positive(),
+  }),
 });
 
-const workImage = z.object({
-  src: z.string(),
+const workImage = ({ image }: SchemaContext) => z.object({
+  src: image(),
   alt: z.string(),
-  width: z.number().int().positive(),
-  height: z.number().int().positive(),
-  srcset: z.array(z.object({
-    src: z.string(),
-    width: z.number().int().positive(),
-  })).optional(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
   caption: z.string().optional(),
 });
 
 const works = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/works' }),
-  schema: z.object({
+  schema: (context) => z.object({
     title: z.string(),
     summary: z.string(),
     publishedAt: z.coerce.date(),
     status: z.enum(['active', 'wip', 'paused', 'archived']),
     tags: z.array(z.string()),
-    cover: workImage,
-    gallery: z.array(workImage).default([]),
+    cover: workImage(context),
+    gallery: z.array(workImage(context)).default([]),
     links: z.array(z.object({
       label: z.string(),
       href: z.string(),
@@ -42,4 +49,4 @@ const works = defineCollection({
   }),
 });
 
-export const collections = { blog, works };
+export const collections = { blogs, works };

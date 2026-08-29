@@ -1,0 +1,13 @@
+.article-back {
+  display: inline-flex;
+  margin-bottom: 24px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.article-back:hover {
+  color: var(--link);
+}

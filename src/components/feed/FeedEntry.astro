@@ -1,0 +1,105 @@
+---
+import EntryFrame from '@/components/feed/EntryFrame.astro';
+import EntryPreview from '@/components/feed/EntryPreview.astro';
+import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro';
+import TagList from '@/components/common/TagList.astro';
+import '@/styles/components/entry-link.css';
+import { authorNames } from '@/lib/portfolio/authors';
+import type { FeedEntry as FeedEntryType } from '@/lib/portfolio/types';
+
+type Props = {
+  entry: FeedEntryType;
+  showReplies?: boolean;
+  headingLevel?: 2 | 3;
+  priority?: boolean;
+};
+
+const { entry, showReplies = true, headingLevel = 2, priority = false } = Astro.props;
+const Heading = headingLevel === 3 ? 'h3' : 'h2';
+
+const external = entry.href?.startsWith('http');
+const sourceHref = entry.sourceHref ?? entry.href;
+const sourceExternal = sourceHref?.startsWith('http');
+const sourceUrl = sourceHref
+  ? sourceExternal
+    ? new URL(sourceHref)
+    : new URL(sourceHref, 'https://mumumu6.net')
+  : undefined;
+const sourceLabel = sourceUrl
+  ? entry.sourceLabel ?? `${sourceUrl.hostname.replace(/^www\./, '')}${sourceUrl.pathname.replace(/\/$/, '')}`
+  : undefined;
+const imageSizes = entry.kind === 'blog'
+  ? '(max-width: 480px) calc(100vw - 76px), (max-width: 760px) calc(100vw - 82px), 280px'
+  : '(max-width: 480px) 92px, (max-width: 760px) 145px, 280px';
+---
+
+<EntryFrame author={entry.author} className={`feed-entry--${entry.kind}`}>
+  <header class="entry-head">
+    <div class="entry-author">
+      <strong>{authorNames[entry.author]}</strong>
+      <span aria-hidden="true">·</span>
+      <time datetime={entry.date}>{entry.dateLabel}</time>
+      {entry.kind === 'blog' && entry.readingMinutes && (
+        <><span aria-hidden="true">·</span><span>約{entry.readingMinutes}分</span></>
+      )}
+    </div>
+  </header>
+
+  {entry.title && (
+    entry.href ? (
+      <Heading class="entry-title">
+        <a
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
+          {entry.title}
+        </a>
+      </Heading>
+    ) : (
+      <Heading class="entry-title">{entry.title}</Heading>
+    )
+  )}
+
+  <p class="entry-body">{entry.body}</p>
+
+  {sourceHref && sourceLabel && (
+    <a
+      class="entry-source"
+      href={sourceHref}
+      target={sourceExternal ? '_blank' : undefined}
+      rel={sourceExternal ? 'noreferrer' : undefined}
+    >
+      <span aria-hidden="true">{sourceExternal ? '↗' : '→'}</span> {sourceLabel}
+    </a>
+  )}
+
+  {entry.image && (
+    <EntryPreview
+      image={entry.image}
+      href={entry.href}
+      label={`${entry.title ?? '記事'}を開く`}
+      sizes={imageSizes}
+      external={external}
+      priority={priority}
+      className={`ogp-preview--${entry.kind}`}
+    />
+  )}
+
+  <TagList tags={entry.tags} />
+
+  {entry.href && !entry.image && (
+    <a
+      class="entry-link"
+      href={entry.href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noreferrer' : undefined}
+    >
+      {entry.linkLabel ?? '詳しく見る'}<span aria-hidden="true"> →</span>
+    </a>
+  )}
+
+  {showReplies && entry.replies && entry.replies.length > 0 && (
+    <ReplyDisclosure replies={entry.replies} label={entry.kind === 'thought' ? '返信' : 'AIのコメント'} />
+  )}
+</EntryFrame>

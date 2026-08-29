@@ -8,7 +8,7 @@
 
 - Astroのソースコード
 - traP author RSSから同期した`src/data/generated/blog.json`
-- WebPへ変換済みの`public/images/blog/`
+- AVIF・WebPへ変換済みの`src/assets/images/blog/`
 - レビュー済みAIコンテンツの`src/data/generated/ai-content.json`
 
 生ログ、プロンプト、未レビューの生成結果、APIキーは置きません。
@@ -27,7 +27,7 @@ public repositoryの`Sync blog` workflowを毎日一回実行します。
 
 1. `https://trap.jp/author/mumumu/rss/`を取得
 2. 最新記事のメタデータとOGP画像URLを抽出
-3. OGPを480px・1024pxのWebPへ変換
+3. OGPを480px・960px・1440pxのAVIFとWebPへ変換し、`src/assets/images/blog/`へ保存
 4. 型チェックと本番ビルドを実行
 5. 差分がある場合だけ`automation/blog-sync` PRを作成・更新
 

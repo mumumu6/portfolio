@@ -1,0 +1,110 @@
+.article-prose {
+  min-width: 0;
+  color: var(--text-soft);
+  font-size: 0.93rem;
+  line-height: 1.95;
+}
+
+.article-prose > :first-child {
+  margin-top: 0;
+}
+
+.article-prose h2,
+.article-prose h3,
+.article-prose h4 {
+  color: var(--text);
+  font-family: var(--font-display);
+  scroll-margin-top: 78px;
+  letter-spacing: -0.035em;
+}
+
+.article-prose h2 {
+  margin: 2.8em 0 0.85em;
+  padding-bottom: 0.38em;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.article-prose h3 {
+  margin: 2.2em 0 0.65em;
+  font-size: 1.2rem;
+}
+
+.article-prose h4 {
+  margin: 1.8em 0 0.55em;
+  font-size: 1rem;
+}
+
+.article-prose p,
+.article-prose ul,
+.article-prose ol,
+.article-prose blockquote,
+.article-prose pre,
+.article-prose hr,
+.article-prose table {
+  margin-block: 1.2em;
+}
+
+.article-prose a {
+  color: var(--link);
+  font-weight: 600;
+}
+
+.article-prose blockquote {
+  margin-inline: 0;
+  padding: 10px 14px;
+  border-left: 2px solid var(--line-strong);
+  background: var(--surface-soft);
+  color: var(--muted);
+}
+
+.article-prose pre {
+  overflow-x: auto;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--code-bg);
+  color: var(--code-text);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.article-prose :not(pre) > code {
+  padding: 0.13em 0.34em;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface-soft);
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+.article-prose img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.8em auto;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+}
+
+.article-prose hr {
+  height: 1px;
+  border: 0;
+  background: var(--line);
+}
+
+.article-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.article-prose th,
+.article-prose td {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  text-align: left;
+}

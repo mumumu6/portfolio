@@ -19,14 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: jdx/mise-action@v4
+      - uses: pnpm/action-setup@v6
         with:
-          version: 11.17.0
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: pnpm
+          cache: true
 
       - run: pnpm ci
       - run: pnpm sync:blog
@@ -37,7 +33,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- src/data/generated/blog.json public/images/blog; then
+          if git diff --quiet -- src/data/generated/blog.json src/assets/images/blog; then
             echo "No blog updates."
             exit 0
           fi
@@ -46,7 +42,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$branch"
-          git add src/data/generated/blog.json public/images/blog
+          git add src/data/generated/blog.json src/assets/images/blog
           git commit -m "chore: sync blog posts"
           git push --force origin "$branch"
 
@@ -55,5 +51,5 @@ jobs:
               --base "${{ github.event.repository.default_branch }}" \
               --head "$branch" \
               --title "chore: sync blog posts" \
-              --body "traPのauthor RSSから記事情報とOGP画像を同期しました。画像は静的WebPへ変換済みです。"
+              --body "traPのauthor RSSから記事情報とOGP画像を同期しました。画像は静的AVIF・WebPへ変換済みです。"
           fi

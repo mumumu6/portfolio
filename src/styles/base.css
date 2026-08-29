@@ -1,0 +1,158 @@
+@import '@fontsource/ibm-plex-sans-jp/400.css';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/600.css';
+@import '@fontsource/space-grotesk/700.css';
+
+:root {
+  --font-body: "IBM Plex Sans JP", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", "IBM Plex Sans JP", ui-sans-serif, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --surface-soft: #f5f7f9;
+  --text: #111820;
+  --text-soft: #34404b;
+  --muted: #687480;
+  --faint: #929ca6;
+  --line: #d9e0e6;
+  --line-strong: #bcc6cf;
+  --link: #246b9e;
+  --accent: #18232d;
+  --accent-contrast: #ffffff;
+  --chatgpt: #187b62;
+  --chatgpt-soft: #e8f4f0;
+  --codex: #5068d8;
+  --codex-soft: #edf0ff;
+  --warning: #a97125;
+  --code-bg: #080c11;
+  --code-text: #e7edf2;
+  --avatar-surface: #ffffff;
+  --site-width: 820px;
+  --wide-width: 1240px;
+  --wide-content-width: 1048px;
+  --header-height: 58px;
+}
+
+:root[data-theme='dark'] {
+  --bg: #090d12;
+  --surface: #0d1218;
+  --surface-soft: #121920;
+  --text: #edf2f6;
+  --text-soft: #cbd3da;
+  --muted: #87929d;
+  --faint: #65717c;
+  --line: #222d37;
+  --line-strong: #34414d;
+  --link: #8ec9f2;
+  --accent: #edf2f6;
+  --accent-contrast: #0b1015;
+  --chatgpt: #69c9a8;
+  --chatgpt-soft: #11251f;
+  --codex: #a7b4ff;
+  --codex-soft: #171d36;
+  --warning: #d6a35d;
+  --code-bg: #080c11;
+  --code-text: #e7edf2;
+  --avatar-surface: #ffffff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--text) 3.5%, transparent), transparent 28%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.site-shell {
+  width: min(100%, var(--site-width));
+  min-height: calc(100vh - var(--header-height));
+  margin: 0 auto;
+  overflow: clip;
+  border-inline: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  view-transition-name: page-content;
+}
+.site-shell--wide {
+  width: min(100%, var(--wide-width));
+  overflow: visible;
+}
+@media (max-width: 1099px) {
+  .site-shell--wide {
+    width: min(100%, var(--site-width));
+    overflow: clip;
+  }
+}

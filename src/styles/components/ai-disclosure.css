@@ -1,0 +1,21 @@
+.ai-disclosure {
+  padding: 20px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.ai-disclosure strong {
+  color: var(--text-soft);
+}
+
+.ai-disclosure p {
+  margin: 4px 0 0;
+}
+@media (max-width: 760px) {
+  .ai-disclosure {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}

@@ -1,9 +1,11 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import ProfileHeader from '../components/ProfileHeader.astro';
-import FeedEntry from '../components/FeedEntry.astro';
-import WorkEntry from '../components/WorkEntry.astro';
-import { blogPosts, works } from '../data/content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProfileHeader from '@/components/profile/ProfileHeader.astro';
+import FeedEntry from '@/components/feed/FeedEntry.astro';
+import WorkEntry from '@/components/feed/WorkEntry.astro';
+import SectionHeading from '@/components/layout/SectionHeading.astro';
+import { blogPosts } from '@/lib/portfolio/blogs';
+import { works } from '@/lib/portfolio/works';
 ---
 
 <BaseLayout
@@ -13,31 +15,19 @@ import { blogPosts, works } from '../data/content';
 >
   <ProfileHeader />
 
-  <section class="feed-section" aria-labelledby="works-heading">
-    <header class="feed-heading feed-heading--compact">
-      <div>
-        <p class="eyebrow">SELECTED PROJECTS</p>
-        <h2 id="works-heading"><a href="/works/">Works<span>.</span></a></h2>
-      </div>
-      <a class="section-more" href="/works/">すべて見る →</a>
-    </header>
+  <section aria-labelledby="works-heading">
+    <SectionHeading id="works-heading" eyebrow="SELECTED PROJECTS" title="Works" href="/works/" />
 
     <div class="feed-list feed-list--compact">
-      {works.slice(0, 2).map((entry, index) => <WorkEntry entry={entry} priority={index === 0} />)}
+      {works.slice(0, 2).map((entry, index) => <WorkEntry entry={entry} headingLevel={3} priority={index === 0} />)}
     </div>
   </section>
 
-  <section class="feed-section" aria-labelledby="blog-heading">
-    <header class="feed-heading feed-heading--compact feed-heading--blog">
-      <div>
-        <p class="eyebrow">LATEST WRITING</p>
-        <h2 id="blog-heading"><a href="/blog/">Blog<span>.</span></a></h2>
-      </div>
-      <a class="section-more" href="/blog/">すべて見る →</a>
-    </header>
+  <section aria-labelledby="blog-heading">
+    <SectionHeading id="blog-heading" eyebrow="LATEST WRITING" title="Blog" href="/blog/" />
 
     <div class="feed-list feed-list--compact">
-      {blogPosts.slice(0, 3).map((entry) => <FeedEntry entry={entry} />)}
+      {blogPosts.slice(0, 3).map((entry) => <FeedEntry entry={entry} headingLevel={3} />)}
     </div>
   </section>
 </BaseLayout>
