@@ -1,50 +1,67 @@
-img[data-progressive-image] {
+picture[data-progressive-image] {
+  position: relative;
+  display: block;
+  overflow: hidden;
   background-color: var(--surface-soft);
-  transition: opacity 180ms ease;
 }
 
-html.js img[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error']) {
+picture[data-progressive-image]::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
   background-image: linear-gradient(
     105deg,
     transparent 22%,
-    color-mix(in srgb, var(--text) 10%, transparent) 42%,
+    color-mix(in srgb, var(--text) 18%, transparent) 46%,
+    color-mix(in srgb, var(--surface) 72%, transparent) 52%,
     transparent 62%
   );
-  background-size: 220% 100%;
-  opacity: 0.68;
-  animation: image-skeleton 1.35s ease-in-out infinite;
+  background-size: 300% 100%;
+  opacity: 0;
+  transition: opacity 260ms ease;
 }
 
-img[data-progressive-image][data-image-state='loaded'] {
-  background-image: none;
-  opacity: 1;
+html.js picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error'])::before {
+  opacity: 0.82;
+  animation: image-skeleton 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1;
+}
+
+html.js picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error']) > img[data-progressive-image] {
+  opacity: 0;
+}
+
+picture[data-progressive-image] > img[data-progressive-image] {
+  position: relative;
+  z-index: 0;
+  transition: opacity 260ms ease;
+}
+
+picture[data-progressive-image][data-image-state='loaded']::before,
+picture[data-progressive-image][data-image-state='error']::before {
+  opacity: 0;
   animation: none;
 }
 
-img[data-progressive-image][data-image-state='error'] {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    transparent 0 10px,
-    color-mix(in srgb, var(--text) 5%, transparent) 10px 20px
-  );
+picture[data-progressive-image][data-image-state='loaded'] > img[data-progressive-image],
+picture[data-progressive-image][data-image-state='error'] > img[data-progressive-image] {
   opacity: 1;
-  animation: none;
 }
 
 @keyframes image-skeleton {
-  from {
-    background-position: 100% 0;
+  0% {
+    background-position: 180% 0;
   }
 
-  to {
-    background-position: -120% 0;
+  100% {
+    background-position: -180% 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.js img[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error']) {
-    background-image: none;
-    opacity: 0.82;
+  html.js picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error'])::before {
     animation: none;
+    opacity: 0.82;
   }
 }

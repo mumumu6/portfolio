@@ -5,15 +5,11 @@ import '@/styles/components/responsive-image.css';
 
 type Props = {
   src: ImageMetadata;
-  variants?: Array<{
-    width: number;
-    avif: ImageMetadata;
-    webp: ImageMetadata;
-  }>;
   alt: string;
   width?: number;
   height?: number;
   sizes?: string;
+  widths?: number[];
   loading?: 'lazy' | 'eager';
   fetchPriority?: 'high' | 'low' | 'auto';
   progressive?: boolean;
@@ -22,85 +18,34 @@ type Props = {
 
 const {
   src,
-  variants,
   alt,
   width,
   height,
   sizes = '100vw',
+  widths: customWidths,
   loading = 'lazy',
   fetchPriority = 'low',
   progressive = true,
   className,
 } = Astro.props;
 
-const sourceWidth = src.width;
-const widths = [...new Set([480, 960, 1440, sourceWidth].filter((candidate) => candidate <= sourceWidth))];
-const responsiveVariants = variants
-  ? [...new Map(variants.map((variant) => [variant.webp.width, variant])).values()]
-    .sort((a, b) => a.webp.width - b.webp.width)
-  : undefined;
-const largestVariant = responsiveVariants?.at(-1);
-const avifSrcset = responsiveVariants?.map((variant) => `${variant.avif.src} ${variant.avif.width}w`).join(', ');
-const webpSrcset = responsiveVariants?.map((variant) => `${variant.webp.src} ${variant.webp.width}w`).join(', ');
+const defaultWidths = [...new Set([480, 960, 1440, src.width].filter((candidate) => candidate <= src.width))];
+const widths = customWidths ?? defaultWidths;
 ---
 
-{largestVariant ? (
-  <picture>
-    <source srcset={avifSrcset} sizes={sizes} type="image/avif" />
-    <img
-      src={largestVariant.webp.src}
-      srcset={webpSrcset}
-      sizes={sizes}
-      alt={alt}
-      width={width ?? largestVariant.webp.width}
-      height={height ?? largestVariant.webp.height}
-      loading={loading}
-      decoding="async"
-      fetchpriority={fetchPriority}
-      class={className}
-      data-progressive-image={progressive ? true : undefined}
-    />
-  </picture>
-) : (
-  <Picture
-    src={src}
-    widths={widths}
-    sizes={sizes}
-    formats={['avif']}
-    fallbackFormat="webp"
-    alt={alt}
-    width={width}
-    height={height}
-    loading={loading}
-    decoding="async"
-    fetchpriority={fetchPriority}
-    class={className}
-    data-progressive-image={progressive ? true : undefined}
-  />
-)}
-
-<script>
-  const markImageReady = (image: HTMLImageElement, state: 'loaded' | 'error') => {
-    delete image.dataset.imageLoading;
-    image.dataset.imageState = state;
-  };
-
-  const setupProgressiveImages = () => {
-    document.querySelectorAll<HTMLImageElement>('img[data-progressive-image]').forEach((image) => {
-      if (image.dataset.imageBound === 'true') return;
-      image.dataset.imageBound = 'true';
-
-      if (image.complete) {
-        markImageReady(image, image.naturalWidth > 0 ? 'loaded' : 'error');
-        return;
-      }
-
-      image.dataset.imageLoading = 'true';
-      image.addEventListener('load', () => markImageReady(image, 'loaded'), { once: true });
-      image.addEventListener('error', () => markImageReady(image, 'error'), { once: true });
-    });
-  };
-
-  setupProgressiveImages();
-  document.addEventListener('astro:page-load', setupProgressiveImages);
-</script>
+<Picture
+  src={src}
+  widths={widths}
+  sizes={sizes}
+  formats={['avif']}
+  fallbackFormat="webp"
+  alt={alt}
+  width={width}
+  height={height}
+  loading={loading}
+  decoding="async"
+  fetchpriority={fetchPriority}
+  class={className}
+  data-progressive-image={progressive ? true : undefined}
+  pictureAttributes={{ 'data-progressive-image': progressive ? true : undefined }}
+/>

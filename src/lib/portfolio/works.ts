@@ -7,7 +7,7 @@ const workDocuments = await getCollection('works');
 export const works: WorkEntry[] = workDocuments
   .map((work) => {
     const publishedAt = work.data.publishedAt.toISOString().slice(0, 10);
-    const latestComment = work.data.comments.at(-1);
+    const latestComment = work.data.comments.at(-1)!;
 
     return {
       id: work.id,
@@ -22,13 +22,11 @@ export const works: WorkEntry[] = workDocuments
       linkLabel: '詳細を見る',
       image: work.data.cover,
       status: work.data.status,
-      comment: latestComment
-        ? {
-            label: latestComment.label,
-            body: latestComment.body,
-            date: latestComment.date?.toISOString().slice(0, 10),
-          }
-        : { label: 'コメント', body: '', date: publishedAt },
+      comment: {
+        label: latestComment.label,
+        body: latestComment.body,
+        date: latestComment.date?.toISOString().slice(0, 10),
+      },
       replies: getAiReplies('work', work.id),
     };
   })

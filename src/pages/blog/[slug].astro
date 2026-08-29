@@ -12,7 +12,7 @@ import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro';
 import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro';
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
 import TagList from '@/components/common/TagList.astro';
-import generatedBlogPosts from '@/data/generated/blog.json';
+import generatedBlogPosts from '@/data/generated/blogs.json';
 import { getAiReplies } from '@/lib/portfolio/ai';
 import { resolveBlogImage } from '@/lib/portfolio/images';
 import { estimateReadingMinutes } from '@/lib/portfolio/utils';
@@ -109,7 +109,6 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
         <ResponsiveImage
           className="article-cover"
           src={data.cover}
-          variants={externalImage?.variants}
           sizes="(max-width: 760px) calc(100vw - 32px), 780px"
           alt={data.coverAlt}
           width={data.coverWidth}

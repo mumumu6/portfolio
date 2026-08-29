@@ -7,33 +7,24 @@ type GeneratedBlogImage = {
   source?: string;
 };
 
-const blogImages = import.meta.glob('/src/assets/images/blog/*.{avif,webp}', {
+const blogImages = import.meta.glob('/src/assets/images/blog/*-1440.webp', {
   eager: true,
   import: 'default',
 }) as Record<string, ImageMetadata>;
 
-const imageWidths = [480, 960, 1440];
-
 export const resolveBlogImage = (image: GeneratedBlogImage | undefined): FeedImage | undefined => {
   if (!image) return undefined;
 
-  const variants = imageWidths.map((width) => ({
-    width,
-    avif: blogImages[`/src/assets/images/blog/${image.asset}-${width}.avif`],
-    webp: blogImages[`/src/assets/images/blog/${image.asset}-${width}.webp`],
-  }));
-  const missing = variants.find((variant) => !variant.avif || !variant.webp);
-  if (missing) {
-    throw new Error(`Generated blog image variant was not found: ${image.asset}-${missing.width}`);
+  const src = blogImages[`/src/assets/images/blog/${image.asset}-1440.webp`];
+  if (!src) {
+    throw new Error(`Generated blog image was not found: ${image.asset}-1440.webp`);
   }
-  const largest = variants.at(-1)!;
 
   return {
-    src: largest.webp,
-    variants,
+    src,
     alt: image.alt,
-    width: largest.webp.width,
-    height: largest.webp.height,
+    width: src.width,
+    height: src.height,
     source: image.source,
   };
 };

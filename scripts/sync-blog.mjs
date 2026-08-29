@@ -6,11 +6,11 @@ import sharp from 'sharp';
 
 const RSS_URL = 'https://trap.jp/author/mumumu/rss/';
 const MAX_POSTS = 20;
-const IMAGE_TRANSFORM_VERSION = 5;
-const BLOG_IMAGE_WIDTHS = [480, 960, 1440];
-const BLOG_IMAGE_FORMATS = ['avif', 'webp'];
+const IMAGE_TRANSFORM_VERSION = 6;
+const BLOG_IMAGE_WIDTHS = [1440];
+const BLOG_IMAGE_FORMATS = ['webp'];
 const root = fileURLToPath(new URL('..', import.meta.url));
-const outputFile = path.join(root, 'src/data/generated/blog.json');
+const outputFile = path.join(root, 'src/data/generated/blogs.json');
 const imageDirectory = path.join(root, 'src/assets/images/blog');
 
 const asArray = (value) => value == null ? [] : Array.isArray(value) ? value : [value];

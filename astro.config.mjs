@@ -7,13 +7,17 @@ const defaultThemeColor = '#090d12';
 
 const runtimeCaching = [
   {
-    urlPattern: ({ request }) =>
-      request.mode === 'navigate' ||
-      request.headers.get('x-portfolio-prefetch') === 'html' ||
-      request.headers.get('accept')?.includes('text/html'),
-    handler: 'StaleWhileRevalidate',
+    // This is a static site. Return prefetched or previously visited HTML
+    // immediately instead of revalidating on every Astro transition.
+    urlPattern: ({ request, url }) =>
+      url.origin === self.location.origin &&
+      (request.mode === 'navigate' ||
+        request.headers.get('x-portfolio-prefetch') === 'html' ||
+        request.headers.get('sec-purpose')?.includes('prefetch') ||
+        request.headers.get('accept')?.includes('text/html')),
+    handler: 'CacheFirst',
     options: {
-      cacheName: 'mumumu-portfolio-pages',
+      cacheName: 'mumumu-portfolio-pages-v2',
       expiration: {
         maxEntries: 40,
         maxAgeSeconds: 60 * 60,
@@ -39,6 +43,11 @@ const runtimeCaching = [
 export default defineConfig({
   site: 'https://mumumu6.net',
   output: 'static',
+  build: {
+    // Inline small route styles so ClientRouter can swap immediately without
+    // waiting for several extra stylesheet requests. Larger styles remain cached assets.
+    inlineStylesheets: 'auto',
+  },
   integrations: [
     mdx(),
     sitemap(),

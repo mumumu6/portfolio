@@ -1,6 +1,11 @@
 ---
 import '@/styles/components/avatar.css';
 import type { AuthorId } from '@/lib/portfolio/types';
+import type { ImageMetadata } from 'astro';
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
+import codexIcon from '@/assets/icons/codex-256.webp';
+import mumumuIcon from '@/assets/icons/mumumu-256.webp';
+import openaiIcon from '@/assets/icons/openai-256.webp';
 
 type Props = {
   author: AuthorId;
@@ -9,31 +14,25 @@ type Props = {
 
 const { author, size = 'medium' } = Astro.props;
 
-const icons: Record<AuthorId, { src: string; srcset?: string }> = {
-  mumumu: {
-    src: '/icons/mumumu-256.webp',
-    srcset: '/icons/mumumu-64.webp 64w, /icons/mumumu-128.webp 128w, /icons/mumumu-256.webp 256w',
-  },
-  chatgpt: { src: '/icons/openai.svg' },
-  codex: {
-    src: '/icons/codex-256.webp',
-    srcset: '/icons/codex-64.webp 64w, /icons/codex-128.webp 128w, /icons/codex-256.webp 256w',
-  },
+const icons: Record<AuthorId, ImageMetadata> = {
+  mumumu: mumumuIcon,
+  chatgpt: openaiIcon,
+  codex: codexIcon,
 };
 
-const icon = icons[author];
 const dimension = size === 'large' ? 112 : size === 'medium' ? 48 : 32;
+const widths = size === 'large' ? [128, 256] : size === 'medium' ? [64, 128] : [64];
 ---
 
 <span class:list={['avatar', `avatar--${author}`, `avatar--${size}`]}>
-  <img
-    src={icon.src}
-    srcset={icon.srcset}
+  <ResponsiveImage
+    src={icons[author]}
+    widths={widths}
     sizes={`${dimension}px`}
     alt=""
     width={dimension}
     height={dimension}
     loading={size === 'large' ? 'eager' : 'lazy'}
-    decoding="async"
+    progressive={size === 'large'}
   />
 </span>

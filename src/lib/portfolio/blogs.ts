@@ -1,12 +1,12 @@
 import { getCollection } from 'astro:content';
-import generatedBlogPosts from '@/data/generated/blog.json';
+import generatedBlogPosts from '@/data/generated/blogs.json';
 import { getAiReplies } from '@/lib/portfolio/ai';
 import { resolveBlogImage } from '@/lib/portfolio/images';
-import type { BlogFrontmatter, FeedEntry } from '@/lib/portfolio/types';
+import type { FeedEntry } from '@/lib/portfolio/types';
 import { estimateReadingMinutes, toExcerpt } from '@/lib/portfolio/utils';
 
 const localBlogPosts: FeedEntry[] = (await getCollection('blogs')).map((post) => {
-  const data = post.data as BlogFrontmatter;
+  const data = post.data;
   const publishedAt = data.publishedAt.toISOString().slice(0, 10);
 
   return {

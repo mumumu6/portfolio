@@ -1,4 +1,7 @@
 ---
+import favicon from '@/assets/favicon.webp';
+import defaultOg from '@/assets/og/default.png';
+
 type Props = {
   title: string;
   description: string;
@@ -17,7 +20,7 @@ type Props = {
 const {
   title,
   description,
-  image = '/og/default.png',
+  image = defaultOg.src,
   imageAlt = 'mumumuのポートフォリオのトップページ',
   imageWidth,
   imageHeight,
@@ -31,16 +34,18 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
-const isDefaultSocialImage = image === '/og/default.png';
+const isDefaultSocialImage = image === defaultOg.src;
 const socialImageWidth = imageWidth ?? (isDefaultSocialImage ? 1200 : undefined);
 const socialImageHeight = imageHeight ?? (isDefaultSocialImage ? 630 : undefined);
-const socialImageType = image.endsWith('.png')
-  ? 'image/png'
-  : image.endsWith('.avif')
-    ? 'image/avif'
-    : image.endsWith('.webp')
-      ? 'image/webp'
-      : undefined;
+const socialImageType = isDefaultSocialImage
+  ? `image/${defaultOg.format}`
+  : image.endsWith('.png')
+    ? 'image/png'
+    : image.endsWith('.avif')
+      ? 'image/avif'
+      : image.endsWith('.webp')
+        ? 'image/webp'
+        : undefined;
 const personId = new URL('/#person', Astro.site ?? Astro.url.origin).href;
 const websiteId = new URL('/#website', Astro.site ?? Astro.url.origin).href;
 const pageId = `${canonical.href}#webpage`;
@@ -52,7 +57,7 @@ const structuredData = {
       '@id': personId,
       name: 'mumumu',
       url: new URL('/', Astro.site ?? Astro.url.origin).href,
-      image: new URL('/favicon.webp', Astro.site ?? Astro.url.origin).href,
+      image: new URL(favicon.src, Astro.site ?? Astro.url.origin).href,
       description: 'Web開発、競技プログラミング、機械学習に取り組む東京科学大学の学生。',
       affiliation: [
         { '@type': 'CollegeOrUniversity', name: '東京科学大学' },
@@ -119,5 +124,5 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u00
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={socialImage} />
 <meta name="twitter:image:alt" content={imageAlt} />
-<link rel="icon" type="image/webp" href="/favicon.webp" />
+<link rel="icon" type="image/webp" href={favicon.src} />
 <script is:inline type="application/ld+json" set:html={structuredDataJson} />

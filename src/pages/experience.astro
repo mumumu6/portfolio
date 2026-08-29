@@ -4,9 +4,10 @@ import PageIntro from '@/components/layout/PageIntro.astro';
 import FeedEntry from '@/components/feed/FeedEntry.astro';
 import TimelineIndex from '@/components/layout/TimelineIndex.astro';
 import TimelineSection from '@/components/layout/TimelineSection.astro';
-import { experiences } from '@/lib/portfolio/timeline';
+import { getExperiences } from '@/lib/portfolio/timeline';
 import { groupEntriesByPeriod } from '@/lib/portfolio/utils';
 
+const experiences = await getExperiences();
 const experienceGroups = groupEntriesByPeriod(experiences, (entry) => entry.date.slice(0, 4));
 const latestLabel = experiences[0]?.dateLabel ?? '—';
 const timelineGroups = experienceGroups.map(([year, entries]) => ({

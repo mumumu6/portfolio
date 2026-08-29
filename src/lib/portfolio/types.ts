@@ -15,11 +15,6 @@ export type Reply = {
 
 export type FeedImage = {
   src: ImageMetadata;
-  variants?: Array<{
-    width: number;
-    avif: ImageMetadata;
-    webp: ImageMetadata;
-  }>;
   alt: string;
   width?: number;
   height?: number;

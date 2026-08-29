@@ -28,10 +28,10 @@ const classes = ['ogp-preview', className];
   >
     <ResponsiveImage
       src={image.src}
-      variants={image.variants}
       alt={image.alt}
       width={image.width}
       height={image.height}
+      widths={[320, 480]}
       sizes={sizes}
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : 'low'}
@@ -41,10 +41,10 @@ const classes = ['ogp-preview', className];
   <div class:list={classes}>
     <ResponsiveImage
       src={image.src}
-      variants={image.variants}
       alt={image.alt}
       width={image.width}
       height={image.height}
+      widths={[320, 480]}
       sizes={sizes}
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : 'low'}

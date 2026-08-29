@@ -1,7 +1,8 @@
-@import '@fontsource/ibm-plex-sans-jp/400.css';
-@import '@fontsource/space-grotesk/500.css';
-@import '@fontsource/space-grotesk/600.css';
-@import '@fontsource/space-grotesk/700.css';
+/* Keep self-hosted Latin glyphs, but let the platform provide Japanese glyphs. */
+@import '@fontsource/ibm-plex-sans-jp/latin-400.css';
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-600.css';
+@import '@fontsource/space-grotesk/latin-700.css';
 
 :root {
   --font-body: "IBM Plex Sans JP", ui-sans-serif, system-ui, -apple-system, sans-serif;

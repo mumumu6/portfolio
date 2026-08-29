@@ -35,14 +35,29 @@
   height: 30px;
 }
 
-.avatar--chatgpt,
 .avatar--codex {
   background: #ffffff;
+}
+
+.avatar--chatgpt,
+.avatar--chatgpt picture {
+  background-color: #ffffff;
+}
+
+.avatar--chatgpt img[data-progressive-image] {
+  background-color: transparent;
 }
 
 .avatar--chatgpt img {
   padding: 6px;
   object-fit: contain;
+}
+
+.avatar--chatgpt picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
 }
 
 .avatar--chatgpt.avatar--small img {
