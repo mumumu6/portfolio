@@ -3,11 +3,6 @@
   margin-top: 10px;
 }
 
-.reply-disclosure[data-animating='true'] {
-  overflow: hidden;
-  will-change: height;
-}
-
 .reply-disclosure > summary {
   width: fit-content;
   min-height: 32px;
@@ -57,10 +52,6 @@
 
 .reply-disclosure[open] .reply-disclosure__icon {
   transform: rotate(180deg);
-}
-
-.reply-disclosure[data-target-open='false'] .reply-disclosure__icon {
-  transform: rotate(0deg);
 }
 
 .reply-thread {
