@@ -17,37 +17,39 @@ const { image, href, label, sizes, external = false, priority = false, className
 const classes = ['ogp-preview', className];
 ---
 
-{href ? (
-  <a
-    class:list={classes}
-    href={href}
-    target={external ? '_blank' : undefined}
-    rel={external ? 'noreferrer' : undefined}
-    aria-label={label}
-    data-astro-prefetch={!external ? 'hover' : undefined}
-  >
-    <ResponsiveImage
-      src={image.src}
-      alt={image.alt}
-      width={image.width}
-      height={image.height}
-      widths={[320, 480]}
-      sizes={sizes}
-      loading={priority ? 'eager' : 'lazy'}
-      fetchPriority={priority ? 'high' : 'low'}
-    />
-  </a>
-) : (
-  <div class:list={classes}>
-    <ResponsiveImage
-      src={image.src}
-      alt={image.alt}
-      width={image.width}
-      height={image.height}
-      widths={[320, 480]}
-      sizes={sizes}
-      loading={priority ? 'eager' : 'lazy'}
-      fetchPriority={priority ? 'high' : 'low'}
-    />
-  </div>
-)}
+{
+  href ? (
+    <a
+      class:list={classes}
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noreferrer' : undefined}
+      aria-label={label}
+      data-astro-prefetch={!external ? 'hover' : undefined}
+    >
+      <ResponsiveImage
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        widths={[320, 480]}
+        sizes={sizes}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'low'}
+      />
+    </a>
+  ) : (
+    <div class:list={classes}>
+      <ResponsiveImage
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        widths={[320, 480]}
+        sizes={sizes}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'low'}
+      />
+    </div>
+  )
+}

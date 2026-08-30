@@ -11,18 +11,14 @@ type Props = {
 };
 
 const { author, className, showAuthorClass = true, showLine = true } = Astro.props;
-const classes = [
-  'feed-entry',
-  className,
-  showAuthorClass ? `feed-entry--author-${author}` : undefined,
-];
+const classes = ['feed-entry', className, showAuthorClass ? `feed-entry--author-${author}` : undefined];
 ---
 
 <article class:list={classes}>
   <div class="entry-grid">
     <div class="entry-rail">
       <Avatar author={author} />
-      {showLine && <span class="entry-line" aria-hidden="true"></span>}
+      {showLine && <span class="entry-line" aria-hidden="true" />}
     </div>
     <div class="entry-content">
       <slot />

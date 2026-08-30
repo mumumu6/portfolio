@@ -13,30 +13,30 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const outputFile = path.join(root, 'src/data/generated/blogs.json');
 const imageDirectory = path.join(root, 'src/assets/images/blog');
 
-const asArray = (value) => value == null ? [] : Array.isArray(value) ? value : [value];
-const asText = (value) => typeof value === 'string' ? value : String(value ?? '');
+const asArray = (value) => (value == null ? [] : Array.isArray(value) ? value : [value]);
+const asText = (value) => (typeof value === 'string' ? value : String(value ?? ''));
 
-const cleanText = (value) => asText(value)
-  .replace(/<[^>]*>/g, ' ')
-  .replace(/&#x([0-9a-f]+);/gi, (_, value) => String.fromCodePoint(Number.parseInt(value, 16)))
-  .replace(/&#([0-9]+);/g, (_, value) => String.fromCodePoint(Number.parseInt(value, 10)))
-  .replace(/&nbsp;/g, ' ')
-  .replace(/&amp;/g, '&')
-  .replace(/&lt;/g, '<')
-  .replace(/&gt;/g, '>')
-  .replace(/&quot;/g, '"')
-  .replace(/&#39;/g, "'")
-  .replace(/\s+/g, ' ')
-  .trim();
+const cleanText = (value) =>
+  asText(value)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&#x([0-9a-f]+);/gi, (_, value) => String.fromCodePoint(Number.parseInt(value, 16)))
+    .replace(/&#([0-9]+);/g, (_, value) => String.fromCodePoint(Number.parseInt(value, 10)))
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
 
 const excerpt = (value, limit = 140) => {
   const characters = [...cleanText(value)];
   const clipped = characters.slice(0, limit).join('');
   const sentenceEnds = [...clipped.matchAll(/[。！？!?]/gu)];
   const lastSentenceEnd = sentenceEnds.at(-1)?.index;
-  const text = (lastSentenceEnd !== undefined && lastSentenceEnd >= 48
-    ? clipped.slice(0, lastSentenceEnd + 1)
-    : clipped
+  const text = (
+    lastSentenceEnd !== undefined && lastSentenceEnd >= 48 ? clipped.slice(0, lastSentenceEnd + 1) : clipped
   ).replace(/[.…]+$/u, '');
   return text ? `${text}…` : '';
 };
@@ -80,14 +80,19 @@ const downloadImage = async (url, id) => {
   const pipeline = sharp(source).rotate();
   const asset = `trap-${id}`;
 
-  await Promise.all(BLOG_IMAGE_WIDTHS.flatMap((width) => BLOG_IMAGE_FORMATS.map(async (format) => {
-    const filename = `${asset}-${width}.${format}`;
-    const resized = pipeline.clone().resize({ width, withoutEnlargement: true });
-    const encoded = format === 'avif'
-      ? resized.avif({ quality: 55, effort: 5 })
-      : resized.webp({ quality: width === 1440 ? 88 : 84, effort: 5 });
-    await encoded.toFile(path.join(imageDirectory, filename));
-  })));
+  await Promise.all(
+    BLOG_IMAGE_WIDTHS.flatMap((width) =>
+      BLOG_IMAGE_FORMATS.map(async (format) => {
+        const filename = `${asset}-${width}.${format}`;
+        const resized = pipeline.clone().resize({ width, withoutEnlargement: true });
+        const encoded =
+          format === 'avif'
+            ? resized.avif({ quality: 55, effort: 5 })
+            : resized.webp({ quality: width === 1440 ? 88 : 84, effort: 5 });
+        await encoded.toFile(path.join(imageDirectory, filename));
+      }),
+    ),
+  );
 
   return {
     asset,
@@ -126,20 +131,20 @@ for (const item of items) {
 
   if (imageUrl) {
     const expectedFiles = BLOG_IMAGE_WIDTHS.flatMap((width) =>
-      BLOG_IMAGE_FORMATS.map((format) => `trap-${postId}-${width}.${format}`));
+      BLOG_IMAGE_FORMATS.map((format) => `trap-${postId}-${width}.${format}`),
+    );
     const existingFiles = new Set(await readdir(imageDirectory));
-    const canReuse = previousImage?.source === imageUrl
-      && previousImage?.transformVersion === IMAGE_TRANSFORM_VERSION
-      && expectedFiles.every((file) => existingFiles.has(file));
+    const canReuse =
+      previousImage?.source === imageUrl &&
+      previousImage?.transformVersion === IMAGE_TRANSFORM_VERSION &&
+      expectedFiles.every((file) => existingFiles.has(file));
     const generated = canReuse ? previousImage : await downloadImage(imageUrl, postId);
     image = { ...generated, alt: cleanText(item.title) };
   }
 
   const date = formatDate(item.pubDate);
   const description = cleanText(item.description);
-  const excerptSource = /[。！？.!?]$/u.test(description)
-    ? description
-    : item['content:encoded'] ?? item.description;
+  const excerptSource = /[。！？.!?]$/u.test(description) ? description : (item['content:encoded'] ?? item.description);
   posts.push({
     id,
     date,
@@ -154,11 +159,14 @@ for (const item of items) {
   });
 }
 
-const activeImages = new Set(posts
-  .map((post) => post.image?.asset)
-  .filter(Boolean)
-  .flatMap((asset) => BLOG_IMAGE_WIDTHS.flatMap((width) =>
-    BLOG_IMAGE_FORMATS.map((format) => `${asset}-${width}.${format}`))));
+const activeImages = new Set(
+  posts
+    .map((post) => post.image?.asset)
+    .filter(Boolean)
+    .flatMap((asset) =>
+      BLOG_IMAGE_WIDTHS.flatMap((width) => BLOG_IMAGE_FORMATS.map((format) => `${asset}-${width}.${format}`)),
+    ),
+);
 for (const file of await readdir(imageDirectory)) {
   if (/^trap-[a-zA-Z0-9-]+-\d+\.(?:avif|webp)$/.test(file) && !activeImages.has(file)) {
     await rm(path.join(imageDirectory, file));

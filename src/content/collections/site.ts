@@ -8,10 +8,12 @@ export const site = defineCollection({
     name: z.string(),
     bio: z.string(),
     affiliations: z.array(z.string()),
-    links: z.array(z.object({
-      label: z.string(),
-      icon: z.string(),
-      href: z.url(),
-    })),
+    links: z.array(
+      z.object({
+        label: z.string(),
+        icon: z.string(),
+        href: z.url(),
+      }),
+    ),
   }),
 });

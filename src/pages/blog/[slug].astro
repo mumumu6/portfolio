@@ -19,9 +19,7 @@ import { estimateReadingMinutes } from '@/lib/portfolio/utils';
 import type { BlogFrontmatter } from '@/lib/portfolio/types';
 
 type ExternalPost = (typeof generatedBlogPosts)[number];
-type Props =
-  | { kind: 'local'; post: CollectionEntry<'blogs'> }
-  | { kind: 'external'; post: ExternalPost };
+type Props = { kind: 'local'; post: CollectionEntry<'blogs'> } | { kind: 'external'; post: ExternalPost };
 
 export async function getStaticPaths() {
   const localPosts = await getCollection('blogs');
@@ -64,9 +62,7 @@ if (props.kind === 'local') {
   };
 }
 
-const publishedAt = props.kind === 'external'
-  ? props.post.date
-  : data.publishedAt.toISOString().slice(0, 10);
+const publishedAt = props.kind === 'external' ? props.post.date : data.publishedAt.toISOString().slice(0, 10);
 const updatedAt = data.updatedAt?.toISOString().slice(0, 10);
 const dateLabel = publishedAt.replaceAll('-', '.');
 const tocHeadings = headings.filter((heading) => heading.depth <= 3);
@@ -87,11 +83,13 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
   readingMinutes={readingMinutes}
 >
   <article class:list={['article-page', { 'article-page--external': isExternal }]}>
-    {!isExternal && (
-      <div class="reading-progress" data-reading-progress aria-hidden="true">
-        <span data-reading-progress-label>0%</span>
-      </div>
-    )}
+    {
+      !isExternal && (
+        <div class="reading-progress" data-reading-progress aria-hidden="true">
+          <span data-reading-progress-label>0%</span>
+        </div>
+      )
+    }
     <header class="article-header">
       <a class="article-back" href="/blog/" data-astro-prefetch="hover">← Blog</a>
       <p class="eyebrow">{isExternal ? 'FROM traP BLOG' : "MUMUMU'S BLOG"}</p>
@@ -104,8 +102,27 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
       </div>
     </header>
 
-    {externalUrl ? (
-      <a class="article-cover-link" href={externalUrl} target="_blank" rel="noreferrer" aria-label="traP Blogで本文を読む">
+    {
+      externalUrl ? (
+        <a
+          class="article-cover-link"
+          href={externalUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="traP Blogで本文を読む"
+        >
+          <ResponsiveImage
+            className="article-cover"
+            src={data.cover}
+            sizes="(max-width: 760px) calc(100vw - 32px), 780px"
+            alt={data.coverAlt}
+            width={data.coverWidth}
+            height={data.coverHeight}
+            loading="eager"
+            fetchPriority="high"
+          />
+        </a>
+      ) : (
         <ResponsiveImage
           className="article-cover"
           src={data.cover}
@@ -116,49 +133,42 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
           loading="eager"
           fetchPriority="high"
         />
-      </a>
-    ) : (
-      <ResponsiveImage
-        className="article-cover"
-        src={data.cover}
-        sizes="(max-width: 760px) calc(100vw - 32px), 780px"
-        alt={data.coverAlt}
-        width={data.coverWidth}
-        height={data.coverHeight}
-        loading="eager"
-        fetchPriority="high"
-      />
-    )}
+      )
+    }
 
-    {isExternal ? (
-      <div class="external-article-body">
-        <ExternalLinkCard
-          href={externalUrl!}
-          label="traP Blogで本文を読む"
-          host="trap.jp"
-          className="external-card-link--article"
-        />
-      </div>
-    ) : (
-      <>
-        <ArticleToc headings={tocHeadings} mode="mobile" />
-
-        <div class="article-layout">
-          <ArticleToc headings={tocHeadings} mode="desktop" />
-          <div class="article-prose">{Content && <Content />}</div>
+    {
+      isExternal ? (
+        <div class="external-article-body">
+          <ExternalLinkCard
+            href={externalUrl!}
+            label="traP Blogで本文を読む"
+            host="trap.jp"
+            className="external-card-link--article"
+          />
         </div>
-      </>
-    )}
+      ) : (
+        <>
+          <ArticleToc headings={tocHeadings} mode="mobile" />
 
-    {aiReplies.length > 0 && (
-      <section class="article-comments" aria-labelledby="article-comments-title">
-        <div class="article-comments__head">
-          <p class="eyebrow">MARGIN NOTES</p>
-          <h2 id="article-comments-title">AIのコメント</h2>
-        </div>
-        <ReplyDisclosure replies={aiReplies} label="コメント" open />
-      </section>
-    )}
+          <div class="article-layout">
+            <ArticleToc headings={tocHeadings} mode="desktop" />
+            <div class="article-prose">{Content && <Content />}</div>
+          </div>
+        </>
+      )
+    }
+
+    {
+      aiReplies.length > 0 && (
+        <section class="article-comments" aria-labelledby="article-comments-title">
+          <div class="article-comments__head">
+            <p class="eyebrow">MARGIN NOTES</p>
+            <h2 id="article-comments-title">AIのコメント</h2>
+          </div>
+          <ReplyDisclosure replies={aiReplies} label="コメント" open />
+        </section>
+      )
+    }
   </article>
 </BaseLayout>
 

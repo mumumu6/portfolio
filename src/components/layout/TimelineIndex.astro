@@ -24,13 +24,15 @@ const { eyebrow, latestLabel, groups, total, navLabel, totalLabel = '件' } = As
   <p class="eyebrow">{eyebrow}</p>
   <p class="experience-index__latest"><span>LATEST</span><strong>{latestLabel}</strong></p>
   <nav aria-label={navLabel}>
-    {groups.map((group) => (
-      <a href={`#${group.id}`}>
-        <span>{group.label}</span>
-        <i aria-hidden="true"></i>
-        <strong>{String(group.count).padStart(2, '0')}</strong>
-      </a>
-    ))}
+    {
+      groups.map((group) => (
+        <a href={`#${group.id}`}>
+          <span>{group.label}</span>
+          <i aria-hidden="true" />
+          <strong>{String(group.count).padStart(2, '0')}</strong>
+        </a>
+      ))
+    }
   </nav>
   <p class="experience-index__total">全{total}{totalLabel}</p>
 </aside>

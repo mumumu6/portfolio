@@ -19,10 +19,7 @@ export const estimateReadingMinutes = (value: string) => {
   return Math.max(1, Math.ceil(japaneseCharacters / 500 + otherWords / 200));
 };
 
-export const groupEntriesByPeriod = <T extends { date: string }>(
-  entries: T[],
-  getPeriod: (entry: T) => string,
-) => {
+export const groupEntriesByPeriod = <T extends { date: string }>(entries: T[], getPeriod: (entry: T) => string) => {
   const grouped = entries.reduce<Record<string, T[]>>((groups, entry) => {
     const period = getPeriod(entry);
     (groups[period] ??= []).push(entry);

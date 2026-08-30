@@ -8,7 +8,12 @@
   overflow: hidden;
   border-bottom: 1px solid var(--line);
   background:
-    linear-gradient(120deg, color-mix(in srgb, var(--line-strong) 58%, var(--surface)), var(--surface) 52%, color-mix(in srgb, var(--line-strong) 45%, var(--surface))),
+    linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--line-strong) 58%, var(--surface)),
+      var(--surface) 52%,
+      color-mix(in srgb, var(--line-strong) 45%, var(--surface))
+    ),
     var(--surface-soft);
 }
 

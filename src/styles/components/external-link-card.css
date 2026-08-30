@@ -10,7 +10,9 @@
   background: var(--surface-soft);
   color: var(--text);
   text-decoration: none;
-  transition: border-color 140ms ease, background-color 140ms ease;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
 }
 
 .external-card-link:hover {

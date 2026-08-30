@@ -12,7 +12,6 @@ type Props = {
   widths?: number[];
   loading?: 'lazy' | 'eager';
   fetchPriority?: 'high' | 'low' | 'auto';
-  progressive?: boolean;
   className?: string;
 };
 
@@ -25,7 +24,6 @@ const {
   widths: customWidths,
   loading = 'lazy',
   fetchPriority = 'low',
-  progressive = true,
   className,
 } = Astro.props;
 
@@ -46,6 +44,6 @@ const widths = customWidths ?? defaultWidths;
   decoding="async"
   fetchpriority={fetchPriority}
   class={className}
-  data-progressive-image={progressive ? true : undefined}
-  pictureAttributes={{ 'data-progressive-image': progressive ? true : undefined }}
+  data-progressive-image
+  pictureAttributes={{ 'data-progressive-image': true }}
 />

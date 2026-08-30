@@ -14,19 +14,17 @@ const readStoredTheme = (): Theme => {
 };
 
 const updateThemeButton = (theme: Theme) => {
-  document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.setAttribute(
-    'aria-pressed',
-    String(theme === 'dark'),
-  );
+  document
+    .querySelector<HTMLButtonElement>('[data-theme-toggle]')
+    ?.setAttribute('aria-pressed', String(theme === 'dark'));
 };
 
 const applyTheme = (theme: Theme) => {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
-  document.querySelector<HTMLMetaElement>('[data-theme-color]')?.setAttribute(
-    'content',
-    theme === 'dark' ? '#090d12' : '#eef1f4',
-  );
+  document
+    .querySelector<HTMLMetaElement>('[data-theme-color]')
+    ?.setAttribute('content', theme === 'dark' ? '#090d12' : '#eef1f4');
   try {
     localStorage.setItem('theme', theme);
   } catch {
@@ -76,23 +74,27 @@ const setupHeaderScroll = () => {
   let previousY = window.scrollY;
   let frame = 0;
 
-  window.addEventListener('scroll', () => {
-    if (frame) return;
-    frame = requestAnimationFrame(() => {
-      frame = 0;
-      const currentY = window.scrollY;
-      const delta = currentY - previousY;
-      const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const currentY = window.scrollY;
+        const delta = currentY - previousY;
+        const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
 
-      if (currentY <= 24 || delta < -4 || menu?.hidden === false) {
-        header.removeAttribute('data-hidden');
-      } else if (currentY > 96 && delta > 4) {
-        header.dataset.hidden = 'true';
-      }
+        if (currentY <= 24 || delta < -4 || menu?.hidden === false) {
+          header.removeAttribute('data-hidden');
+        } else if (currentY > 96 && delta > 4) {
+          header.dataset.hidden = 'true';
+        }
 
-      if (Math.abs(delta) > 4) previousY = currentY;
-    });
-  }, { passive: true });
+        if (Math.abs(delta) > 4) previousY = currentY;
+      });
+    },
+    { passive: true },
+  );
 };
 
 const setMenuOpen = (open: boolean, immediate = false) => {

@@ -43,10 +43,7 @@ const { shell = 'default', ...seoProps } = Astro.props;
         const theme = saved || 'dark';
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
-        document.querySelector('[data-theme-color]')?.setAttribute(
-          'content',
-          theme === 'dark' ? '#090d12' : '#eef1f4',
-        );
+        document.querySelector('[data-theme-color]')?.setAttribute('content', theme === 'dark' ? '#090d12' : '#eef1f4');
 
         const connection = navigator.connection;
         if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? '')) {

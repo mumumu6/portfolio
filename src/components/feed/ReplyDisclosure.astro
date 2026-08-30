@@ -26,22 +26,31 @@ const { replies, label = 'AIのコメント', open = false } = Astro.props;
     </span>
   </summary>
   <div class="reply-thread">
-    {replies.map((reply, index) => {
-      const replyTo = resolveReplyTo(replies, index);
-      const dateLabel = formatReplyDate(reply.createdAt);
-      return (
-        <div class="reply" style={`--reply-index: ${index}`}>
-          <Avatar author={reply.author} size="small" />
-          <div class="reply-content">
-            <header class="reply-head">
-              <strong>{authorNames[reply.author]}</strong>
-              {dateLabel && <><span aria-hidden="true">·</span><time datetime={reply.createdAt}>{dateLabel}</time></>}
-            </header>
-            {replyTo && <p class="reply-context">↳ {authorNames[replyTo]} への返信</p>}
-            <div class="reply-bubble"><p>{reply.body}</p></div>
+    {
+      replies.map((reply, index) => {
+        const replyTo = resolveReplyTo(replies, index);
+        const dateLabel = formatReplyDate(reply.createdAt);
+        return (
+          <div class="reply" style={`--reply-index: ${index}`}>
+            <Avatar author={reply.author} size="small" />
+            <div class="reply-content">
+              <header class="reply-head">
+                <strong>{authorNames[reply.author]}</strong>
+                {dateLabel && (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <time datetime={reply.createdAt}>{dateLabel}</time>
+                  </>
+                )}
+              </header>
+              {replyTo && <p class="reply-context">↳ {authorNames[replyTo]} への返信</p>}
+              <div class="reply-bubble">
+                <p>{reply.body}</p>
+              </div>
+            </div>
           </div>
-        </div>
-      );
-    })}
+        );
+      })
+    }
   </div>
 </details>

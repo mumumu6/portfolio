@@ -2,10 +2,10 @@
 
 ## Target layout
 
-| Host | Repository | Runtime |
-| --- | --- | --- |
-| `mumumu6.net` | `mumumu6/portfolio` | Cloudflare Workers Static Assets |
-| `2024.mumumu6.net` | `mumumu6/homepage` | Vercel |
+| Host               | Repository          | Runtime                          |
+| ------------------ | ------------------- | -------------------------------- |
+| `mumumu6.net`      | `mumumu6/portfolio` | Cloudflare Workers Static Assets |
+| `2024.mumumu6.net` | `mumumu6/homepage`  | Vercel                           |
 
 The old Next.js site stays on Vercel as the 2024 archive. The current Astro site is generated completely at build time and deployed from `dist/`.
 

@@ -1,4 +1,9 @@
-import { applySlowNetworkImagePolicy, closeMenu, setNavigationLoading, setupSiteNavigation } from '@/scripts/site-navigation';
+import {
+  applySlowNetworkImagePolicy,
+  closeMenu,
+  setNavigationLoading,
+  setupSiteNavigation,
+} from '@/scripts/site-navigation';
 
 const markImageReady = (image: HTMLImageElement, state: 'loaded' | 'error') => {
   delete image.dataset.imageLoading;
@@ -35,10 +40,7 @@ const setupImageLoading = () => {
 // クリック操作と並行してHTML取得を始められる。
 const syncPrefetchStrategy = () => {
   const slowNetwork = document.documentElement.dataset.network === 'slow';
-  const strategy = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    && !slowNetwork
-    ? 'hover'
-    : 'tap';
+  const strategy = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !slowNetwork ? 'hover' : 'tap';
 
   document.querySelectorAll<HTMLAnchorElement>('[data-astro-prefetch]').forEach((link) => {
     if (link.dataset.astroPrefetch !== 'false') link.dataset.astroPrefetch = strategy;

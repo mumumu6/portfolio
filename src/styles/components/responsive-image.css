@@ -28,7 +28,9 @@ html.js picture[data-progressive-image]:not([data-image-state='loaded']):not([da
   animation: image-skeleton 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
 
-html.js picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error']) > img[data-progressive-image] {
+html.js
+  picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error'])
+  > img[data-progressive-image] {
   opacity: 0;
 }
 

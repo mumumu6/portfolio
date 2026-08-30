@@ -38,17 +38,21 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
     />
 
     <div class="experience-stream">
-      {thoughtGroups.map(([month, entries]) => (
-        <TimelineSection
-          id={`thoughts-${month}`}
-          headingId={`thoughts-${month}-heading`}
-          label={month.replace('-', '.')}
-          count={entries.length}
-          listClass="feed-list--thoughts"
-        >
-          {entries.map((entry) => <FeedEntry entry={entry} headingLevel={3} />)}
-        </TimelineSection>
-      ))}
+      {
+        thoughtGroups.map(([month, entries]) => (
+          <TimelineSection
+            id={`thoughts-${month}`}
+            headingId={`thoughts-${month}-heading`}
+            label={month.replace('-', '.')}
+            count={entries.length}
+            listClass="feed-list--thoughts"
+          >
+            {entries.map((entry) => (
+              <FeedEntry entry={entry} headingLevel={3} />
+            ))}
+          </TimelineSection>
+        ))
+      }
     </div>
   </div>
 

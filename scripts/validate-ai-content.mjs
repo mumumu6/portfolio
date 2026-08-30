@@ -16,7 +16,10 @@ function validateReply(reply, location) {
   assert(authors.has(reply.author), `${location}.author is invalid.`);
   assert(typeof reply.body === 'string' && reply.body.trim().length > 0, `${location}.body is required.`);
   assert(reply.body.length <= 280, `${location}.body exceeds 280 characters.`);
-  assert(reply.createdAt === undefined || !Number.isNaN(Date.parse(reply.createdAt)), `${location}.createdAt is invalid.`);
+  assert(
+    reply.createdAt === undefined || !Number.isNaN(Date.parse(reply.createdAt)),
+    `${location}.createdAt is invalid.`,
+  );
   assert(reply.replyTo === undefined || replyTargets.has(reply.replyTo), `${location}.replyTo is invalid.`);
   assert(reply.depth === undefined || reply.depth === 1 || reply.depth === 2, `${location}.depth is invalid.`);
 }
@@ -26,7 +29,10 @@ function validateReplyOrder(replies, location, parentDate) {
   for (const [index, reply] of replies.entries()) {
     validateReply(reply, `${location}[${index}]`);
     if (reply.createdAt && previous) {
-      assert(Date.parse(reply.createdAt) >= Date.parse(previous), `${location}[${index}] is older than the message before it.`);
+      assert(
+        Date.parse(reply.createdAt) >= Date.parse(previous),
+        `${location}[${index}] is older than the message before it.`,
+      );
     }
     if (reply.createdAt) previous = reply.createdAt;
   }

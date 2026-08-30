@@ -28,9 +28,7 @@ const dateLabel = publishedAt.slice(0, 7).replace('-', '.');
 const statusLabel = statusLabels[data.status];
 const coverImageSrc = data.cover.src.src;
 const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? [];
-const makerReplies = [
-  ...data.comments.map((comment) => ({ ...comment, date: comment.date ?? data.publishedAt })),
-];
+const makerReplies = [...data.comments.map((comment) => ({ ...comment, date: comment.date ?? data.publishedAt }))];
 const threadItems = [
   ...makerReplies.map((reply, index) => ({
     kind: 'maker' as const,
@@ -96,42 +94,60 @@ const threadItems = [
         <footer class="work-thread-meta">
           <span>{data.tags.join(' / ')}</span>
         </footer>
-        {data.links.length > 0 && (
-          <nav class="work-thread-links" aria-label="作品へのリンク">
-            {data.links.map((link) => {
-              const hostname = new URL(link.href).hostname;
-              return (
-                <ExternalLinkCard href={link.href} label={link.label} host={hostname} className="external-card-link--work" />
-              );
-            })}
-          </nav>
-        )}
+        {
+          data.links.length > 0 && (
+            <nav class="work-thread-links" aria-label="作品へのリンク">
+              {data.links.map((link) => {
+                const hostname = new URL(link.href).hostname;
+                return (
+                  <ExternalLinkCard
+                    href={link.href}
+                    label={link.label}
+                    host={hostname}
+                    className="external-card-link--work"
+                  />
+                );
+              })}
+            </nav>
+          )
+        }
       </div>
     </section>
 
-    {threadItems.map((item, index) => {
-      const replyDate = formatReplyDate(item.date);
-      return (
-        <section
-          class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--ai': item.kind === 'ai' }]}
-          aria-label={item.kind === 'ai' ? `${authorNames[item.author]}のコメント ${index + 1}` : `mumumuの${item.label} ${index + 1}`}
-        >
-          <div class="work-thread-rail">
-            <Avatar author={item.author} />
-            {index < threadItems.length - 1 && <span class="work-thread-line" aria-hidden="true"></span>}
-          </div>
-          <div class="work-thread-content">
-            <header class="work-thread-head">
-              <strong>{authorNames[item.author]}</strong>
-              {item.kind === 'maker' && <span>{item.label}</span>}
-              {replyDate && <><span aria-hidden="true">·</span><time datetime={item.date}>{replyDate}</time></>}
-            </header>
-            {item.replyTo && <p class="work-thread-reply-context">↳ {authorNames[item.replyTo]}への返信</p>}
-            <p>{item.body}</p>
-          </div>
-        </section>
-      );
-    })}
+    {
+      threadItems.map((item, index) => {
+        const replyDate = formatReplyDate(item.date);
+        return (
+          <section
+            class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--ai': item.kind === 'ai' }]}
+            aria-label={
+              item.kind === 'ai'
+                ? `${authorNames[item.author]}のコメント ${index + 1}`
+                : `mumumuの${item.label} ${index + 1}`
+            }
+          >
+            <div class="work-thread-rail">
+              <Avatar author={item.author} />
+              {index < threadItems.length - 1 && <span class="work-thread-line" aria-hidden="true" />}
+            </div>
+            <div class="work-thread-content">
+              <header class="work-thread-head">
+                <strong>{authorNames[item.author]}</strong>
+                {item.kind === 'maker' && <span>{item.label}</span>}
+                {replyDate && (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <time datetime={item.date}>{replyDate}</time>
+                  </>
+                )}
+              </header>
+              {item.replyTo && <p class="work-thread-reply-context">↳ {authorNames[item.replyTo]}への返信</p>}
+              <p>{item.body}</p>
+            </div>
+          </section>
+        );
+      })
+    }
 
     <section class="work-details" aria-labelledby="work-details-title">
       <header class="work-details__head">
@@ -141,26 +157,36 @@ const threadItems = [
       <div class="work-details__body">
         <div class="article-prose work-thread-prose"><Content /></div>
 
-        {data.highlights.length > 0 && (
-          <div class="work-thread-highlights">
-            <p class="eyebrow">WHAT IT DOES</p>
-            <ul>{data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>
-          </div>
-        )}
+        {
+          data.highlights.length > 0 && (
+            <div class="work-thread-highlights">
+              <p class="eyebrow">WHAT IT DOES</p>
+              <ul>
+                {data.highlights.map((highlight) => (
+                  <li>{highlight}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
 
-        {data.warning && (
-          <aside class="work-thread-warning">
-            <strong>更新状況</strong>
-            <p>{data.warning}</p>
-          </aside>
-        )}
+        {
+          data.warning && (
+            <aside class="work-thread-warning">
+              <strong>更新状況</strong>
+              <p>{data.warning}</p>
+            </aside>
+          )
+        }
 
-        {data.gallery.map((image) => (
-          <figure class="work-thread-gallery">
-            <ResponsiveImage src={image.src} alt={image.alt} width={image.width} height={image.height} />
-            {image.caption && <figcaption>{image.caption}</figcaption>}
-          </figure>
-        ))}
+        {
+          data.gallery.map((image) => (
+            <figure class="work-thread-gallery">
+              <ResponsiveImage src={image.src} alt={image.alt} width={image.width} height={image.height} />
+              {image.caption && <figcaption>{image.caption}</figcaption>}
+            </figure>
+          ))
+        }
       </div>
     </section>
   </article>

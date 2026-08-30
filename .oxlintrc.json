@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "astro": true,
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "unicorn/no-useless-spread": "off"
+  }
+}
