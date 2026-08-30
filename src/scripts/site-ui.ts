@@ -55,11 +55,16 @@ const registerServiceWorkerWhenIdle = () => {
     import('virtual:pwa-register').then(({ registerSW }) => registerSW());
   };
 
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(register, { timeout: 2000 });
-  } else {
-    globalThis.setTimeout(register, 1000);
-  }
+  const schedule = () => {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(register, { timeout: 3000 });
+    } else {
+      globalThis.setTimeout(register, 3000);
+    }
+  };
+
+  if (document.readyState === 'complete') schedule();
+  else window.addEventListener('load', schedule, { once: true });
 };
 
 registerServiceWorkerWhenIdle();

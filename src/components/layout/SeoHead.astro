@@ -70,6 +70,7 @@ const structuredData = {
       '@id': websiteId,
       url: new URL('/', Astro.site ?? Astro.url.origin).href,
       name: 'mumumu portfolio',
+      alternateName: ['mumumu', 'mumumu6.net'],
       description: 'mumumuの制作物、技術記事、活動記録をまとめたポートフォリオ。',
       inLanguage: 'ja',
       author: { '@id': personId },
@@ -103,7 +104,7 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll('<', '\\u00
 <link rel="canonical" href={canonical} />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="manifest" href="/manifest.webmanifest" />
-<meta property="og:site_name" content="mumumu6.net" />
+<meta property="og:site_name" content="mumumu6" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:type" content={type} />

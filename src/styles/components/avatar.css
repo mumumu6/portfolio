@@ -44,8 +44,8 @@
   background-color: #ffffff;
 }
 
-.avatar--chatgpt img[data-progressive-image] {
-  background-color: transparent;
+.avatar--chatgpt picture[data-progressive-image] {
+  background-color: #ffffff;
 }
 
 .avatar--chatgpt img {
