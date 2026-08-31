@@ -300,3 +300,7 @@
     display: grid;
   }
 }
+
+.site-header[data-nav-pending='true'] .desktop-nav a {
+  transition: none;
+}

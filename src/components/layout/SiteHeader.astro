@@ -97,6 +97,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
   let pendingIndicatorPath: string | null = null;
   const navigationLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
   const desktopNav = document.querySelector<HTMLElement>('.desktop-nav');
+  const siteHeader = document.querySelector<HTMLElement>('.site-header');
   const navIndicator = desktopNav?.querySelector<HTMLElement>('[data-nav-indicator]');
 
   const getIndicatorTargetWidth = (activeLink: HTMLAnchorElement) =>
@@ -176,6 +177,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
         return;
       }
 
+      siteHeader?.setAttribute('data-nav-pending', 'true');
       const nav = link.closest<HTMLElement>('.desktop-nav');
       setActiveNavigation(linkUrl.pathname);
       if (nav) {
@@ -208,5 +210,8 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
   );
 
   syncActiveNavigation();
-  document.addEventListener('astro:page-load', syncActiveNavigation);
+  document.addEventListener('astro:page-load', () => {
+    syncActiveNavigation();
+    siteHeader?.removeAttribute('data-nav-pending');
+  });
 </script>
