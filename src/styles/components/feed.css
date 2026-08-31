@@ -195,6 +195,17 @@
   text-decoration: underline;
 }
 
+@media (min-width: 1440px) {
+  .site-shell--adaptive .feed-list--compact .entry-content {
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 24vw, 420px);
+    column-gap: 24px;
+  }
+
+  .site-shell--adaptive .feed-list--compact .ogp-preview {
+    width: 100%;
+  }
+}
+
 @media (max-width: 760px) {
   .feed-entry {
     padding-right: 16px;

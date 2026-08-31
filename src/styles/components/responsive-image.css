@@ -9,7 +9,7 @@ picture[data-progressive-image]::before {
   content: '';
   position: absolute;
   z-index: 1;
-  inset: 0;
+  inset: 0 -50%;
   pointer-events: none;
   background-image: linear-gradient(
     105deg,
@@ -18,18 +18,28 @@ picture[data-progressive-image]::before {
     color-mix(in srgb, var(--surface) 72%, transparent) 52%,
     transparent 62%
   );
-  background-size: 300% 100%;
-  opacity: 0;
+  background-size: 100% 100%;
+  transform: translate3d(-50%, 0, 0);
+  /* Keep a quiet placeholder visible even before JS promotes the image. */
+  opacity: 0.42;
   transition: opacity 260ms ease;
 }
 
-html.js picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error'])::before {
+html.js
+  picture[data-progressive-image][data-image-requested='true']:not([data-image-state='loaded']):not(
+    [data-image-state='error']
+  )::before {
   opacity: 0.82;
-  animation: image-skeleton 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  /* Only requested, near-viewport images animate; stop when decoding finishes. */
+  animation: image-skeleton 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  will-change: transform;
 }
 
+html.js picture[data-progressive-image]:not([data-image-requested='true']) > img[data-progressive-image],
 html.js
-  picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error'])
+  picture[data-progressive-image][data-image-requested='true']:not([data-image-state='loaded']):not(
+    [data-image-state='error']
+  )
   > img[data-progressive-image] {
   opacity: 0;
 }
@@ -40,29 +50,39 @@ picture[data-progressive-image] > img[data-progressive-image] {
   transition: opacity 260ms ease;
 }
 
-picture[data-progressive-image][data-image-state='loaded']::before,
-picture[data-progressive-image][data-image-state='error']::before {
+picture[data-progressive-image][data-image-state='loaded']::before {
   opacity: 0;
   animation: none;
 }
 
-picture[data-progressive-image][data-image-state='loaded'] > img[data-progressive-image],
-picture[data-progressive-image][data-image-state='error'] > img[data-progressive-image] {
+picture[data-progressive-image][data-image-state='loaded'] > img[data-progressive-image] {
   opacity: 1;
+}
+
+picture[data-progressive-image][data-image-state='error']::before {
+  opacity: 0.3;
+  animation: none;
+}
+
+picture[data-progressive-image][data-image-state='error'] > img[data-progressive-image] {
+  opacity: 0;
 }
 
 @keyframes image-skeleton {
   0% {
-    background-position: 180% 0;
+    transform: translate3d(-50%, 0, 0);
   }
 
   100% {
-    background-position: -180% 0;
+    transform: translate3d(50%, 0, 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.js picture[data-progressive-image]:not([data-image-state='loaded']):not([data-image-state='error'])::before {
+  html.js
+    picture[data-progressive-image][data-image-requested='true']:not([data-image-state='loaded']):not(
+      [data-image-state='error']
+    )::before {
     animation: none;
     opacity: 0.82;
   }

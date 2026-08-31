@@ -1,0 +1,46 @@
+/* Page navigation starts after Astro has prepared the next document. */
+:root {
+  --page-transition-duration: 220ms;
+  --page-transition-ease: cubic-bezier(0.42, 0, 1, 1);
+}
+
+/* Keep the live document background and animate only the page shell. */
+html {
+  view-transition-name: none;
+}
+
+/* The browser's default group animation adds a separate 250ms hold. */
+::view-transition-group(page-content) {
+  animation: none;
+}
+
+/* Keep the shell surface opaque while the old and new page images overlap. */
+::view-transition-image-pair(page-content) {
+  animation: none;
+  background: var(--surface);
+  isolation: isolate;
+}
+
+/* Keep the old page steady; the incoming page then replaces it without a dim flash. */
+::view-transition-old(page-content) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(page-content) {
+  background: var(--surface);
+  mix-blend-mode: normal;
+  animation: page-fade-in var(--page-transition-duration) var(--page-transition-ease) both;
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(page-content) {
+    animation-duration: 0.01ms;
+  }
+}

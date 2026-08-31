@@ -272,26 +272,16 @@
   }
 
   .article-toc-mobile nav {
-    max-height: 0;
-    overflow: hidden;
     padding: 0 13px;
-    border-top: 1px solid transparent;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition:
-      max-height 220ms cubic-bezier(0.22, 1, 0.36, 1),
-      padding-bottom 220ms cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 180ms ease,
-      opacity 160ms ease,
-      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    border-top: 0 solid transparent;
+    transform-origin: top;
   }
 
-  .article-toc-mobile[open] nav {
-    max-height: 32rem;
+  .article-toc-mobile nav.is-open {
+    padding-top: 12px;
     padding-bottom: 12px;
+    border-top-width: 1px;
     border-top-color: var(--line);
-    opacity: 1;
-    transform: translateY(0);
   }
 
   .article-toc-mobile ol {
@@ -323,7 +313,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .article-toc-mobile nav {
-    transition: none;
     transform: none;
   }
 }

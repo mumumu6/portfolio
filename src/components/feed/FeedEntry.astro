@@ -30,8 +30,8 @@ const sourceLabel = sourceUrl
   : undefined;
 const imageSizes =
   entry.kind === 'blog'
-    ? '(max-width: 480px) calc(100vw - 76px), (max-width: 760px) calc(100vw - 82px), 280px'
-    : '(max-width: 480px) 92px, (max-width: 760px) 145px, 280px';
+    ? '(max-width: 480px) calc(100vw - 76px), (max-width: 760px) calc(100vw - 82px), (min-width: 1440px) min(420px, 24vw), 280px'
+    : '(max-width: 480px) 92px, (max-width: 760px) 145px, (min-width: 1440px) min(420px, 24vw), 280px';
 ---
 
 <EntryFrame author={entry.author} className={`feed-entry--${entry.kind}`}>

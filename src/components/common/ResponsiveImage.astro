@@ -1,5 +1,5 @@
 ---
-import { Picture } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import '@/styles/components/responsive-image.css';
 
@@ -29,21 +29,59 @@ const {
 
 const defaultWidths = [...new Set([480, 960, 1440, src.width].filter((candidate) => candidate <= src.width))];
 const widths = customWidths ?? defaultWidths;
+const isLazy = loading === 'lazy';
+
+const [avifImage, webpImage] = await Promise.all([
+  getImage({ src, width, height, widths, sizes, format: 'avif' }),
+  getImage({ src, width, height, widths, sizes, format: 'webp' }),
+]);
+
+const imageAttributes = {
+  ...webpImage.attributes,
+  alt,
+  sizes,
+  loading,
+  decoding: 'async' as const,
+  fetchpriority: fetchPriority,
+  class: className,
+  'data-progressive-image': true,
+  ...(isLazy
+    ? {
+        'data-src': webpImage.src,
+        'data-srcset': webpImage.srcSet.attribute,
+      }
+    : {
+        src: webpImage.src,
+        srcset: webpImage.srcSet.attribute,
+      }),
+};
 ---
 
-<Picture
-  src={src}
-  widths={widths}
-  sizes={sizes}
-  formats={['avif']}
-  fallbackFormat="webp"
-  alt={alt}
-  width={width}
-  height={height}
-  loading={loading}
-  decoding="async"
-  fetchpriority={fetchPriority}
-  class={className}
-  data-progressive-image
-  pictureAttributes={{ 'data-progressive-image': true }}
-/>
+<picture data-progressive-image data-image-requested={isLazy ? undefined : 'true'}>
+  <source
+    type="image/avif"
+    sizes={sizes}
+    {...isLazy ? { 'data-srcset': avifImage.srcSet.attribute } : { srcset: avifImage.srcSet.attribute }}
+  />
+  <source
+    type="image/webp"
+    sizes={sizes}
+    {...isLazy ? { 'data-srcset': webpImage.srcSet.attribute } : { srcset: webpImage.srcSet.attribute }}
+  />
+  <img {...imageAttributes} />
+  {
+    isLazy && (
+      <noscript>
+        <img
+          src={webpImage.src}
+          srcset={webpImage.srcSet.attribute}
+          sizes={sizes}
+          alt={alt}
+          width={width}
+          height={height}
+          decoding="async"
+        />
+      </noscript>
+    )
+  }
+</picture>

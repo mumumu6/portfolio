@@ -2,6 +2,11 @@
 import '@/styles/components/site-header.css';
 import { mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
 
+type Props = {
+  adaptive?: boolean;
+};
+
+const { adaptive = false } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
   { href: '/works/', label: 'Works' },
@@ -14,7 +19,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 ---
 
 <header class="site-header" transition:persist="site-header" transition:animate="none">
-  <div class="header-inner">
+  <div class:list={['header-inner', { 'header-inner--adaptive': adaptive }]}>
     <a class="site-name" href="/" aria-label="mumumu ホーム" data-astro-prefetch="hover">
       <span>mumumu<em>.</em></span>
     </a>
@@ -33,6 +38,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
           </a>
         ))
       }
+      <span class="desktop-nav__indicator" data-nav-indicator aria-hidden="true"></span>
     </nav>
 
     <div class="header-actions">
@@ -62,7 +68,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
     </div>
   </div>
 
-  <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+  <div class:list={['mobile-menu', { 'mobile-menu--adaptive': adaptive }]} id="mobile-menu" data-mobile-menu hidden>
     <nav aria-label="モバイルナビゲーション">
       {
         navItems.map((item) => (
@@ -82,18 +88,124 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
 </header>
 
 <script>
-  const syncActiveNavigation = () => {
-    const currentPath = window.location.pathname;
+  import { navigate } from 'astro:transitions/client';
 
-    document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]').forEach((link) => {
-      const linkPath = new URL(link.href, window.location.href).pathname;
-      const active = currentPath === linkPath || currentPath.startsWith(linkPath);
+  const indicatorMinWidth = 36;
+  const indicatorHorizontalInset = 20;
+  const indicatorBaseWidth = 65;
+  let indicatorInitialized = false;
+  let pendingIndicatorPath: string | null = null;
+  const navigationLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
+  const desktopNav = document.querySelector<HTMLElement>('.desktop-nav');
+  const navIndicator = desktopNav?.querySelector<HTMLElement>('[data-nav-indicator]');
+
+  const getIndicatorTargetWidth = (activeLink: HTMLAnchorElement) =>
+    Math.max(indicatorMinWidth, activeLink.offsetWidth - indicatorHorizontalInset);
+
+  const setActiveNavigation = (pathname: string) => {
+    navigationLinks.forEach((link) => {
+      const linkPath = link.pathname;
+      const active = pathname === linkPath || pathname.startsWith(linkPath);
 
       link.classList.toggle('active', active);
       if (active) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
     });
   };
+
+  const moveNavIndicator = (nav: HTMLElement, activeLink: HTMLAnchorElement, immediate = false) => {
+    const indicator = nav.querySelector<HTMLElement>('[data-nav-indicator]');
+    if (!indicator) return;
+    indicator.hidden = false;
+
+    const targetWidth = getIndicatorTargetWidth(activeLink);
+    const targetX = activeLink.offsetLeft + (activeLink.offsetWidth - targetWidth) / 2;
+    const targetTransform = `translateX(${targetX + (targetWidth - indicatorBaseWidth) / 2}px) scaleX(${targetWidth / indicatorBaseWidth})`;
+
+    if (immediate) {
+      indicator.removeAttribute('data-nav-ready');
+      indicator.style.transform = targetTransform;
+      requestAnimationFrame(() => {
+        if (indicator.isConnected) indicator.setAttribute('data-nav-ready', 'true');
+      });
+      return;
+    }
+
+    indicator.setAttribute('data-nav-ready', 'true');
+    indicator.style.transform = targetTransform;
+  };
+
+  const syncActiveNavigation = () => {
+    const currentPath = window.location.pathname;
+    const skipPendingAnimation = pendingIndicatorPath === currentPath;
+    pendingIndicatorPath = null;
+
+    setActiveNavigation(currentPath);
+
+    if (!desktopNav || !navIndicator) return;
+    const activeLink = desktopNav.querySelector<HTMLAnchorElement>('a.active');
+    if (!activeLink) {
+      navIndicator.hidden = true;
+      return;
+    }
+    navIndicator.hidden = false;
+    if (skipPendingAnimation) return;
+
+    moveNavIndicator(desktopNav, activeLink, !indicatorInitialized);
+    indicatorInitialized = true;
+  };
+
+  let earlyNavigationLink: HTMLAnchorElement | null = null;
+
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const link = target.closest<HTMLAnchorElement>('.site-header a[href]');
+      if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+
+      const linkUrl = new URL(link.href, window.location.href);
+      if (
+        linkUrl.origin !== window.location.origin ||
+        (link.target && link.target !== '_self') ||
+        link.hasAttribute('download') ||
+        (linkUrl.pathname === window.location.pathname && linkUrl.search === window.location.search)
+      ) {
+        return;
+      }
+
+      const nav = link.closest<HTMLElement>('.desktop-nav');
+      setActiveNavigation(linkUrl.pathname);
+      if (nav) {
+        moveNavIndicator(nav, link);
+        pendingIndicatorPath = linkUrl.pathname;
+      }
+
+      earlyNavigationLink = link;
+      void navigate(link.href, {
+        history: link.dataset.astroHistory === 'replace' ? 'replace' : 'auto',
+        sourceElement: link,
+      });
+    },
+    { capture: true },
+  );
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const target = event.target;
+      if (!(target instanceof Element) || !earlyNavigationLink) return;
+
+      const link = target.closest<HTMLAnchorElement>('.site-header a[href]');
+      if (link !== earlyNavigationLink) return;
+
+      event.preventDefault();
+      earlyNavigationLink = null;
+    },
+    { capture: true },
+  );
 
   syncActiveNavigation();
   document.addEventListener('astro:page-load', syncActiveNavigation);

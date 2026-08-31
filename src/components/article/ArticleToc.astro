@@ -21,7 +21,7 @@ const { headings, mode } = Astro.props;
           <span>目次</span>
           <small>{headings.length}項目</small>
         </summary>
-        <nav aria-label="目次">
+        <nav aria-label="目次" data-disclosure-content>
           <ol>
             {headings.map((heading) => (
               <li class:list={[`article-toc--depth-${heading.depth}`]}>

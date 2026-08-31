@@ -153,13 +153,12 @@ const setupMobileMenu = () => {
 };
 
 export const setNavigationLoading = (loading: boolean) => {
-  document.documentElement.toggleAttribute('data-navigation-loading', loading);
   document.querySelector('main#main-content')?.setAttribute('aria-busy', String(loading));
 };
 
 export const applySlowNetworkImagePolicy = () => {
   if (document.documentElement.dataset.network !== 'slow') return;
-  document.querySelectorAll<HTMLImageElement>('[data-progressive-image]').forEach((image) => {
+  document.querySelectorAll<HTMLImageElement>('img[data-progressive-image]').forEach((image) => {
     image.loading = 'lazy';
     image.setAttribute('fetchpriority', 'low');
   });
@@ -174,6 +173,7 @@ const setupNavigationFeedback = () => {
 
   document.addEventListener('astro:before-swap', (event) => {
     const theme = readStoredTheme();
+    event.newDocument.documentElement.classList.add('js');
     event.newDocument.documentElement.dataset.theme = theme;
     event.newDocument.documentElement.style.colorScheme = theme;
   });

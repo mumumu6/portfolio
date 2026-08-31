@@ -29,6 +29,13 @@
   padding-left: max(40px, calc((100% - var(--wide-content-width)) / 2));
 }
 
+@media (min-width: 1440px) {
+  .site-shell--adaptive > .page-intro {
+    padding-right: max(40px, calc((100% - var(--wide-content-width)) / 2));
+    padding-left: max(40px, calc((100% - var(--wide-content-width)) / 2));
+  }
+}
+
 @media (max-width: 1099px) {
   .site-shell--wide > .page-intro {
     padding-right: 20px;

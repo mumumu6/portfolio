@@ -9,36 +9,6 @@
   }
 }
 
-html[data-navigation-loading]::before {
-  position: fixed;
-  z-index: 1000;
-  top: 0;
-  left: 0;
-  width: 34%;
-  height: 2px;
-  background: var(--link);
-  content: '';
-  transform-origin: left center;
-  animation: navigation-progress 1.2s ease-in-out infinite;
-}
-
-@keyframes navigation-progress {
-  from {
-    transform: translateX(-100%);
-  }
-
-  to {
-    transform: translateX(300%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html[data-navigation-loading]::before {
-    transform: none;
-    animation: none;
-  }
-}
-
 @keyframes mobile-menu-item-in {
   from {
     opacity: 0;
@@ -56,48 +26,30 @@ html[data-navigation-loading]::before {
   }
 }
 
-@keyframes reply-thread-in {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
+[data-disclosure-content] {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-5px) scaleY(0.99);
+  transition:
+    max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease-out,
+    transform 420ms cubic-bezier(0.16, 1.06, 0.3, 1),
+    padding 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-top-width 180ms ease,
+    border-top-color 180ms ease;
 }
 
-@keyframes reply-item-in {
-  from {
-    opacity: 0;
-    transform: translateY(-3px);
-  }
+[data-disclosure-content].is-open {
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-}
-
-::view-transition-old(page-content) {
-  animation: 90ms ease-in both page-fade-out;
-}
-
-::view-transition-new(page-content) {
-  animation: 150ms ease-out both page-fade-in;
-}
-
-@keyframes page-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes page-fade-in {
-  from {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(page-content),
-  ::view-transition-new(page-content) {
-    animation-duration: 0.01ms;
-  }
+[data-disclosure-content].is-measuring {
+  transition:
+    opacity 220ms ease-out,
+    transform 420ms cubic-bezier(0.16, 1.06, 0.3, 1),
+    padding 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-top-width 180ms ease,
+    border-top-color 180ms ease;
 }

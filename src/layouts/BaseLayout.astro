@@ -17,7 +17,7 @@ type Props = {
   schemaType?: 'WebPage' | 'ProfilePage' | 'CollectionPage' | 'BlogPosting' | 'CreativeWork';
   tags?: string[];
   readingMinutes?: number;
-  shell?: 'default' | 'wide';
+  shell?: 'default' | 'wide' | 'adaptive';
 };
 
 const { shell = 'default', ...seoProps } = Astro.props;
@@ -31,6 +31,21 @@ const { shell = 'default', ...seoProps } = Astro.props;
     <SeoHead {...seoProps} />
     <ClientRouter />
     <title>{seoProps.title}</title>
+    <style is:inline>
+      html,
+      body {
+        background-color: #090d12;
+        color: #edf2f6;
+        color-scheme: dark;
+      }
+
+      html[data-theme='light'],
+      html[data-theme='light'] body {
+        background-color: #eef1f4;
+        color: #111820;
+        color-scheme: light;
+      }
+    </style>
     <script is:inline>
       (() => {
         document.documentElement.classList.add('js');
@@ -54,8 +69,14 @@ const { shell = 'default', ...seoProps } = Astro.props;
   </head>
   <body>
     <a class="skip-link" href="#main-content">本文へ移動</a>
-    <SiteHeader />
-    <main class:list={['site-shell', { 'site-shell--wide': shell === 'wide' }]} id="main-content">
+    <SiteHeader adaptive={shell === 'adaptive'} />
+    <main
+      class:list={[
+        'site-shell',
+        { 'site-shell--wide': shell === 'wide', 'site-shell--adaptive': shell === 'adaptive' },
+      ]}
+      id="main-content"
+    >
       <slot />
     </main>
 

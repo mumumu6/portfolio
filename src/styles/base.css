@@ -8,33 +8,6 @@
   --font-body: 'IBM Plex Sans JP', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: 'Space Grotesk', 'IBM Plex Sans JP', ui-sans-serif, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-  --bg: #eef1f4;
-  --surface: #ffffff;
-  --surface-soft: #f5f7f9;
-  --text: #111820;
-  --text-soft: #34404b;
-  --muted: #687480;
-  --faint: #929ca6;
-  --line: #d9e0e6;
-  --line-strong: #bcc6cf;
-  --link: #246b9e;
-  --accent: #18232d;
-  --accent-contrast: #ffffff;
-  --chatgpt: #187b62;
-  --chatgpt-soft: #e8f4f0;
-  --codex: #5068d8;
-  --codex-soft: #edf0ff;
-  --warning: #a97125;
-  --code-bg: #080c11;
-  --code-text: #e7edf2;
-  --avatar-surface: #ffffff;
-  --site-width: 820px;
-  --wide-width: 1240px;
-  --wide-content-width: 1048px;
-  --header-height: 58px;
-}
-
-:root[data-theme='dark'] {
   --bg: #090d12;
   --surface: #0d1218;
   --surface-soft: #121920;
@@ -52,6 +25,34 @@
   --codex: #a7b4ff;
   --codex-soft: #171d36;
   --warning: #d6a35d;
+  --code-bg: #080c11;
+  --code-text: #e7edf2;
+  --avatar-surface: #ffffff;
+  --site-width: 820px;
+  --wide-width: 1240px;
+  --adaptive-wide-width: 1440px;
+  --wide-content-width: 1048px;
+  --header-height: 58px;
+}
+
+:root[data-theme='light'] {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --surface-soft: #f5f7f9;
+  --text: #111820;
+  --text-soft: #34404b;
+  --muted: #687480;
+  --faint: #929ca6;
+  --line: #d9e0e6;
+  --line-strong: #bcc6cf;
+  --link: #246b9e;
+  --accent: #18232d;
+  --accent-contrast: #ffffff;
+  --chatgpt: #187b62;
+  --chatgpt-soft: #e8f4f0;
+  --codex: #5068d8;
+  --codex-soft: #edf0ff;
+  --warning: #a97125;
   --code-bg: #080c11;
   --code-text: #e7edf2;
   --avatar-surface: #ffffff;
@@ -149,6 +150,18 @@ summary:focus-visible {
 .site-shell--wide {
   width: min(100%, var(--wide-width));
   overflow: visible;
+}
+
+.site-shell--adaptive {
+  width: min(100%, var(--site-width));
+  overflow: clip;
+}
+
+@media (min-width: 1440px) {
+  .site-shell--adaptive {
+    width: min(92%, var(--adaptive-wide-width));
+    overflow: visible;
+  }
 }
 @media (max-width: 1099px) {
   .site-shell--wide {
