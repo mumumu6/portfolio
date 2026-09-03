@@ -1,20 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
-import defaultCover from '@/assets/images/default-cover.png';
 import '@/styles/pages/blog.css';
 import '@/styles/components/article-prose.css';
 import '@/styles/components/article-nav.css';
 import '@/styles/components/eyebrow.css';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ArticleToc from '@/components/article/ArticleToc.astro';
-import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro';
 import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro';
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
 import TagList from '@/components/common/TagList.astro';
 import generatedBlogPosts from '@/data/generated/blogs.json';
 import { getAiReplies } from '@/lib/portfolio/ai';
-import { resolveBlogImage } from '@/lib/portfolio/images';
 import { estimateReadingMinutes } from '@/lib/portfolio/utils';
 import type { BlogFrontmatter } from '@/lib/portfolio/types';
 
@@ -30,39 +27,14 @@ export async function getStaticPaths() {
 }
 
 const props: Props = Astro.props;
-const isExternal = props.kind === 'external';
-const id = props.post.id;
-const aiReplies = getAiReplies('blog', id) ?? [];
+if (props.kind === 'external') return Astro.redirect(props.post.href, 301);
 
-let Content: Awaited<ReturnType<typeof render>>['Content'] | undefined;
-let headings: Awaited<ReturnType<typeof render>>['headings'] = [];
-let data: BlogFrontmatter;
-let externalUrl: string | undefined;
-let readingMinutes: number;
-const externalImage = props.kind === 'external' ? resolveBlogImage(props.post.image) : undefined;
-
-if (props.kind === 'local') {
-  const rendered = await render(props.post);
-  Content = rendered.Content;
-  headings = rendered.headings;
-  data = props.post.data as BlogFrontmatter;
-  readingMinutes = estimateReadingMinutes(props.post.body ?? data.description);
-} else {
-  externalUrl = props.post.href;
-  readingMinutes = props.post.readingMinutes;
-  data = {
-    title: props.post.title,
-    description: props.post.body,
-    publishedAt: new Date(`${props.post.date}T00:00:00+09:00`),
-    tags: props.post.tags,
-    cover: externalImage?.src ?? defaultCover,
-    coverAlt: props.post.image?.alt ?? `${props.post.title}のカバー画像`,
-    coverWidth: externalImage?.width ?? defaultCover.width,
-    coverHeight: externalImage?.height ?? defaultCover.height,
-  };
-}
-
-const publishedAt = props.kind === 'external' ? props.post.date : data.publishedAt.toISOString().slice(0, 10);
+const post = props.post;
+const { Content, headings } = await render(post);
+const data = post.data as BlogFrontmatter;
+const aiReplies = getAiReplies('blog', post.id) ?? [];
+const readingMinutes = estimateReadingMinutes(post.body ?? data.description);
+const publishedAt = data.publishedAt.toISOString().slice(0, 10);
 const updatedAt = data.updatedAt?.toISOString().slice(0, 10);
 const dateLabel = publishedAt.replaceAll('-', '.');
 const tocHeadings = headings.filter((heading) => heading.depth <= 3);
@@ -82,17 +54,13 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
   tags={data.tags}
   readingMinutes={readingMinutes}
 >
-  <article class:list={['article-page', { 'article-page--external': isExternal }]}>
-    {
-      !isExternal && (
-        <div class="reading-progress" data-reading-progress aria-hidden="true">
-          <span data-reading-progress-label>0%</span>
-        </div>
-      )
-    }
+  <article class="article-page">
+    <div class="reading-progress" data-reading-progress aria-hidden="true">
+      <span data-reading-progress-label>0%</span>
+    </div>
     <header class="article-header">
       <a class="article-back" href="/blog/" data-astro-prefetch="hover">← Blog</a>
-      <p class="eyebrow">{isExternal ? 'FROM traP BLOG' : "MUMUMU'S BLOG"}</p>
+      <p class="eyebrow">MUMUMU'S BLOG</p>
       <h1>{data.title}</h1>
       <p class="article-lead">{data.description}</p>
       <div class="article-meta">
@@ -102,61 +70,23 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
       </div>
     </header>
 
-    {
-      externalUrl ? (
-        <a
-          class="article-cover-link"
-          href={externalUrl}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="traP Blogで本文を読む"
-        >
-          <ResponsiveImage
-            className="article-cover"
-            src={data.cover}
-            sizes="(max-width: 760px) calc(100vw - 32px), 780px"
-            alt={data.coverAlt}
-            width={data.coverWidth}
-            height={data.coverHeight}
-            loading="eager"
-            fetchPriority="high"
-          />
-        </a>
-      ) : (
-        <ResponsiveImage
-          className="article-cover"
-          src={data.cover}
-          sizes="(max-width: 760px) calc(100vw - 32px), 780px"
-          alt={data.coverAlt}
-          width={data.coverWidth}
-          height={data.coverHeight}
-          loading="eager"
-          fetchPriority="high"
-        />
-      )
-    }
+    <ResponsiveImage
+      className="article-cover"
+      src={data.cover}
+      sizes="(max-width: 760px) calc(100vw - 32px), 780px"
+      alt={data.coverAlt}
+      width={data.coverWidth}
+      height={data.coverHeight}
+      loading="eager"
+      fetchPriority="high"
+    />
 
-    {
-      isExternal ? (
-        <div class="external-article-body">
-          <ExternalLinkCard
-            href={externalUrl!}
-            label="traP Blogで本文を読む"
-            host="trap.jp"
-            className="external-card-link--article"
-          />
-        </div>
-      ) : (
-        <>
-          <ArticleToc headings={tocHeadings} mode="mobile" />
+    <ArticleToc headings={tocHeadings} mode="mobile" />
 
-          <div class="article-layout">
-            <ArticleToc headings={tocHeadings} mode="desktop" />
-            <div class="article-prose">{Content && <Content />}</div>
-          </div>
-        </>
-      )
-    }
+    <div class="article-layout">
+      <ArticleToc headings={tocHeadings} mode="desktop" />
+      <div class="article-prose"><Content /></div>
+    </div>
 
     {
       aiReplies.length > 0 && (
@@ -177,7 +107,7 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
 
   const updateReadingProgress = () => {
     progressFrame = 0;
-    const article = document.querySelector<HTMLElement>('.article-page:not(.article-page--external)');
+    const article = document.querySelector<HTMLElement>('.article-page');
     const ring = document.querySelector<HTMLElement>('[data-reading-progress]');
     if (!article || !ring) return;
 

@@ -199,6 +199,11 @@
     width: calc(100% - 32px);
     padding-top: 20px;
   }
+
+  .work-thread-cover {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
 }
 
 @media (max-width: 480px) {

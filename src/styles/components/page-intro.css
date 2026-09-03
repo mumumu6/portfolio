@@ -4,10 +4,6 @@
   background: var(--surface);
 }
 
-.page-intro__heading {
-  display: block;
-}
-
 .page-intro h1 {
   margin: 5px 0 0;
   font-family: var(--font-display);
@@ -45,7 +41,14 @@
 
 @media (max-width: 760px) {
   .page-intro {
-    padding-right: 16px;
-    padding-left: 16px;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }

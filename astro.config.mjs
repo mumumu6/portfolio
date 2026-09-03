@@ -12,7 +12,6 @@ const runtimeCaching = [
     urlPattern: ({ request, url }) =>
       url.origin === self.location.origin &&
       (request.mode === 'navigate' ||
-        request.headers.get('x-portfolio-prefetch') === 'html' ||
         request.headers.get('sec-purpose')?.includes('prefetch') ||
         request.headers.get('accept')?.includes('text/html')),
     handler: 'CacheFirst',

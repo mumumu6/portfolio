@@ -1,12 +1,14 @@
 .profile-header {
-  border-bottom: 1px solid var(--line);
+  width: min(100%, var(--site-width));
+  margin-inline: auto;
+  border-inline: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
 }
 
 .profile-cover {
   position: relative;
   height: 132px;
   overflow: hidden;
-  border-bottom: 1px solid var(--line);
   background:
     linear-gradient(
       120deg,
@@ -116,6 +118,7 @@
   border-radius: 50%;
   color: var(--text);
   text-decoration: none;
+  transition: background-color 140ms ease;
 }
 
 .profile-links a:hover {
@@ -134,7 +137,19 @@
   height: 100%;
   fill: currentColor;
 }
+
+@media (min-width: 1440px) {
+  .profile-header--adaptive {
+    width: min(92%, var(--adaptive-wide-width));
+  }
+}
+
 @media (max-width: 760px) {
+  .profile-header {
+    width: 100%;
+    border-inline: 0;
+  }
+
   .profile-cover {
     height: 112px;
   }

@@ -29,6 +29,21 @@ const { shell = 'default', ...seoProps } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <SeoHead {...seoProps} />
+    <script is:inline>
+      (() => {
+        history.scrollRestoration = 'manual';
+        const restoreScrollPosition = () => {
+          const state = history.state;
+          const scrollX = Number(state?.scrollX);
+          const scrollY = Number(state?.scrollY);
+          if (!Number.isFinite(scrollX) || !Number.isFinite(scrollY) || (scrollX === 0 && scrollY === 0)) return;
+          window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' });
+        };
+
+        window.addEventListener('load', restoreScrollPosition, { once: true });
+        document.addEventListener('astro:page-load', restoreScrollPosition, { once: true });
+      })();
+    </script>
     <ClientRouter />
     <title>{seoProps.title}</title>
     <style is:inline>

@@ -39,7 +39,7 @@ export const blogPosts: FeedEntry[] = [
     body: toExcerpt(post.body),
     kind: 'blog' as const,
     author: 'mumumu' as const,
-    href: `/blog/${post.id}/`,
+    href: post.href,
     sourceHref: post.href,
     sourceLabel: 'traP Blogで読む',
     replies: getAiReplies('blog', post.id),

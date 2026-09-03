@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import ProfileHeader from '@/components/profile/ProfileHeader.astro';
 import FeedEntry from '@/components/feed/FeedEntry.astro';
 import WorkEntry from '@/components/feed/WorkEntry.astro';
 import SectionHeading from '@/components/layout/SectionHeading.astro';
@@ -14,8 +13,6 @@ import { works } from '@/lib/portfolio/works';
   schemaType="ProfilePage"
   shell="adaptive"
 >
-  <ProfileHeader />
-
   <section aria-labelledby="works-heading">
     <SectionHeading id="works-heading" eyebrow="SELECTED PROJECTS" title="Works" href="/works/" />
 

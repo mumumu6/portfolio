@@ -1,9 +1,4 @@
-import {
-  applySlowNetworkImagePolicy,
-  closeMenu,
-  setNavigationLoading,
-  setupSiteNavigation,
-} from '@/scripts/site-navigation';
+import { applySlowNetworkImagePolicy, setNavigationLoading, setupSiteNavigation } from '@/scripts/site-navigation';
 
 const markImageReady = (image: HTMLImageElement, state: 'loaded' | 'error') => {
   image.dataset.imageState = state;
@@ -35,10 +30,20 @@ const markImageDecoded = async (image: HTMLImageElement) => {
 
 const boundImages = new WeakSet<HTMLImageElement>();
 const boundDisclosures = new WeakSet<HTMLDetailsElement>();
+const responsivePrefetchQuery = window.matchMedia('(max-width: 760px)');
 // Native loading="lazy" can still fetch images well below the fold. Keep the
 // URLs out of src/srcset until the image is close enough to be useful.
 const lazyImageRootMargin = '160px 0px';
 let lazyImageObserver: IntersectionObserver | undefined;
+
+const syncResponsivePrefetch = () => {
+  const strategy = responsivePrefetchQuery.matches ? 'tap' : 'hover';
+  document.querySelectorAll<HTMLAnchorElement>('a[data-astro-prefetch]').forEach((link) => {
+    if (link.dataset.astroPrefetch !== 'false') link.dataset.astroPrefetch = strategy;
+  });
+};
+
+responsivePrefetchQuery.addEventListener('change', syncResponsivePrefetch);
 
 const hydrateLazyImage = (image: HTMLImageElement) => {
   const lazySrc = image.dataset.src;
@@ -244,7 +249,7 @@ const registerServiceWorkerWhenIdle = () => {
 
 registerServiceWorkerWhenIdle();
 const setupPage = () => {
-  closeMenu(true);
+  syncResponsivePrefetch();
   setNavigationLoading(false);
   setupSiteNavigation();
   applySlowNetworkImagePolicy();

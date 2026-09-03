@@ -2,6 +2,8 @@
 :root {
   --page-transition-duration: 220ms;
   --page-transition-ease: cubic-bezier(0.42, 0, 1, 1);
+  --page-slide-duration: 360ms;
+  --page-slide-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Keep the live document background and animate only the page shell. */
@@ -39,8 +41,66 @@ html {
   }
 }
 
+@keyframes page-slide-out-left {
+  to {
+    transform: translate3d(-18%, 0, 0) scale(0.985);
+    opacity: 0.72;
+  }
+}
+
+@keyframes page-slide-in-right {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes page-slide-out-right {
+  to {
+    transform: translate3d(18%, 0, 0) scale(0.985);
+    opacity: 0.72;
+  }
+}
+
+@keyframes page-slide-in-left {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@media (max-width: 760px) {
+  :root[data-navigation-direction='forward']::view-transition-old(page-content),
+  :root[data-navigation-direction='back']::view-transition-old(page-content),
+  :root[data-navigation-direction='forward']::view-transition-new(page-content),
+  :root[data-navigation-direction='back']::view-transition-new(page-content) {
+    animation-duration: var(--page-slide-duration);
+    animation-timing-function: var(--page-slide-ease);
+    animation-fill-mode: both;
+  }
+
+  :root[data-navigation-direction='forward']::view-transition-old(page-content) {
+    animation-name: page-slide-out-left;
+  }
+
+  :root[data-navigation-direction='forward']::view-transition-new(page-content) {
+    animation-name: page-slide-in-right;
+  }
+
+  :root[data-navigation-direction='back']::view-transition-old(page-content) {
+    animation-name: page-slide-out-right;
+  }
+
+  :root[data-navigation-direction='back']::view-transition-new(page-content) {
+    animation-name: page-slide-in-left;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-new(page-content) {
+    animation-duration: 0.01ms;
+  }
+
+  :root[data-navigation-direction]::view-transition-old(page-content),
+  :root[data-navigation-direction]::view-transition-new(page-content) {
     animation-duration: 0.01ms;
   }
 }

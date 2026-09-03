@@ -3,18 +3,23 @@ import '@/styles/components/profile.css';
 import Avatar from '@/components/common/Avatar.astro';
 import { getEntry } from 'astro:content';
 
+type Props = {
+  adaptive?: boolean;
+};
+
+const { adaptive = false } = Astro.props;
 const profileEntry = await getEntry('site', 'profile');
 if (!profileEntry) throw new Error('Missing site profile content');
 const { data: profile } = profileEntry;
 ---
 
-<section class="profile-header" aria-labelledby="profile-name">
+<section class:list={['profile-header', { 'profile-header--adaptive': adaptive }]} aria-labelledby="profile-name">
   <div class="profile-cover" aria-hidden="true"></div>
   <div class="profile-main">
     <div class="profile-top">
-      <div class="profile-portrait">
+      <a class="profile-portrait" href="/" aria-label="mumumu ホーム" data-site-home>
         <Avatar author="mumumu" size="large" />
-      </div>
+      </a>
 
       <nav class="profile-links" aria-label="外部プロフィール">
         {

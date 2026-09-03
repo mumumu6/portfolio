@@ -1,5 +1,6 @@
 ---
 import '@/styles/components/site-header.css';
+import ProfileHeader from '@/components/profile/ProfileHeader.astro';
 import { mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
 
 type Props = {
@@ -8,6 +9,7 @@ type Props = {
 
 const { adaptive = false } = Astro.props;
 const pathname = Astro.url.pathname;
+const isHome = pathname === '/';
 const navItems = [
   { href: '/works/', label: 'Works' },
   { href: '/blog/', label: 'Blog' },
@@ -18,145 +20,251 @@ const navItems = [
 const isActive = (href: string) => pathname === href || pathname.startsWith(href);
 ---
 
-<header class="site-header" transition:persist="site-header" transition:animate="none">
-  <div class:list={['header-inner', { 'header-inner--adaptive': adaptive }]}>
-    <a class="site-name" href="/" aria-label="mumumu ホーム" data-astro-prefetch="hover">
-      <span>mumumu<em>.</em></span>
-    </a>
-
-    <nav class="desktop-nav" aria-label="メインナビゲーション">
-      {
-        navItems.map((item) => (
-          <a
-            href={item.href}
-            class:list={{ active: isActive(item.href) }}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-            data-nav-link
-            data-astro-prefetch="hover"
-          >
-            {item.label}
-          </a>
-        ))
-      }
-      <span class="desktop-nav__indicator" data-nav-indicator aria-hidden="true"></span>
-    </nav>
-
-    <div class="header-actions">
-      <button
-        class="icon-button theme-toggle"
-        type="button"
-        data-theme-toggle
-        aria-label="テーマを切り替える"
-        aria-pressed="true"
+<div class:list={['site-chrome', { 'site-chrome--profile': isHome }]}>
+  <header class="site-header" transition:persist="site-header" transition:animate="none">
+    <div class:list={['header-inner', { 'header-inner--adaptive': adaptive }]}>
+      <a
+        class="site-name"
+        href="/"
+        aria-label="mumumu ホーム"
+        data-site-home
+        data-astro-prefetch={isHome ? undefined : 'hover'}
       >
-        <span class="theme-icon" aria-hidden="true">
-          <svg class="theme-icon__sun" viewBox="0 0 24 24"><path d={mdiWeatherSunny}></path></svg>
-          <svg class="theme-icon__moon" viewBox="0 0 24 24"><path d={mdiWeatherNight}></path></svg>
-        </span>
-      </button>
-      <button
-        class="icon-button menu-toggle"
-        type="button"
-        data-menu-toggle
-        aria-label="メニューを開く"
-        aria-expanded="false"
-        aria-controls="mobile-menu"
-      >
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </button>
+        <span>mumumu<em>.</em></span>
+      </a>
+
+      <nav class="desktop-nav" data-nav-container aria-label="メインナビゲーション">
+        {
+          navItems.map((item) => (
+            <a
+              href={item.href}
+              class:list={{ active: isActive(item.href) }}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              data-nav-link
+              data-astro-prefetch="hover"
+            >
+              <span>{item.label}</span>
+            </a>
+          ))
+        }
+        <span class="desktop-nav__indicator" data-nav-indicator aria-hidden="true"></span>
+      </nav>
+
+      <div class="header-actions">
+        <button
+          class="icon-button theme-toggle"
+          type="button"
+          data-theme-toggle
+          aria-label="テーマを切り替える"
+          aria-pressed="true"
+        >
+          <span class="theme-icon" aria-hidden="true">
+            <svg class="theme-icon__sun" viewBox="0 0 24 24"><path d={mdiWeatherSunny}></path></svg>
+            <svg class="theme-icon__moon" viewBox="0 0 24 24"><path d={mdiWeatherNight}></path></svg>
+          </span>
+        </button>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <div class:list={['mobile-menu', { 'mobile-menu--adaptive': adaptive }]} id="mobile-menu" data-mobile-menu hidden>
-    <nav aria-label="モバイルナビゲーション">
-      {
-        navItems.map((item) => (
-          <a
-            href={item.href}
-            class:list={{ active: isActive(item.href) }}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-            data-nav-link
-            data-astro-prefetch="hover"
-          >
-            <span>{item.label}</span>
-          </a>
-        ))
-      }
-    </nav>
-  </div>
-</header>
+  {isHome && <ProfileHeader adaptive={adaptive} />}
+
+  <nav
+    class:list={['section-nav', { 'section-nav--adaptive': adaptive }]}
+    data-nav-container
+    aria-label="メインナビゲーション"
+    transition:persist="section-nav"
+    transition:animate="none"
+  >
+    {
+      navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={{ active: isActive(item.href) }}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+          data-nav-link
+          data-astro-prefetch="hover"
+        >
+          <span>{item.label}</span>
+        </a>
+      ))
+    }
+    <span class="section-nav__indicator" data-nav-indicator aria-hidden="true"></span>
+  </nav>
+</div>
 
 <script>
   import { navigate } from 'astro:transitions/client';
 
   const indicatorMinWidth = 36;
-  const indicatorHorizontalInset = 20;
-  const indicatorBaseWidth = 65;
+  const indicatorDuration = 280;
+  const indicatorEasing = 'cubic-bezier(0.22, 1, 0.36, 1)';
   let indicatorInitialized = false;
   let pendingIndicatorPath: string | null = null;
-  const navigationLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
-  const desktopNav = document.querySelector<HTMLElement>('.desktop-nav');
-  const siteHeader = document.querySelector<HTMLElement>('.site-header');
-  const navIndicator = desktopNav?.querySelector<HTMLElement>('[data-nav-indicator]');
+  let earlyNavigationLink: HTMLAnchorElement | null = null;
+  let pendingScrollY: number | null = null;
+  let scrollResetGuardY: number | null = null;
+  let directionResetTimer = 0;
 
-  const getIndicatorTargetWidth = (activeLink: HTMLAnchorElement) =>
-    Math.max(indicatorMinWidth, activeLink.offsetWidth - indicatorHorizontalInset);
+  const nativeScrollTo = window.scrollTo.bind(window);
+  window.scrollTo = ((...args: Parameters<typeof window.scrollTo>) => {
+    const firstArg = args[0] as ScrollToOptions | number | undefined;
+    const targetTop = typeof firstArg === 'object' && firstArg !== null ? firstArg.top : args[1];
+    if (scrollResetGuardY !== null && targetTop === 0 && scrollResetGuardY > 0) return;
+    nativeScrollTo(...args);
+  }) as typeof window.scrollTo;
+
+  const navContainers = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-container]'));
+  const navigationLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
+  const sectionLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.section-nav [data-nav-link]'));
+  const sectionPaths = sectionLinks.map((link) => link.pathname);
+
+  type IndicatorGeometry = {
+    x: number;
+    width: number;
+  };
+
+  const matchesPath = (pathname: string, linkPath: string) => pathname === linkPath || pathname.startsWith(linkPath);
 
   const setActiveNavigation = (pathname: string) => {
     navigationLinks.forEach((link) => {
-      const linkPath = link.pathname;
-      const active = pathname === linkPath || pathname.startsWith(linkPath);
-
+      const active = matchesPath(pathname, link.pathname);
       link.classList.toggle('active', active);
       if (active) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
     });
   };
 
-  const moveNavIndicator = (nav: HTMLElement, activeLink: HTMLAnchorElement, immediate = false) => {
-    const indicator = nav.querySelector<HTMLElement>('[data-nav-indicator]');
-    if (!indicator) return;
-    indicator.hidden = false;
+  const getTargetIndicatorGeometry = (activeLink: HTMLAnchorElement): IndicatorGeometry => {
+    const label = activeLink.querySelector<HTMLElement>(':scope > span');
+    const availableWidth = Math.max(indicatorMinWidth, activeLink.offsetWidth - 16);
+    const labelWidth = label?.offsetWidth ?? availableWidth;
+    const width = Math.min(availableWidth, Math.max(indicatorMinWidth, labelWidth));
 
-    const targetWidth = getIndicatorTargetWidth(activeLink);
-    const targetX = activeLink.offsetLeft + (activeLink.offsetWidth - targetWidth) / 2;
-    const targetTransform = `translateX(${targetX + (targetWidth - indicatorBaseWidth) / 2}px) scaleX(${targetWidth / indicatorBaseWidth})`;
+    return {
+      x: activeLink.offsetLeft + (activeLink.offsetWidth - width) / 2,
+      width,
+    };
+  };
 
-    if (immediate) {
-      indicator.removeAttribute('data-nav-ready');
-      indicator.style.transform = targetTransform;
-      requestAnimationFrame(() => {
-        if (indicator.isConnected) indicator.setAttribute('data-nav-ready', 'true');
-      });
-      return;
-    }
+  const getCurrentIndicatorGeometry = (nav: HTMLElement): IndicatorGeometry | null => {
+    const navIndicator = nav.querySelector<HTMLElement>('[data-nav-indicator]');
+    if (!navIndicator || navIndicator.hidden || nav.getClientRects().length === 0) return null;
 
-    indicator.setAttribute('data-nav-ready', 'true');
-    indicator.style.transform = targetTransform;
+    const navRect = nav.getBoundingClientRect();
+    const indicatorRect = navIndicator.getBoundingClientRect();
+    return {
+      x: indicatorRect.left - navRect.left - nav.clientLeft,
+      width: indicatorRect.width,
+    };
+  };
+
+  const moveNavIndicator = (
+    nav: HTMLElement,
+    activeLink: HTMLAnchorElement,
+    immediate = false,
+    origin?: IndicatorGeometry,
+  ) => {
+    const navIndicator = nav.querySelector<HTMLElement>('[data-nav-indicator]');
+    if (!navIndicator || nav.getClientRects().length === 0) return;
+    navIndicator.hidden = false;
+    const target = getTargetIndicatorGeometry(activeLink);
+    navIndicator.getAnimations().forEach((animation) => animation.cancel());
+    navIndicator.setAttribute('data-nav-ready', 'true');
+    navIndicator.style.width = `${target.width}px`;
+    navIndicator.style.transform = `translate3d(${target.x}px, 0, 0)`;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (immediate || reducedMotion || !origin || origin.width <= 0) return;
+
+    navIndicator.animate(
+      [
+        {
+          transform: `translate3d(${origin.x}px, 0, 0) scaleX(${origin.width / target.width})`,
+        },
+        { transform: `translate3d(${target.x}px, 0, 0) scaleX(1)` },
+      ],
+      {
+        duration: indicatorDuration,
+        easing: indicatorEasing,
+      },
+    );
   };
 
   const syncActiveNavigation = () => {
     const currentPath = window.location.pathname;
     const skipPendingAnimation = pendingIndicatorPath === currentPath;
     pendingIndicatorPath = null;
-
     setActiveNavigation(currentPath);
 
-    if (!desktopNav || !navIndicator) return;
-    const activeLink = desktopNav.querySelector<HTMLAnchorElement>('a.active');
-    if (!activeLink) {
-      navIndicator.hidden = true;
-      return;
-    }
-    navIndicator.hidden = false;
-    if (skipPendingAnimation) return;
+    navContainers.forEach((nav) => {
+      const activeLink = nav.querySelector<HTMLAnchorElement>('a.active');
+      const navIndicator = nav.querySelector<HTMLElement>('[data-nav-indicator]');
+      if (!activeLink) {
+        if (navIndicator) navIndicator.hidden = true;
+        return;
+      }
 
-    moveNavIndicator(desktopNav, activeLink, !indicatorInitialized);
+      if (!skipPendingAnimation) moveNavIndicator(nav, activeLink, !indicatorInitialized);
+    });
     indicatorInitialized = true;
   };
 
-  let earlyNavigationLink: HTMLAnchorElement | null = null;
+  const startNavigation = (link: HTMLAnchorElement) => {
+    const linkUrl = new URL(link.href, window.location.href);
+    if (
+      linkUrl.origin !== window.location.origin ||
+      (link.target && link.target !== '_self') ||
+      link.hasAttribute('download') ||
+      (linkUrl.pathname === window.location.pathname && linkUrl.search === window.location.search)
+    ) {
+      return false;
+    }
+
+    window.clearTimeout(directionResetTimer);
+    const currentIsSection = sectionPaths.some((path) => matchesPath(window.location.pathname, path));
+    pendingScrollY = link.matches('[data-nav-link]') && currentIsSection ? window.scrollY : null;
+    scrollResetGuardY = pendingScrollY;
+    const indicatorOrigins = new Map<HTMLElement, IndicatorGeometry>();
+    navContainers.forEach((nav) => {
+      const origin = getCurrentIndicatorGeometry(nav);
+      if (origin) indicatorOrigins.set(nav, origin);
+    });
+    setActiveNavigation(linkUrl.pathname);
+
+    const nextLink = sectionLinks.find((candidate) => matchesPath(linkUrl.pathname, candidate.pathname));
+    if (nextLink) {
+      const currentIndex = sectionPaths.findIndex((path) => matchesPath(window.location.pathname, path));
+      const nextIndex = sectionPaths.findIndex((path) => path === nextLink.pathname);
+      const direction = nextIndex > currentIndex ? 'forward' : nextIndex < currentIndex ? 'back' : 'none';
+      document.documentElement.dataset.navigationDirection = direction;
+      navContainers.forEach((nav) => {
+        const navLink = Array.from(nav.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')).find(
+          (candidate) => candidate.pathname === nextLink.pathname,
+        );
+        if (navLink) moveNavIndicator(nav, navLink, false, indicatorOrigins.get(nav));
+      });
+      pendingIndicatorPath = linkUrl.pathname;
+    } else {
+      delete document.documentElement.dataset.navigationDirection;
+      navContainers.forEach((nav) => {
+        const navIndicator = nav.querySelector<HTMLElement>('[data-nav-indicator]');
+        if (navIndicator) navIndicator.hidden = true;
+      });
+      pendingIndicatorPath = linkUrl.pathname;
+    }
+
+    return true;
+  };
+
+  const commitNavigation = (link: HTMLAnchorElement) => {
+    void navigate(link.href, {
+      history: link.dataset.astroHistory === 'replace' ? 'replace' : 'auto',
+      sourceElement: link,
+    }).finally(() => {
+      if (pendingScrollY === null) scrollResetGuardY = null;
+    });
+  };
 
   document.addEventListener(
     'pointerdown',
@@ -164,32 +272,11 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
       const target = event.target;
       if (!(target instanceof Element)) return;
 
-      const link = target.closest<HTMLAnchorElement>('.site-header a[href]');
+      const link = target.closest<HTMLAnchorElement>('[data-nav-link], [data-site-home]');
       if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
-
-      const linkUrl = new URL(link.href, window.location.href);
-      if (
-        linkUrl.origin !== window.location.origin ||
-        (link.target && link.target !== '_self') ||
-        link.hasAttribute('download') ||
-        (linkUrl.pathname === window.location.pathname && linkUrl.search === window.location.search)
-      ) {
-        return;
-      }
-
-      siteHeader?.setAttribute('data-nav-pending', 'true');
-      const nav = link.closest<HTMLElement>('.desktop-nav');
-      setActiveNavigation(linkUrl.pathname);
-      if (nav) {
-        moveNavIndicator(nav, link);
-        pendingIndicatorPath = linkUrl.pathname;
-      }
-
+      if (!startNavigation(link)) return;
       earlyNavigationLink = link;
-      void navigate(link.href, {
-        history: link.dataset.astroHistory === 'replace' ? 'replace' : 'auto',
-        sourceElement: link,
-      });
+      commitNavigation(link);
     },
     { capture: true },
   );
@@ -198,20 +285,107 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
     'click',
     (event) => {
       const target = event.target;
-      if (!(target instanceof Element) || !earlyNavigationLink) return;
+      if (!(target instanceof Element)) return;
 
-      const link = target.closest<HTMLAnchorElement>('.site-header a[href]');
-      if (link !== earlyNavigationLink) return;
+      const link = target.closest<HTMLAnchorElement>('[data-nav-link], [data-site-home]');
+      if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
 
-      event.preventDefault();
+      if (link === earlyNavigationLink) {
+        // Navigation already started on pointerdown. Prevent the native
+        // ClientRouter click handler from starting a second navigation.
+        event.preventDefault();
+        earlyNavigationLink = null;
+        return;
+      }
+
       earlyNavigationLink = null;
+      if (startNavigation(link)) {
+        event.preventDefault();
+        commitNavigation(link);
+      }
     },
     { capture: true },
   );
 
+  let swipeStart: { x: number; y: number } | null = null;
+
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      if (event.pointerType === 'mouse' || !window.matchMedia('(max-width: 760px)').matches) return;
+      const target = event.target;
+      if (!(target instanceof Element) || !target.closest('main.site-shell')) return;
+      if (target.closest('a, button, input, textarea, select, summary, pre, code, [data-swipe-ignore]')) return;
+      swipeStart = { x: event.clientX, y: event.clientY };
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    'pointerup',
+    (event) => {
+      if (!swipeStart) return;
+      const { x, y } = swipeStart;
+      swipeStart = null;
+
+      const deltaX = event.clientX - x;
+      const deltaY = event.clientY - y;
+      if (Math.abs(deltaX) < 72 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+
+      const currentIndex = sectionPaths.findIndex((path) => matchesPath(window.location.pathname, path));
+      const nextIndex = currentIndex + (deltaX < 0 ? 1 : -1);
+      const nextPath = sectionPaths[nextIndex];
+      const nextLink = sectionLinks.find((link) => link.pathname === nextPath);
+      if (currentIndex < 0 || !nextLink) return;
+
+      event.preventDefault();
+      if (!startNavigation(nextLink)) return;
+      commitNavigation(nextLink);
+    },
+    { capture: true },
+  );
+
+  document.addEventListener('pointercancel', () => {
+    swipeStart = null;
+  });
+
   syncActiveNavigation();
+  document.addEventListener('astro:before-swap', (event) => {
+    const newDocument = (event as Event & { newDocument?: Document }).newDocument;
+    const direction = document.documentElement.dataset.navigationDirection;
+    if (newDocument && direction && direction !== 'none') {
+      newDocument.documentElement.dataset.navigationDirection = direction;
+    }
+  });
+  document.addEventListener('astro:after-swap', () => {
+    if (pendingScrollY === null) return;
+    const scrollY = pendingScrollY;
+    pendingScrollY = null;
+    window.scrollTo({ left: 0, top: scrollY, behavior: 'instant' });
+    scrollResetGuardY = null;
+  });
   document.addEventListener('astro:page-load', () => {
     syncActiveNavigation();
-    siteHeader?.removeAttribute('data-nav-pending');
+    scrollResetGuardY = null;
+    window.clearTimeout(directionResetTimer);
+    directionResetTimer = window.setTimeout(() => {
+      delete document.documentElement.dataset.navigationDirection;
+    }, 420);
   });
+
+  let resizeFrame = 0;
+  window.addEventListener(
+    'resize',
+    () => {
+      window.cancelAnimationFrame(resizeFrame);
+      resizeFrame = window.requestAnimationFrame(() => {
+        if (pendingIndicatorPath) return;
+        navContainers.forEach((nav) => {
+          const activeLink = nav.querySelector<HTMLAnchorElement>('a.active');
+          if (activeLink) moveNavIndicator(nav, activeLink, true);
+        });
+      });
+    },
+    { passive: true },
+  );
 </script>

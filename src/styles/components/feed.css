@@ -3,6 +3,8 @@
 }
 
 .feed-entry {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 320px;
   padding: 18px 20px;
   border-bottom: 1px solid var(--line);
   background: var(--surface);

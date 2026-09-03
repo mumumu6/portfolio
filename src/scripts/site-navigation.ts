@@ -1,8 +1,5 @@
 type Theme = 'light' | 'dark';
 
-let menuHideTimer = 0;
-let menuFrame = 0;
-let escapeBound = false;
 let navigationFeedbackInitialized = false;
 
 const readStoredTheme = (): Theme => {
@@ -66,92 +63,6 @@ const setupTheme = () => {
   });
 };
 
-const setupHeaderScroll = () => {
-  const header = document.querySelector<HTMLElement>('.site-header');
-  if (!header || header.dataset.scrollBound === 'true') return;
-
-  header.dataset.scrollBound = 'true';
-  let previousY = window.scrollY;
-  let frame = 0;
-
-  window.addEventListener(
-    'scroll',
-    () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        const currentY = window.scrollY;
-        const delta = currentY - previousY;
-        const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
-
-        if (currentY <= 24 || delta < -4 || menu?.hidden === false) {
-          header.removeAttribute('data-hidden');
-        } else if (currentY > 96 && delta > 4) {
-          header.dataset.hidden = 'true';
-        }
-
-        if (Math.abs(delta) > 4) previousY = currentY;
-      });
-    },
-    { passive: true },
-  );
-};
-
-const setMenuOpen = (open: boolean, immediate = false) => {
-  const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
-  const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
-  const header = document.querySelector<HTMLElement>('.site-header');
-  if (!menuButton || !menu) return;
-
-  window.clearTimeout(menuHideTimer);
-  cancelAnimationFrame(menuFrame);
-  if (open) {
-    menu.hidden = false;
-    menuFrame = requestAnimationFrame(() => {
-      menu.dataset.open = 'true';
-    });
-  } else {
-    delete menu.dataset.open;
-    if (immediate) menu.hidden = true;
-    else {
-      menuHideTimer = window.setTimeout(() => {
-        if (menu.dataset.open !== 'true') menu.hidden = true;
-      }, 190);
-    }
-  }
-
-  menuButton.setAttribute('aria-expanded', String(open));
-  menuButton.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
-  header?.removeAttribute('data-hidden');
-};
-
-export const closeMenu = (immediate = false) => setMenuOpen(false, immediate);
-
-const setupMobileMenu = () => {
-  const menuButton = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
-  const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
-  if (!menuButton || !menu) return;
-
-  if (menuButton.dataset.bound !== 'true') {
-    menuButton.dataset.bound = 'true';
-    menuButton.addEventListener('click', () => {
-      const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
-      setMenuOpen(!isOpen);
-    });
-  }
-
-  if (escapeBound) return;
-  escapeBound = true;
-  document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') return;
-    const currentMenu = document.querySelector<HTMLElement>('[data-mobile-menu]');
-    if (currentMenu && !currentMenu.hidden) {
-      closeMenu();
-      document.querySelector<HTMLButtonElement>('[data-menu-toggle]')?.focus();
-    }
-  });
-};
-
 export const setNavigationLoading = (loading: boolean) => {
   document.querySelector('main#main-content')?.setAttribute('aria-busy', String(loading));
 };
@@ -181,7 +92,5 @@ const setupNavigationFeedback = () => {
 
 export const setupSiteNavigation = () => {
   setupTheme();
-  setupHeaderScroll();
-  setupMobileMenu();
   setupNavigationFeedback();
 };
