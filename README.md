@@ -17,7 +17,7 @@ Node.jsのバージョンは`mise.toml`で管理し、pnpmのバージョンは`
 
 本番成果物は`dist/`へ生成されます。Cloudflare Workers Static Assets向けのキャッシュ・セキュリティヘッダーは`public/_headers`で管理しています。
 
-Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox設定で管理し、ページ遷移のprefetchはAstro標準機能を使います。画像はAstroの`Picture`でAVIF/WebPのレスポンシブ画像を生成し、`loading`属性と`srcset`で遅延読み込み・表示幅を制御します。
+Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox設定で管理し、ページ遷移のprefetchはデスクトップではhover、モバイルではtapに合わせた共有キャッシュで行います。画像はAstroの`Picture`でAVIF/WebPのレスポンシブ画像を生成し、`loading`属性と`srcset`で遅延読み込み・表示幅を制御します。
 
 ## Pages
 
@@ -27,7 +27,7 @@ Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox�
 - `/experience/` — 活動履歴
 - `/thoughts/` — ChatGPTとCodexによるAI日記
 
-自サイトの記事は`src/content/blogs/`のMarkdown・MDXで管理し、traPの記事一覧はRSSから同期します。記事内で最適化対象の画像を使う場合はMDXから`ResponsiveImage`へローカル画像を渡します。Blog同期とprivate AI repositoryからの公開フローは[docs/content-pipeline.md](docs/content-pipeline.md)にまとめています。
+自サイトの記事は`src/content/blogs/`のMarkdown・MDXで管理し、traPの記事一覧はRSSから同期します。記事内で最適化対象の画像を使う場合はMDXから`ResponsiveImage`へローカル画像を渡します。Blog同期とprivate AI repositoryからの公開フローは、リポジトリ外の運用手順として管理します。
 
 ## Directory roles
 

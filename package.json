@@ -6,7 +6,7 @@
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build:ci": "pnpm validate:ai && pnpm lint && pnpm fmt:check && pnpm check && pnpm build",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
-    "deploy": "wrangler deploy",
+    "workers:deploy": "wrangler deploy",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "lint": "oxlint src scripts",

@@ -40,8 +40,10 @@ const { shell = 'default', ...seoProps } = Astro.props;
           window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' });
         };
 
+        // Client-side navigations are coordinated by site-header.ts. Keeping
+        // this initial-load restore here avoids a visible jump after reload
+        // without competing with the transition scroll handler.
         window.addEventListener('load', restoreScrollPosition, { once: true });
-        document.addEventListener('astro:page-load', restoreScrollPosition, { once: true });
       })();
     </script>
     <ClientRouter />

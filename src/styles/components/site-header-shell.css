@@ -1,0 +1,124 @@
+.site-header {
+  position: relative;
+  z-index: 50;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  view-transition-name: none !important;
+}
+
+.site-chrome {
+  display: contents;
+}
+
+.header-inner,
+.section-nav {
+  width: min(100%, var(--site-width));
+  margin-inline: auto;
+  border-inline: 1px solid var(--line);
+}
+
+.section-nav {
+  view-transition-name: none !important;
+}
+
+.header-inner {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 20px;
+}
+
+@media (min-width: 1440px) {
+  .header-inner--adaptive,
+  .section-nav--adaptive {
+    width: min(92%, var(--adaptive-wide-width));
+  }
+}
+
+.site-name {
+  flex: none;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  text-decoration: none;
+}
+
+.site-name em {
+  color: var(--muted);
+  font-style: normal;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.desktop-nav {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.desktop-nav a,
+.section-nav a {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 140ms ease;
+}
+
+.desktop-nav a {
+  padding: 0 10px;
+  z-index: 1;
+}
+
+.desktop-nav a:hover,
+.desktop-nav a.active,
+.section-nav a:hover,
+.section-nav a.active {
+  color: var(--text);
+}
+
+.desktop-nav a > span,
+.section-nav a > span {
+  display: inline-block;
+  padding: 6px;
+  border-radius: 3px;
+  transition: background-color 120ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .desktop-nav a:not(.active):hover > span,
+  .section-nav a:not(.active):hover > span {
+    background: color-mix(in srgb, var(--text) 4%, transparent);
+  }
+}
+
+.desktop-nav__indicator,
+.section-nav__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 36px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  pointer-events: none;
+  visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  transform-origin: left center;
+  will-change: transform;
+}

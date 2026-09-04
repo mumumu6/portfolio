@@ -1,0 +1,18 @@
+---
+import { mdiWeatherNight, mdiWeatherSunny } from '@mdi/js';
+---
+
+<div class="header-actions">
+  <button
+    class="icon-button theme-toggle"
+    type="button"
+    data-theme-toggle
+    aria-label="テーマを切り替える"
+    aria-pressed="true"
+  >
+    <span class="theme-icon" aria-hidden="true">
+      <svg class="theme-icon__sun" viewBox="0 0 24 24"><path d={mdiWeatherSunny}></path></svg>
+      <svg class="theme-icon__moon" viewBox="0 0 24 24"><path d={mdiWeatherNight}></path></svg>
+    </span>
+  </button>
+</div>

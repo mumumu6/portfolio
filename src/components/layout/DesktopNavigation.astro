@@ -1,0 +1,13 @@
+---
+import NavigationLinks from '@/components/layout/NavigationLinks.astro';
+
+type Props = {
+  pathname: string;
+};
+
+const { pathname } = Astro.props;
+---
+
+<nav class="desktop-nav" data-nav-container aria-label="メインナビゲーション">
+  <NavigationLinks pathname={pathname} indicatorClass="desktop-nav__indicator" />
+</nav>

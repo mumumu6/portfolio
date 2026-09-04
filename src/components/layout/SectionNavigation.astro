@@ -1,0 +1,20 @@
+---
+import NavigationLinks from '@/components/layout/NavigationLinks.astro';
+
+type Props = {
+  adaptive?: boolean;
+  pathname: string;
+};
+
+const { adaptive = false, pathname } = Astro.props;
+---
+
+<nav
+  class:list={['section-nav', { 'section-nav--adaptive': adaptive }]}
+  data-nav-container
+  aria-label="メインナビゲーション"
+  transition:persist="section-nav"
+  transition:animate="none"
+>
+  <NavigationLinks pathname={pathname} indicatorClass="section-nav__indicator" />
+</nav>
