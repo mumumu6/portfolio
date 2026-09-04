@@ -219,6 +219,9 @@ document.addEventListener('pointercancel', () => {
 
 syncAdaptiveLayout();
 syncActiveNavigation();
+document.addEventListener('astro:before-preparation', () => {
+  hasClientNavigationStarted = true;
+});
 document.addEventListener('astro:before-swap', (event) => {
   const newDocument = (event as Event & { newDocument?: Document }).newDocument;
   const direction = document.documentElement.dataset.navigationDirection;
