@@ -1,12 +1,12 @@
 ---
-import '@/styles/components/tag-list.css';
+import '@/styles/components/tag-list.css'
 
 type Props = {
-  tags?: string[];
-  label?: string;
-};
+  tags?: string[] | undefined
+  label?: string | undefined
+}
 
-const { tags, label = 'タグ' } = Astro.props;
+const { tags, label = 'タグ' } = Astro.props
 ---
 
 {

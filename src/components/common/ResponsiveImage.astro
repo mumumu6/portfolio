@@ -1,19 +1,19 @@
 ---
-import { getImage } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
-import '@/styles/components/responsive-image.css';
+import { getImage } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+import '@/styles/components/responsive-image.css'
 
 type Props = {
-  src: ImageMetadata;
-  alt: string;
-  width?: number;
-  height?: number;
-  sizes?: string;
-  widths?: number[];
-  loading?: 'lazy' | 'eager';
-  fetchPriority?: 'high' | 'low' | 'auto';
-  className?: string;
-};
+  src: ImageMetadata
+  alt: string
+  width?: number | undefined
+  height?: number | undefined
+  sizes?: string | undefined
+  widths?: number[] | undefined
+  loading?: 'lazy' | 'eager' | undefined
+  fetchPriority?: 'high' | 'low' | 'auto' | undefined
+  className?: string | undefined
+}
 
 const {
   src,
@@ -25,16 +25,20 @@ const {
   loading = 'lazy',
   fetchPriority = 'low',
   className,
-} = Astro.props;
+} = Astro.props
 
-const defaultWidths = [...new Set([480, 960, 1440, src.width].filter((candidate) => candidate <= src.width))];
-const widths = customWidths ?? defaultWidths;
-const isLazy = loading === 'lazy';
+const defaultWidths = [
+  ...new Set(
+    [480, 960, 1440, src.width].filter((candidate) => candidate <= src.width),
+  ),
+]
+const widths = customWidths ?? defaultWidths
+const isLazy = loading === 'lazy'
 
 const [avifImage, webpImage] = await Promise.all([
   getImage({ src, width, height, widths, sizes, format: 'avif' }),
   getImage({ src, width, height, widths, sizes, format: 'webp' }),
-]);
+])
 
 const imageAttributes = {
   ...webpImage.attributes,
@@ -54,19 +58,26 @@ const imageAttributes = {
         src: webpImage.src,
         srcset: webpImage.srcSet.attribute,
       }),
-};
+}
 ---
 
-<picture data-progressive-image data-image-requested={isLazy ? undefined : 'true'}>
+<picture
+  data-progressive-image
+  data-image-requested={isLazy ? undefined : 'true'}
+>
   <source
     type="image/avif"
     sizes={sizes}
-    {...isLazy ? { 'data-srcset': avifImage.srcSet.attribute } : { srcset: avifImage.srcSet.attribute }}
+    {...isLazy
+      ? { 'data-srcset': avifImage.srcSet.attribute }
+      : { srcset: avifImage.srcSet.attribute }}
   />
   <source
     type="image/webp"
     sizes={sizes}
-    {...isLazy ? { 'data-srcset': webpImage.srcSet.attribute } : { srcset: webpImage.srcSet.attribute }}
+    {...isLazy
+      ? { 'data-srcset': webpImage.srcSet.attribute }
+      : { srcset: webpImage.srcSet.attribute }}
   />
   <img {...imageAttributes} />
   {

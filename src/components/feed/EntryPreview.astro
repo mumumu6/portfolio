@@ -1,20 +1,28 @@
 ---
-import '@/styles/components/entry-preview.css';
-import type { FeedEntry } from '@/lib/portfolio/types';
-import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
+import '@/styles/components/entry-preview.css'
+import type { FeedEntry } from '@/lib/portfolio/types'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 
 type Props = {
-  image: NonNullable<FeedEntry['image']>;
-  href?: string;
-  label: string;
-  sizes: string;
-  external?: boolean;
-  priority?: boolean;
-  className?: string;
-};
+  image: NonNullable<FeedEntry['image']>
+  href?: string | undefined
+  label: string
+  sizes: string
+  external?: boolean | undefined
+  priority?: boolean | undefined
+  className?: string | undefined
+}
 
-const { image, href, label, sizes, external = false, priority = false, className } = Astro.props;
-const classes = ['ogp-preview', className];
+const {
+  image,
+  href,
+  label,
+  sizes,
+  external = false,
+  priority = false,
+  className,
+} = Astro.props
+const classes = ['ogp-preview', className]
 ---
 
 {

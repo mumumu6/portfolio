@@ -1,33 +1,40 @@
 ---
-import '@/styles/components/work-entry.css';
-import '@/styles/components/work-status.css';
-import EntryFrame from '@/components/feed/EntryFrame.astro';
-import EntryPreview from '@/components/feed/EntryPreview.astro';
-import Avatar from '@/components/common/Avatar.astro';
-import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro';
-import TagList from '@/components/common/TagList.astro';
-import { statusLabels } from '@/lib/portfolio/constants';
-import type { WorkEntry as WorkEntryType } from '@/lib/portfolio/types';
+import '@/styles/components/work-entry.css'
+import '@/styles/components/work-status.css'
+import EntryFrame from '@/components/feed/EntryFrame.astro'
+import EntryPreview from '@/components/feed/EntryPreview.astro'
+import Avatar from '@/components/common/Avatar.astro'
+import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro'
+import TagList from '@/components/common/TagList.astro'
+import { statusLabels } from '@/lib/portfolio/constants'
+import type { WorkEntry as WorkEntryType } from '@/lib/portfolio/types'
 
 type Props = {
-  entry: WorkEntryType;
-  headingLevel?: 2 | 3;
-  priority?: boolean;
-};
+  entry: WorkEntryType
+  headingLevel?: 2 | 3
+  priority?: boolean
+}
 
-const { entry, headingLevel = 2, priority = false } = Astro.props;
-const Heading = headingLevel === 3 ? 'h3' : 'h2';
-const statusLabel = statusLabels[entry.status];
+const { entry, headingLevel = 2, priority = false } = Astro.props
+const Heading = headingLevel === 3 ? 'h3' : 'h2'
+const statusLabel = statusLabels[entry.status]
 ---
 
-<EntryFrame author="mumumu" className="work-entry" showAuthorClass={false} showLine={false}>
+<EntryFrame
+  author="mumumu"
+  className="work-entry"
+  showAuthorClass={false}
+  showLine={false}
+>
   <header class="entry-head">
     <div class="entry-author">
       <strong>mumumu</strong>
       <span aria-hidden="true">·</span>
       <time datetime={entry.date}>{entry.dateLabel}</time>
       <span aria-hidden="true">·</span>
-      <span class:list={['work-status', `work-status--${entry.status}`]}>{statusLabel}</span>
+      <span class:list={['work-status', `work-status--${entry.status}`]}
+        >{statusLabel}</span
+      >
     </div>
   </header>
 
@@ -50,10 +57,18 @@ const statusLabel = statusLabels[entry.status];
   <div class="work-note-preview">
     <Avatar author="mumumu" size="small" />
     <span>
-      <strong>{entry.comment.label}{entry.comment.date && ` · ${entry.comment.date.replaceAll('-', '.')}`}</strong>
+      <strong
+        >{entry.comment.label}{
+          entry.comment.date && ` · ${entry.comment.date.replaceAll('-', '.')}`
+        }</strong
+      >
       <span>{entry.comment.body}</span>
     </span>
   </div>
 
-  {entry.replies && entry.replies.length > 0 && <ReplyDisclosure replies={entry.replies} />}
+  {
+    entry.replies && entry.replies.length > 0 && (
+      <ReplyDisclosure replies={entry.replies} />
+    )
+  }
 </EntryFrame>

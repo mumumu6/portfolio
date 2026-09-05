@@ -1,20 +1,22 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageIntro from '@/components/layout/PageIntro.astro';
-import FeedEntry from '@/components/feed/FeedEntry.astro';
-import TimelineIndex from '@/components/layout/TimelineIndex.astro';
-import TimelineSection from '@/components/layout/TimelineSection.astro';
-import { getExperiences } from '@/lib/portfolio/timeline';
-import { groupEntriesByPeriod } from '@/lib/portfolio/utils';
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/layout/PageIntro.astro'
+import FeedEntry from '@/components/feed/FeedEntry.astro'
+import TimelineIndex from '@/components/layout/TimelineIndex.astro'
+import TimelineSection from '@/components/layout/TimelineSection.astro'
+import { getExperiences } from '@/lib/portfolio/timeline'
+import { groupEntriesByPeriod } from '@/lib/portfolio/utils'
 
-const experiences = await getExperiences();
-const experienceGroups = groupEntriesByPeriod(experiences, (entry) => entry.date.slice(0, 4));
-const latestLabel = experiences[0]?.dateLabel ?? '—';
+const experiences = await getExperiences()
+const experienceGroups = groupEntriesByPeriod(experiences, (entry) =>
+  entry.date.slice(0, 4),
+)
+const latestLabel = experiences[0]?.dateLabel ?? '—'
 const timelineGroups = experienceGroups.map(([year, entries]) => ({
   id: `experience-${year}`,
   label: year,
   count: entries.length,
-}));
+}))
 ---
 
 <BaseLayout

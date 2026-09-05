@@ -1,43 +1,51 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { getCollection, render } from 'astro:content';
-import '@/styles/pages/blog.css';
-import '@/styles/components/article-prose.css';
-import '@/styles/components/article-nav.css';
-import '@/styles/components/eyebrow.css';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import ArticleToc from '@/components/article/ArticleToc.astro';
-import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro';
-import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
-import TagList from '@/components/common/TagList.astro';
-import generatedBlogPosts from '@/data/generated/blogs.json';
-import { getAiReplies } from '@/lib/portfolio/ai';
-import { estimateReadingMinutes } from '@/lib/portfolio/utils';
-import type { BlogFrontmatter } from '@/lib/portfolio/types';
+import type { CollectionEntry } from 'astro:content'
+import { getCollection, render } from 'astro:content'
+import '@/styles/pages/blog.css'
+import '@/styles/components/article-prose.css'
+import '@/styles/components/article-nav.css'
+import '@/styles/components/eyebrow.css'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import ArticleToc from '@/components/article/ArticleToc.astro'
+import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+import TagList from '@/components/common/TagList.astro'
+import generatedBlogPosts from '@/data/generated/blogs.json'
+import { getAiReplies } from '@/lib/portfolio/ai'
+import { estimateReadingMinutes } from '@/lib/portfolio/utils'
+import type { BlogFrontmatter } from '@/lib/portfolio/types'
 
-type ExternalPost = (typeof generatedBlogPosts)[number];
-type Props = { kind: 'local'; post: CollectionEntry<'blogs'> } | { kind: 'external'; post: ExternalPost };
+type ExternalPost = (typeof generatedBlogPosts)[number]
+type Props =
+  | { kind: 'local'; post: CollectionEntry<'blogs'> }
+  | { kind: 'external'; post: ExternalPost }
 
 export async function getStaticPaths() {
-  const localPosts = await getCollection('blogs');
+  const localPosts = await getCollection('blogs')
   return [
-    ...localPosts.map((post) => ({ params: { slug: post.id }, props: { kind: 'local' as const, post } })),
-    ...generatedBlogPosts.map((post) => ({ params: { slug: post.id }, props: { kind: 'external' as const, post } })),
-  ];
+    ...localPosts.map((post) => ({
+      params: { slug: post.id },
+      props: { kind: 'local' as const, post },
+    })),
+    ...generatedBlogPosts.map((post) => ({
+      params: { slug: post.id },
+      props: { kind: 'external' as const, post },
+    })),
+  ]
 }
 
-const props: Props = Astro.props;
-if (props.kind === 'external') return Astro.redirect(props.post.href, 301);
+const props: Props = Astro.props
+if (props.kind === 'external') return Astro.redirect(props.post.href, 301)
 
-const post = props.post;
-const { Content, headings } = await render(post);
-const data = post.data as BlogFrontmatter;
-const aiReplies = getAiReplies('blog', post.id) ?? [];
-const readingMinutes = estimateReadingMinutes(post.body ?? data.description);
-const publishedAt = data.publishedAt.toISOString().slice(0, 10);
-const updatedAt = data.updatedAt?.toISOString().slice(0, 10);
-const dateLabel = publishedAt.replaceAll('-', '.');
-const tocHeadings = headings.filter((heading) => heading.depth <= 3);
+const post = props.post
+const { Content, headings } = await render(post)
+const data = post.data as BlogFrontmatter
+const aiReplies = getAiReplies('blog', post.id) ?? []
+const readingMinutes = estimateReadingMinutes(post.body ?? data.description)
+const publishedAt = data.publishedAt.toISOString().slice(0, 10)
+const updatedAt = data.updatedAt?.toISOString().slice(0, 10)
+const dateLabel = publishedAt.replaceAll('-', '.')
+const tocHeadings = headings.filter((heading) => heading.depth <= 3)
 ---
 
 <BaseLayout
@@ -90,7 +98,10 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
 
     {
       aiReplies.length > 0 && (
-        <section class="article-comments" aria-labelledby="article-comments-title">
+        <section
+          class="article-comments"
+          aria-labelledby="article-comments-title"
+        >
           <div class="article-comments__head">
             <p class="eyebrow">MARGIN NOTES</p>
             <h2 id="article-comments-title">AIのコメント</h2>
@@ -103,40 +114,58 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
 </BaseLayout>
 
 <script>
-  let progressFrame = 0;
+  let progressFrame = 0
 
   const updateReadingProgress = () => {
-    progressFrame = 0;
-    const article = document.querySelector<HTMLElement>('.article-page');
-    const ring = document.querySelector<HTMLElement>('[data-reading-progress]');
-    if (!article || !ring) return;
+    progressFrame = 0
+    const article = document.querySelector<HTMLElement>('.article-page')
+    const ring = document.querySelector<HTMLElement>('[data-reading-progress]')
+    if (!article || !ring) return
 
-    const start = article.offsetTop;
-    const end = Math.max(start + article.offsetHeight - window.innerHeight, start + 1);
-    const progress = Math.min(1, Math.max(0, (window.scrollY - start) / (end - start)));
-    ring.style.setProperty('--reading-progress', `${progress * 360}deg`);
+    const start = article.offsetTop
+    const end = Math.max(
+      start + article.offsetHeight - window.innerHeight,
+      start + 1,
+    )
+    const progress = Math.min(
+      1,
+      Math.max(0, (window.scrollY - start) / (end - start)),
+    )
+    ring.style.setProperty('--reading-progress', `${progress * 360}deg`)
 
-    document.querySelectorAll<HTMLElement>('[data-reading-progress-label]').forEach((label) => {
-      label.textContent = `${Math.round(progress * 100)}%`;
-    });
+    document
+      .querySelectorAll<HTMLElement>('[data-reading-progress-label]')
+      .forEach((label) => {
+        label.textContent = `${Math.round(progress * 100)}%`
+      })
 
-    const headings = [...article.querySelectorAll<HTMLElement>('.article-prose h2, .article-prose h3')];
-    const current = headings.filter((heading) => heading.getBoundingClientRect().top <= 150).at(-1);
-    document.querySelectorAll<HTMLAnchorElement>('.article-toc a').forEach((link) => {
-      const active = current ? link.hash === `#${encodeURIComponent(current.id)}` : false;
-      link.classList.toggle('active', active);
-      if (active) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
-    });
-  };
+    const headings = [
+      ...article.querySelectorAll<HTMLElement>(
+        '.article-prose h2, .article-prose h3',
+      ),
+    ]
+    const current = headings
+      .filter((heading) => heading.getBoundingClientRect().top <= 150)
+      .at(-1)
+    document
+      .querySelectorAll<HTMLAnchorElement>('.article-toc a')
+      .forEach((link) => {
+        const active = current
+          ? link.hash === `#${encodeURIComponent(current.id)}`
+          : false
+        link.classList.toggle('active', active)
+        if (active) link.setAttribute('aria-current', 'location')
+        else link.removeAttribute('aria-current')
+      })
+  }
 
   const scheduleReadingProgress = () => {
-    if (progressFrame) return;
-    progressFrame = requestAnimationFrame(updateReadingProgress);
-  };
+    if (progressFrame) return
+    progressFrame = requestAnimationFrame(updateReadingProgress)
+  }
 
-  window.addEventListener('scroll', scheduleReadingProgress, { passive: true });
-  window.addEventListener('resize', scheduleReadingProgress);
-  document.addEventListener('astro:page-load', scheduleReadingProgress);
-  scheduleReadingProgress();
+  window.addEventListener('scroll', scheduleReadingProgress, { passive: true })
+  window.addEventListener('resize', scheduleReadingProgress)
+  document.addEventListener('astro:page-load', scheduleReadingProgress)
+  scheduleReadingProgress()
 </script>

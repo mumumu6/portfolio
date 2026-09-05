@@ -1,28 +1,37 @@
 ---
-import '@/styles/components/timeline.css';
-import '@/styles/components/eyebrow.css';
+import '@/styles/components/timeline.css'
+import '@/styles/components/eyebrow.css'
 
 type TimelineGroup = {
-  id: string;
-  label: string;
-  count: number;
-};
+  id: string
+  label: string
+  count: number
+}
 
 type Props = {
-  eyebrow: string;
-  latestLabel: string;
-  groups: TimelineGroup[];
-  total: number;
-  navLabel: string;
-  totalLabel?: string;
-};
+  eyebrow: string
+  latestLabel: string
+  groups: TimelineGroup[]
+  total: number
+  navLabel: string
+  totalLabel?: string
+}
 
-const { eyebrow, latestLabel, groups, total, navLabel, totalLabel = '件' } = Astro.props;
+const {
+  eyebrow,
+  latestLabel,
+  groups,
+  total,
+  navLabel,
+  totalLabel = '件',
+} = Astro.props
 ---
 
 <aside class="experience-index">
   <p class="eyebrow">{eyebrow}</p>
-  <p class="experience-index__latest"><span>LATEST</span><strong>{latestLabel}</strong></p>
+  <p class="experience-index__latest">
+    <span>LATEST</span><strong>{latestLabel}</strong>
+  </p>
   <nav aria-label={navLabel}>
     {
       groups.map((group) => (

@@ -1,20 +1,30 @@
 ---
-import '@/styles/components/reply.css';
-import Avatar from '@/components/common/Avatar.astro';
-import { mdiChevronDown } from '@mdi/js';
-import { authorNames, formatReplyDate, resolveReplyTo } from '@/lib/portfolio/authors';
-import type { Reply } from '@/lib/portfolio/types';
+import '@/styles/components/reply.css'
+import Avatar from '@/components/common/Avatar.astro'
+import { mdiChevronDown } from '@mdi/js'
+import {
+  authorNames,
+  formatReplyDate,
+  resolveReplyTo,
+} from '@/lib/portfolio/authors'
+import type { Reply } from '@/lib/portfolio/types'
 
 type Props = {
-  replies: Reply[];
-  label?: string;
-  open?: boolean;
-};
+  replies: Reply[]
+  label?: string
+  open?: boolean
+}
 
-const { replies, label = 'AIのコメント', open = false } = Astro.props;
+const { replies, label = 'AIのコメント', open = false } = Astro.props
 ---
 
-<details class:list={['reply-disclosure', { 'reply-disclosure--ai': label !== '返信' }]} open={open}>
+<details
+  class:list={[
+    'reply-disclosure',
+    { 'reply-disclosure--ai': label !== '返信' },
+  ]}
+  open={open}
+>
   <summary>
     <span class="reply-disclosure__spark" aria-hidden="true">✦</span>
     <span>{label}</span>
@@ -29,8 +39,8 @@ const { replies, label = 'AIのコメント', open = false } = Astro.props;
     <div class="reply-thread">
       {
         replies.map((reply, index) => {
-          const replyTo = resolveReplyTo(replies, index);
-          const dateLabel = formatReplyDate(reply.createdAt);
+          const replyTo = resolveReplyTo(replies, index)
+          const dateLabel = formatReplyDate(reply.createdAt)
           return (
             <div class="reply">
               <Avatar author={reply.author} size="small" />
@@ -44,13 +54,15 @@ const { replies, label = 'AIのコメント', open = false } = Astro.props;
                     </>
                   )}
                 </header>
-                {replyTo && <p class="reply-context">↳ {authorNames[replyTo]} への返信</p>}
+                {replyTo && (
+                  <p class="reply-context">↳ {authorNames[replyTo]} への返信</p>
+                )}
                 <div class="reply-bubble">
                   <p>{reply.body}</p>
                 </div>
               </div>
             </div>
-          );
+          )
         })
       }
     </div>

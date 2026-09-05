@@ -1,17 +1,22 @@
 ---
-import '@/styles/components/external-link-card.css';
+import '@/styles/components/external-link-card.css'
 
 type Props = {
-  href: string;
-  label: string;
-  host: string;
-  className?: string;
-};
+  href: string
+  label: string
+  host: string
+  className?: string
+}
 
-const { href, label, host, className } = Astro.props;
+const { href, label, host, className } = Astro.props
 ---
 
-<a class:list={['external-card-link', className]} href={href} target="_blank" rel="noreferrer">
+<a
+  class:list={['external-card-link', className]}
+  href={href}
+  target="_blank"
+  rel="noreferrer"
+>
   <span>
     <strong>{label}</strong>
     <small>{host}</small>

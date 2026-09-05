@@ -1,15 +1,15 @@
 ---
-import '@/styles/components/timeline.css';
+import '@/styles/components/timeline.css'
 
 type Props = {
-  id: string;
-  headingId: string;
-  label: string;
-  count: number;
-  listClass?: string;
-};
+  id: string
+  headingId: string
+  label: string
+  count: number
+  listClass?: string
+}
 
-const { id, headingId, label, count, listClass } = Astro.props;
+const { id, headingId, label, count, listClass } = Astro.props
 ---
 
 <section class="timeline-group" id={id} aria-labelledby={headingId}>

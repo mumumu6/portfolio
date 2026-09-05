@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageIntro from '@/components/layout/PageIntro.astro';
-import FeedEntry from '@/components/feed/FeedEntry.astro';
-import { blogPosts } from '@/lib/portfolio/blogs';
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/layout/PageIntro.astro'
+import FeedEntry from '@/components/feed/FeedEntry.astro'
+import { blogPosts } from '@/lib/portfolio/blogs'
 ---
 
 <BaseLayout
@@ -17,6 +17,10 @@ import { blogPosts } from '@/lib/portfolio/blogs';
     description="技術の話、作ったものの記録、途中で見つけた面白いこと。"
   />
   <div class="feed-list feed-list--compact">
-    {blogPosts.map((entry, index) => <FeedEntry entry={entry} priority={index === 0} />)}
+    {
+      blogPosts.map((entry, index) => (
+        <FeedEntry entry={entry} priority={index === 0} />
+      ))
+    }
   </div>
 </BaseLayout>

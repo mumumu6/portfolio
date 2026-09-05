@@ -7,18 +7,18 @@ export type EntryKind = 'work' | 'blog' | 'experience' | 'thought'
 export type Reply = {
   author: Exclude<AuthorId, 'mumumu'>
   body: string
-  createdAt?: string
-  replyTo?: AuthorId
+  createdAt?: string | undefined
+  replyTo?: AuthorId | undefined
   /** Legacy nesting hint retained while older generated content is migrated. */
-  depth?: 1 | 2
+  depth?: 1 | 2 | undefined
 }
 
 export type FeedImage = {
   src: ImageMetadata
   alt: string
-  width?: number
-  height?: number
-  source?: string
+  width?: number | undefined
+  height?: number | undefined
+  source?: string | undefined
 }
 
 export type FeedEntry = {
@@ -27,16 +27,16 @@ export type FeedEntry = {
   author: AuthorId
   date: string
   dateLabel: string
-  title?: string
+  title?: string | undefined
   body: string
-  tags?: string[]
-  href?: string
-  linkLabel?: string
-  sourceHref?: string
-  sourceLabel?: string
-  readingMinutes?: number
-  image?: FeedImage
-  replies?: Reply[]
+  tags?: string[] | undefined
+  href?: string | undefined
+  linkLabel?: string | undefined
+  sourceHref?: string | undefined
+  sourceLabel?: string | undefined
+  readingMinutes?: number | undefined
+  image?: FeedImage | undefined
+  replies?: Reply[] | undefined
 }
 
 export type WorkEntry = FeedEntry & {
@@ -48,7 +48,7 @@ export type WorkEntry = FeedEntry & {
   comment: {
     label: string
     body: string
-    date?: string
+    date?: string | undefined
   }
 }
 
@@ -56,8 +56,8 @@ export type BlogFrontmatter = {
   title: string
   description: string
   publishedAt: Date
-  updatedAt?: Date
-  tags?: string[]
+  updatedAt?: Date | undefined
+  tags?: string[] | undefined
   cover: ImageMetadata
   coverAlt: string
   coverWidth: number

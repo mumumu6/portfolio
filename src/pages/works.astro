@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageIntro from '@/components/layout/PageIntro.astro';
-import WorkEntry from '@/components/feed/WorkEntry.astro';
-import { works } from '@/lib/portfolio/works';
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/layout/PageIntro.astro'
+import WorkEntry from '@/components/feed/WorkEntry.astro'
+import { works } from '@/lib/portfolio/works'
 ---
 
 <BaseLayout
@@ -17,6 +17,10 @@ import { works } from '@/lib/portfolio/works';
     description="作ったものと、そのとき考えていたこと。制作メモと一緒に記録しています。"
   />
   <div class="feed-list feed-list--compact">
-    {works.map((entry, index) => <WorkEntry entry={entry} priority={index === 0} />)}
+    {
+      works.map((entry, index) => (
+        <WorkEntry entry={entry} priority={index === 0} />
+      ))
+    }
   </div>
 </BaseLayout>

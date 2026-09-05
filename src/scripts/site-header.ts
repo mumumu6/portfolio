@@ -2,10 +2,14 @@ import { matchesNavigationPath } from '@/lib/navigation'
 import { createNavigationIndicatorController } from '@/scripts/navigation-indicator'
 
 let syncVersion = 0
+let pendingPathname: string | null = null
 
-const syncNavigation = (animate = false) => {
+const syncNavigation = (
+  animate = false,
+  targetPathname = location.pathname,
+) => {
   const version = ++syncVersion
-  const pathname = location.pathname
+  const pathname = targetPathname
   const containers = Array.from(
     document.querySelectorAll<HTMLElement>('[data-nav-container]'),
   )
@@ -33,16 +37,26 @@ const syncNavigation = (animate = false) => {
     // Start the indicator as soon as the new DOM is swapped in. It can move
     // alongside the page fade instead of waiting for the View Transition to finish.
     if (version !== syncVersion) return
-    indicators
-      .read(pathname)
-      .forEach((state, index) =>
-        indicators.apply({ ...state, origin: states[index].origin }),
-      )
+    indicators.read(pathname).forEach((state, index) => {
+      indicators.apply({
+        ...state,
+        origin: states[index]?.origin ?? null,
+      })
+    })
   } else {
     indicators.reposition(pathname)
   }
 }
 
 syncNavigation()
-document.addEventListener('astro:after-swap', () => syncNavigation(true))
+document.addEventListener('astro:before-swap', (event) => {
+  // Keep the persisted navigation tied to the document Astro is about to swap
+  // in instead of relying on the live URL while the transition is in flight.
+  pendingPathname = event.to.pathname
+})
+document.addEventListener('astro:after-swap', () => {
+  const pathname = pendingPathname ?? location.pathname
+  pendingPathname = null
+  syncNavigation(true, pathname)
+})
 window.addEventListener('resize', () => syncNavigation(), { passive: true })

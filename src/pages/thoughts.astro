@@ -1,20 +1,22 @@
 ---
-import '@/styles/components/ai-disclosure.css';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import PageIntro from '@/components/layout/PageIntro.astro';
-import FeedEntry from '@/components/feed/FeedEntry.astro';
-import TimelineIndex from '@/components/layout/TimelineIndex.astro';
-import TimelineSection from '@/components/layout/TimelineSection.astro';
-import { thoughts } from '@/lib/portfolio/ai';
-import { groupEntriesByPeriod } from '@/lib/portfolio/utils';
+import '@/styles/components/ai-disclosure.css'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageIntro from '@/components/layout/PageIntro.astro'
+import FeedEntry from '@/components/feed/FeedEntry.astro'
+import TimelineIndex from '@/components/layout/TimelineIndex.astro'
+import TimelineSection from '@/components/layout/TimelineSection.astro'
+import { thoughts } from '@/lib/portfolio/ai'
+import { groupEntriesByPeriod } from '@/lib/portfolio/utils'
 
-const thoughtGroups = groupEntriesByPeriod(thoughts, (entry) => entry.date.slice(0, 7));
-const latestLabel = thoughts[0]?.dateLabel ?? '—';
+const thoughtGroups = groupEntriesByPeriod(thoughts, (entry) =>
+  entry.date.slice(0, 7),
+)
+const latestLabel = thoughts[0]?.dateLabel ?? '—'
 const timelineGroups = thoughtGroups.map(([month, entries]) => ({
   id: `thoughts-${month}`,
   label: month.replace('-', '.'),
   count: entries.length,
-}));
+}))
 ---
 
 <BaseLayout
@@ -58,6 +60,8 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
 
   <aside class="ai-disclosure" aria-label="AI生成について">
     <strong>このページについて</strong>
-    <p>投稿と返信はChatGPT・CodexのログをもとにAIで生成し、公開前に本人が確認しています。</p>
+    <p>
+      投稿と返信はChatGPT・CodexのログをもとにAIで生成し、公開前に本人が確認しています。
+    </p>
   </aside>
 </BaseLayout>

@@ -1,34 +1,44 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { getCollection, render } from 'astro:content';
-import '@/styles/components/work-detail.css';
-import '@/styles/components/article-prose.css';
-import '@/styles/components/article-nav.css';
-import '@/styles/components/eyebrow.css';
-import '@/styles/components/work-status.css';
-import Avatar from '@/components/common/Avatar.astro';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro';
-import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
-import { authorNames, formatReplyDate, resolveReplyTo } from '@/lib/portfolio/authors';
-import { statusLabels } from '@/lib/portfolio/constants';
-import { works as workEntries } from '@/lib/portfolio/works';
+import type { CollectionEntry } from 'astro:content'
+import { getCollection, render } from 'astro:content'
+import '@/styles/components/work-detail.css'
+import '@/styles/components/article-prose.css'
+import '@/styles/components/article-nav.css'
+import '@/styles/components/eyebrow.css'
+import '@/styles/components/work-status.css'
+import Avatar from '@/components/common/Avatar.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+import {
+  authorNames,
+  formatReplyDate,
+  resolveReplyTo,
+} from '@/lib/portfolio/authors'
+import { statusLabels } from '@/lib/portfolio/constants'
+import { works as workEntries } from '@/lib/portfolio/works'
 
 export async function getStaticPaths() {
-  const works = await getCollection('works');
-  return works.map((work) => ({ params: { slug: work.id }, props: { work } }));
+  const works = await getCollection('works')
+  return works.map((work) => ({ params: { slug: work.id }, props: { work } }))
 }
 
-type Props = { work: CollectionEntry<'works'> };
-const { work }: Props = Astro.props;
-const { Content } = await render(work);
-const data = work.data;
-const publishedAt = data.publishedAt.toISOString().slice(0, 10);
-const dateLabel = publishedAt.slice(0, 7).replace('-', '.');
-const statusLabel = statusLabels[data.status];
-const coverImageSrc = data.cover.src.src;
-const aiReplies = workEntries.find((entry) => entry.id === work.id)?.replies ?? [];
-const makerReplies = [...data.comments.map((comment) => ({ ...comment, date: comment.date ?? data.publishedAt }))];
+type Props = { work: CollectionEntry<'works'> }
+const { work }: Props = Astro.props
+const { Content } = await render(work)
+const data = work.data
+const publishedAt = data.publishedAt.toISOString().slice(0, 10)
+const dateLabel = publishedAt.slice(0, 7).replace('-', '.')
+const statusLabel = statusLabels[data.status]
+const coverImageSrc = data.cover.src.src
+const aiReplies =
+  workEntries.find((entry) => entry.id === work.id)?.replies ?? []
+const makerReplies = [
+  ...data.comments.map((comment) => ({
+    ...comment,
+    date: comment.date ?? data.publishedAt,
+  })),
+]
 const threadItems = [
   ...makerReplies.map((reply, index) => ({
     kind: 'maker' as const,
@@ -48,7 +58,7 @@ const threadItems = [
     replyTo: resolveReplyTo(aiReplies, index),
     sourceOrder: makerReplies.length + index,
   })),
-].sort((a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder);
+].sort((a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder)
 ---
 
 <BaseLayout
@@ -66,7 +76,10 @@ const threadItems = [
   <article class="work-thread-page">
     <a class="article-back" href="/works/">← Works</a>
 
-    <section class="work-thread-post work-thread-post--root" aria-labelledby="work-title">
+    <section
+      class="work-thread-post work-thread-post--root"
+      aria-labelledby="work-title"
+    >
       <div class="work-thread-rail">
         <Avatar author="mumumu" />
         <span class="work-thread-line" aria-hidden="true"></span>
@@ -77,7 +90,9 @@ const threadItems = [
           <span aria-hidden="true">·</span>
           <time datetime={publishedAt}>{dateLabel}</time>
           <span aria-hidden="true">·</span>
-          <span class:list={['work-status', `work-status--${data.status}`]}>{statusLabel}</span>
+          <span class:list={['work-status', `work-status--${data.status}`]}
+            >{statusLabel}</span
+          >
         </header>
         <h1 id="work-title">{data.title}</h1>
         <p class="work-thread-summary">{data.summary}</p>
@@ -98,7 +113,7 @@ const threadItems = [
           data.links.length > 0 && (
             <nav class="work-thread-links" aria-label="作品へのリンク">
               {data.links.map((link) => {
-                const hostname = new URL(link.href).hostname;
+                const hostname = new URL(link.href).hostname
                 return (
                   <ExternalLinkCard
                     href={link.href}
@@ -106,7 +121,7 @@ const threadItems = [
                     host={hostname}
                     className="external-card-link--work"
                   />
-                );
+                )
               })}
             </nav>
           )
@@ -116,10 +131,14 @@ const threadItems = [
 
     {
       threadItems.map((item, index) => {
-        const replyDate = formatReplyDate(item.date);
+        const replyDate = formatReplyDate(item.date)
         return (
           <section
-            class:list={['work-thread-post', 'work-thread-post--reply', { 'work-thread-post--ai': item.kind === 'ai' }]}
+            class:list={[
+              'work-thread-post',
+              'work-thread-post--reply',
+              { 'work-thread-post--ai': item.kind === 'ai' },
+            ]}
             aria-label={
               item.kind === 'ai'
                 ? `${authorNames[item.author]}のコメント ${index + 1}`
@@ -128,7 +147,9 @@ const threadItems = [
           >
             <div class="work-thread-rail">
               <Avatar author={item.author} />
-              {index < threadItems.length - 1 && <span class="work-thread-line" aria-hidden="true" />}
+              {index < threadItems.length - 1 && (
+                <span class="work-thread-line" aria-hidden="true" />
+              )}
             </div>
             <div class="work-thread-content">
               <header class="work-thread-head">
@@ -141,11 +162,15 @@ const threadItems = [
                   </>
                 )}
               </header>
-              {item.replyTo && <p class="work-thread-reply-context">↳ {authorNames[item.replyTo]}への返信</p>}
+              {item.replyTo && (
+                <p class="work-thread-reply-context">
+                  ↳ {authorNames[item.replyTo]}への返信
+                </p>
+              )}
               <p>{item.body}</p>
             </div>
           </section>
-        );
+        )
       })
     }
 
@@ -182,7 +207,12 @@ const threadItems = [
         {
           data.gallery.map((image) => (
             <figure class="work-thread-gallery">
-              <ResponsiveImage src={image.src} alt={image.alt} width={image.width} height={image.height} />
+              <ResponsiveImage
+                src={image.src}
+                alt={image.alt}
+                width={image.width}
+                height={image.height}
+              />
               {image.caption && <figcaption>{image.caption}</figcaption>}
             </figure>
           ))

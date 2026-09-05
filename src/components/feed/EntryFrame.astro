@@ -1,17 +1,26 @@
 ---
-import '@/styles/components/feed.css';
-import Avatar from '@/components/common/Avatar.astro';
-import type { AuthorId } from '@/lib/portfolio/types';
+import '@/styles/components/feed.css'
+import Avatar from '@/components/common/Avatar.astro'
+import type { AuthorId } from '@/lib/portfolio/types'
 
 type Props = {
-  author: AuthorId;
-  className?: string;
-  showAuthorClass?: boolean;
-  showLine?: boolean;
-};
+  author: AuthorId
+  className?: string
+  showAuthorClass?: boolean
+  showLine?: boolean
+}
 
-const { author, className, showAuthorClass = true, showLine = true } = Astro.props;
-const classes = ['feed-entry', className, showAuthorClass ? `feed-entry--author-${author}` : undefined];
+const {
+  author,
+  className,
+  showAuthorClass = true,
+  showLine = true,
+} = Astro.props
+const classes = [
+  'feed-entry',
+  className,
+  showAuthorClass ? `feed-entry--author-${author}` : undefined,
+]
 ---
 
 <article class:list={classes}>

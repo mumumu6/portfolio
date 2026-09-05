@@ -1,12 +1,12 @@
 ---
-import NavigationLinks from '@/components/layout/NavigationLinks.astro';
+import NavigationLinks from '@/components/layout/NavigationLinks.astro'
 
 type Props = {
-  adaptive?: boolean;
-  pathname: string;
-};
+  adaptive?: boolean
+  pathname: string
+}
 
-const { adaptive = false, pathname } = Astro.props;
+const { adaptive = false, pathname } = Astro.props
 ---
 
 <nav
@@ -16,5 +16,8 @@ const { adaptive = false, pathname } = Astro.props;
   transition:persist="section-nav"
   transition:animate="none"
 >
-  <NavigationLinks pathname={pathname} indicatorClass="section-nav__indicator" />
+  <NavigationLinks
+    pathname={pathname}
+    indicatorClass="section-nav__indicator"
+  />
 </nav>

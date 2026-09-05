@@ -1,27 +1,28 @@
 ---
-import '@/styles/components/avatar.css';
-import type { AuthorId } from '@/lib/portfolio/types';
-import type { ImageMetadata } from 'astro';
-import ResponsiveImage from '@/components/common/ResponsiveImage.astro';
-import codexIcon from '@/assets/icons/codex-256.webp';
-import mumumuIcon from '@/assets/icons/mumumu-256.webp';
-import openaiIcon from '@/assets/icons/openai-256.webp';
+import '@/styles/components/avatar.css'
+import type { AuthorId } from '@/lib/portfolio/types'
+import type { ImageMetadata } from 'astro'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+import codexIcon from '@/assets/icons/codex-256.webp'
+import mumumuIcon from '@/assets/icons/mumumu-256.webp'
+import openaiIcon from '@/assets/icons/openai-256.webp'
 
 type Props = {
-  author: AuthorId;
-  size?: 'large' | 'medium' | 'small';
-};
+  author: AuthorId
+  size?: 'large' | 'medium' | 'small'
+}
 
-const { author, size = 'medium' } = Astro.props;
+const { author, size = 'medium' } = Astro.props
 
 const icons: Record<AuthorId, ImageMetadata> = {
   mumumu: mumumuIcon,
   chatgpt: openaiIcon,
   codex: codexIcon,
-};
+}
 
-const dimension = size === 'large' ? 112 : size === 'medium' ? 48 : 32;
-const widths = size === 'large' ? [128, 256] : size === 'medium' ? [64, 128] : [64];
+const dimension = size === 'large' ? 112 : size === 'medium' ? 48 : 32
+const widths =
+  size === 'large' ? [128, 256] : size === 'medium' ? [64, 128] : [64]
 ---
 
 <span class:list={['avatar', `avatar--${author}`, `avatar--${size}`]}>

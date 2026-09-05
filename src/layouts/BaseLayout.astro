@@ -7,22 +7,23 @@ import SiteHeader from '@/components/layout/SiteHeader.astro'
 type Props = {
   title: string
   description: string
-  image?: string
-  imageAlt?: string
-  imageWidth?: number
-  imageHeight?: number
-  type?: 'website' | 'article'
-  publishedTime?: string
-  updatedTime?: string
+  image?: string | undefined
+  imageAlt?: string | undefined
+  imageWidth?: number | undefined
+  imageHeight?: number | undefined
+  type?: 'website' | 'article' | undefined
+  publishedTime?: string | undefined
+  updatedTime?: string | undefined
   schemaType?:
     | 'WebPage'
     | 'ProfilePage'
     | 'CollectionPage'
     | 'BlogPosting'
     | 'CreativeWork'
-  tags?: string[]
-  readingMinutes?: number
-  shell?: 'default' | 'wide' | 'adaptive'
+    | undefined
+  tags?: string[] | undefined
+  readingMinutes?: number | undefined
+  shell?: 'default' | 'wide' | 'adaptive' | undefined
 }
 
 const { shell = 'default', ...seoProps } = Astro.props
