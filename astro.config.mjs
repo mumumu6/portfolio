@@ -88,10 +88,11 @@ export default defineConfig({
       },
     }),
   ],
-  // Prefetch only opted-in pages. The page response is prefetched; images keep
-  // their own loading="lazy"/loading="eager" policy.
   prefetch: {
-    prefetchAll: false,
+    prefetchAll: true,
     defaultStrategy: 'hover',
+  },
+  experimental: {
+    clientPrerender: true,
   },
 })

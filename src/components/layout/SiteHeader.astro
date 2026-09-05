@@ -1,23 +1,31 @@
 ---
-import '@/styles/components/site-header.css';
-import DesktopNavigation from '@/components/layout/DesktopNavigation.astro';
-import ProfileHeader from '@/components/profile/ProfileHeader.astro';
-import SectionNavigation from '@/components/layout/SectionNavigation.astro';
-import ThemeToggle from '@/components/layout/ThemeToggle.astro';
+import '@/styles/components/site-header.css'
+import DesktopNavigation from '@/components/layout/DesktopNavigation.astro'
+import ProfileHeader from '@/components/profile/ProfileHeader.astro'
+import SectionNavigation from '@/components/layout/SectionNavigation.astro'
+import ThemeToggle from '@/components/layout/ThemeToggle.astro'
 
 type Props = {
-  adaptive?: boolean;
-};
+  adaptive?: boolean
+}
 
-const { adaptive = false } = Astro.props;
-const pathname = Astro.url.pathname;
-const isHome = pathname === '/';
+const { adaptive = false } = Astro.props
+const pathname = Astro.url.pathname
+const isHome = pathname === '/'
 ---
 
 <div class:list={['site-chrome', { 'site-chrome--profile': isHome }]}>
-  <header class="site-header" transition:persist="site-header" transition:animate="none">
+  <header
+    class="site-header"
+    transition:persist="site-header"
+    transition:animate="none"
+  >
     <div class:list={['header-inner', { 'header-inner--adaptive': adaptive }]}>
-      <a class="site-name" href="/" aria-label="mumumu ホーム" data-site-home>
+      <a
+        class="site-name"
+        href="/"
+        aria-label="mumumu ホーム"
+      >
         <span>mumumu<em>.</em></span>
       </a>
 
@@ -32,5 +40,5 @@ const isHome = pathname === '/';
 </div>
 
 <script>
-  import '@/scripts/site-header';
+  import '@/scripts/site-header'
 </script>

@@ -1,22 +1,27 @@
 ---
-import { isNavigationItemActive, navigationItems } from '@/lib/navigation';
+import { isNavigationItemActive, navigationItems } from '@/lib/navigation'
 
 type Props = {
-  indicatorClass: string;
-  pathname: string;
-};
+  indicatorClass: string
+  pathname: string
+}
 
-const { indicatorClass, pathname } = Astro.props;
+const { indicatorClass, pathname } = Astro.props
 ---
 
 {
   navigationItems.map((item) => {
-    const active = isNavigationItemActive(pathname, item.href);
+    const active = isNavigationItemActive(pathname, item.href)
     return (
-      <a href={item.href} class:list={{ active }} aria-current={active ? 'page' : undefined} data-nav-link>
+      <a
+        href={item.href}
+        class:list={{ active }}
+        aria-current={active ? 'page' : undefined}
+        data-nav-link
+      >
         <span>{item.label}</span>
       </a>
-    );
+    )
   })
 }
 <span class={indicatorClass} data-nav-indicator aria-hidden="true"></span>
