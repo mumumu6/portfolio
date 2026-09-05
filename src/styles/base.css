@@ -5,8 +5,10 @@
 @import '@fontsource/space-grotesk/latin-700.css';
 
 :root {
-  --font-body: 'IBM Plex Sans JP', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: 'Space Grotesk', 'IBM Plex Sans JP', ui-sans-serif, sans-serif;
+  --font-body:
+    'IBM Plex Sans JP', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display:
+    'Space Grotesk', 'IBM Plex Sans JP', ui-sans-serif, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
   --bg: #090d12;
   --surface: #0d1218;
@@ -75,7 +77,12 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--text) 3.5%, transparent), transparent 28%), var(--bg);
+    radial-gradient(
+      circle at top left,
+      color-mix(in srgb, var(--text) 3.5%, transparent),
+      transparent 28%
+    ),
+    var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   line-height: 1.65;
@@ -146,7 +153,6 @@ summary:focus-visible {
   overflow: clip;
   border-inline: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface) 94%, transparent);
-  view-transition-name: page-content;
 }
 .site-shell--wide {
   width: min(100%, var(--wide-width));

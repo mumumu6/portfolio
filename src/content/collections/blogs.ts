@@ -1,6 +1,6 @@
-import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
-import { z } from 'astro/zod';
+import { defineCollection } from 'astro:content'
+import { glob } from 'astro/loaders'
+import { z } from 'astro/zod'
 
 export const blogs = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blogs' }),
@@ -16,4 +16,4 @@ export const blogs = defineCollection({
       coverWidth: z.number().int().positive(),
       coverHeight: z.number().int().positive(),
     }),
-});
+})

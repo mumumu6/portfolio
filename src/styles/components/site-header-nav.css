@@ -116,8 +116,4 @@
     font-size: 0.68rem;
     white-space: nowrap;
   }
-
-  .site-shell {
-    touch-action: pan-y;
-  }
 }

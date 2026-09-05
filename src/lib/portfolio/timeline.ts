@@ -1,9 +1,9 @@
-import { getCollection } from 'astro:content';
-import { getAiReplies } from '@/lib/portfolio/ai';
-import type { FeedEntry } from '@/lib/portfolio/types';
+import { getCollection } from 'astro:content'
+import { getAiReplies } from '@/lib/portfolio/ai'
+import type { FeedEntry } from '@/lib/portfolio/types'
 
 export const getExperiences = async (): Promise<FeedEntry[]> => {
-  const entries = await getCollection('experiences');
+  const entries = await getCollection('experiences')
 
   return entries
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -17,5 +17,5 @@ export const getExperiences = async (): Promise<FeedEntry[]> => {
       body: entry.body?.trim() ?? '',
       tags: entry.data.tags,
       replies: getAiReplies('experience', entry.id),
-    }));
-};
+    }))
+}

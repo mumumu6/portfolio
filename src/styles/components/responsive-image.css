@@ -27,20 +27,22 @@ picture[data-progressive-image]::before {
 }
 
 html.js
-  picture[data-progressive-image][data-image-requested='true']:not([data-image-state='loaded']):not(
-    [data-image-state='error']
-  )::before {
+  picture[data-progressive-image][data-image-requested='true']:not(
+    [data-image-state='loaded']
+  ):not([data-image-state='error'])::before {
   opacity: 0.82;
   /* Only requested, near-viewport images animate; stop when decoding finishes. */
   animation: image-skeleton 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   will-change: transform;
 }
 
-html.js picture[data-progressive-image]:not([data-image-requested='true']) > img[data-progressive-image],
 html.js
-  picture[data-progressive-image][data-image-requested='true']:not([data-image-state='loaded']):not(
-    [data-image-state='error']
-  )
+  picture[data-progressive-image]:not([data-image-requested='true'])
+  > img[data-progressive-image],
+html.js
+  picture[data-progressive-image][data-image-requested='true']:not(
+    [data-image-state='loaded']
+  ):not([data-image-state='error'])
   > img[data-progressive-image] {
   opacity: 0;
 }
@@ -56,7 +58,8 @@ picture[data-progressive-image][data-image-state='loaded']::before {
   animation: none;
 }
 
-picture[data-progressive-image][data-image-state='loaded'] > img[data-progressive-image] {
+picture[data-progressive-image][data-image-state='loaded']
+  > img[data-progressive-image] {
   opacity: 1;
 }
 
@@ -65,7 +68,8 @@ picture[data-progressive-image][data-image-state='error']::before {
   animation: none;
 }
 
-picture[data-progressive-image][data-image-state='error'] > img[data-progressive-image] {
+picture[data-progressive-image][data-image-state='error']
+  > img[data-progressive-image] {
   opacity: 0;
 }
 
@@ -81,9 +85,9 @@ picture[data-progressive-image][data-image-state='error'] > img[data-progressive
 
 @media (prefers-reduced-motion: reduce) {
   html.js
-    picture[data-progressive-image][data-image-requested='true']:not([data-image-state='loaded']):not(
-      [data-image-state='error']
-    )::before {
+    picture[data-progressive-image][data-image-requested='true']:not(
+      [data-image-state='loaded']
+    ):not([data-image-state='error'])::before {
     animation: none;
     opacity: 0.82;
   }

@@ -13,13 +13,7 @@ const { indicatorClass, pathname } = Astro.props;
   navigationItems.map((item) => {
     const active = isNavigationItemActive(pathname, item.href);
     return (
-      <a
-        href={item.href}
-        class:list={{ active }}
-        aria-current={active ? 'page' : undefined}
-        data-nav-link
-        data-astro-prefetch="false"
-      >
+      <a href={item.href} class:list={{ active }} aria-current={active ? 'page' : undefined} data-nav-link>
         <span>{item.label}</span>
       </a>
     );

@@ -1,6 +1,6 @@
-import { defineCollection, type SchemaContext } from 'astro:content';
-import { glob } from 'astro/loaders';
-import { z } from 'astro/zod';
+import { defineCollection, type SchemaContext } from 'astro:content'
+import { glob } from 'astro/loaders'
+import { z } from 'astro/zod'
 
 const workImage = ({ image }: SchemaContext) =>
   z.object({
@@ -9,7 +9,7 @@ const workImage = ({ image }: SchemaContext) =>
     width: z.number().int().positive().optional(),
     height: z.number().int().positive().optional(),
     caption: z.string().optional(),
-  });
+  })
 
 export const works = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/works' }),
@@ -42,4 +42,4 @@ export const works = defineCollection({
       highlights: z.array(z.string()).default([]),
       warning: z.string().optional(),
     }),
-});
+})

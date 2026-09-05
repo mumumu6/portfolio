@@ -1,6 +1,6 @@
-import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
-import { z } from 'astro/zod';
+import { defineCollection } from 'astro:content'
+import { glob } from 'astro/loaders'
+import { z } from 'astro/zod'
 
 export const site = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/site' }),
@@ -16,4 +16,4 @@ export const site = defineCollection({
       }),
     ),
   }),
-});
+})

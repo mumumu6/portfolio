@@ -1,9 +1,9 @@
-import { defineConfig } from 'astro/config';
-import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
-import AstroPWA from '@vite-pwa/astro';
+import { defineConfig } from 'astro/config'
+import mdx from '@astrojs/mdx'
+import sitemap from '@astrojs/sitemap'
+import AstroPWA from '@vite-pwa/astro'
 
-const defaultThemeColor = '#090d12';
+const defaultThemeColor = '#090d12'
 
 const runtimeCaching = [
   {
@@ -37,7 +37,7 @@ const runtimeCaching = [
       cacheableResponse: { statuses: [200] },
     },
   },
-];
+]
 
 export default defineConfig({
   site: 'https://mumumu6.net',
@@ -60,7 +60,8 @@ export default defineConfig({
       manifest: {
         name: 'mumumu portfolio',
         short_name: 'mumumu',
-        description: 'mumumuの制作物、技術記事、活動記録をまとめたポートフォリオ。',
+        description:
+          'mumumuの制作物、技術記事、活動記録をまとめたポートフォリオ。',
         lang: 'ja',
         start_url: '/',
         scope: '/',
@@ -93,4 +94,4 @@ export default defineConfig({
     prefetchAll: false,
     defaultStrategy: 'hover',
   },
-});
+})

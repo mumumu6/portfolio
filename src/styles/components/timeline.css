@@ -163,7 +163,9 @@
   }
 
   .feed-list--timeline .feed-entry:not(:first-child) .entry-rail::before,
-  .timeline-group:not(:first-child) .feed-entry:first-child .entry-rail::before {
+  .timeline-group:not(:first-child)
+    .feed-entry:first-child
+    .entry-rail::before {
     left: var(--timeline-center);
   }
 }

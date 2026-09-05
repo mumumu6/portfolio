@@ -1,7 +1,14 @@
 {
+  "$schema": "https://json.schemastore.org/prettierrc",
   "plugins": ["prettier-plugin-astro"],
+  "semi": false,
   "singleQuote": true,
-  "semi": true,
-  "trailingComma": "all",
-  "printWidth": 120
+  "overrides": [
+    {
+      "files": ["*.json", "*.jsonc"],
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ]
 }
