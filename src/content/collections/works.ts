@@ -6,8 +6,6 @@ const workImage = ({ image }: SchemaContext) =>
   z.object({
     src: image(),
     alt: z.string(),
-    width: z.number().int().positive().optional(),
-    height: z.number().int().positive().optional(),
     caption: z.string().optional(),
   })
 

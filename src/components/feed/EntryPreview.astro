@@ -23,40 +23,23 @@ const {
   className,
 } = Astro.props
 const classes = ['ogp-preview', className]
+const Wrapper = href ? 'a' : 'div'
+const wrapperAttributes = href
+  ? {
+      href,
+      'aria-label': label,
+      ...(external ? { target: '_blank', rel: 'noreferrer' } : {}),
+    }
+  : {}
 ---
 
-{
-  href ? (
-    <a
-      class:list={classes}
-      href={href}
-      target={external ? '_blank' : undefined}
-      rel={external ? 'noreferrer' : undefined}
-      aria-label={label}
-    >
-      <ResponsiveImage
-        src={image.src}
-        alt={image.alt}
-        width={image.width}
-        height={image.height}
-        widths={[320, 480, 640, 960]}
-        sizes={sizes}
-        loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : 'low'}
-      />
-    </a>
-  ) : (
-    <div class:list={classes}>
-      <ResponsiveImage
-        src={image.src}
-        alt={image.alt}
-        width={image.width}
-        height={image.height}
-        widths={[320, 480, 640, 960]}
-        sizes={sizes}
-        loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : 'low'}
-      />
-    </div>
-  )
-}
+<Wrapper class:list={classes} {...wrapperAttributes}>
+  <ResponsiveImage
+    src={image.src}
+    alt={image.alt}
+    widths={[320, 480, 640, 960]}
+    sizes={sizes}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchPriority={priority ? 'high' : 'low'}
+  />
+</Wrapper>

@@ -27,32 +27,8 @@ const markImageDecoded = async (image: HTMLImageElement) => {
 }
 
 const boundImages = new WeakSet<HTMLImageElement>()
-// Native loading="lazy" can still fetch images well below the fold. Keep the
-// URLs out of src/srcset until the image is close enough to be useful.
 const lazyImageRootMargin = '160px 0px'
 let lazyImageObserver: IntersectionObserver | undefined
-
-const hydrateLazyImage = (image: HTMLImageElement) => {
-  const lazySrc = image.dataset.src
-  if (!lazySrc) return
-
-  const picture = image.closest('picture')
-  picture
-    ?.querySelectorAll<HTMLSourceElement>('source[data-srcset]')
-    .forEach((source) => {
-      const srcset = source.dataset.srcset
-      if (!srcset) return
-      source.srcset = srcset
-      delete source.dataset.srcset
-    })
-
-  const srcset = image.dataset.srcset
-  if (srcset) image.srcset = srcset
-  image.src = lazySrc
-  delete image.dataset.src
-  delete image.dataset.srcset
-  picture?.setAttribute('data-image-requested', 'true')
-}
 
 export const setupImageLoading = () => {
   lazyImageObserver?.disconnect()
@@ -62,14 +38,9 @@ export const setupImageLoading = () => {
           (entries) => {
             entries.forEach((entry) => {
               if (!entry.isIntersecting) return
-              const target = entry.target as HTMLElement
-              const image = target.matches('img[data-progressive-image]')
-                ? (target as HTMLImageElement)
-                : target.querySelector<HTMLImageElement>(
-                    'img[data-progressive-image]',
-                  )
-              if (!image) return
-              hydrateLazyImage(image)
+              const target = entry.target
+              if (!(target instanceof HTMLElement)) return
+              target.dataset.imageRequested = 'true'
               lazyImageObserver?.unobserve(target)
             })
           },
@@ -80,11 +51,13 @@ export const setupImageLoading = () => {
   document
     .querySelectorAll<HTMLImageElement>('img[data-progressive-image]')
     .forEach((image) => {
+      const picture = image.closest<HTMLElement>(
+        'picture[data-progressive-image]',
+      )
+      if (!picture) return
+
       if (boundImages.has(image)) {
-        if (image.dataset.src) {
-          const target = image.closest('picture') ?? image
-          lazyImageObserver?.observe(target)
-        }
+        if (!picture.dataset.imageRequested) lazyImageObserver?.observe(picture)
         return
       }
       boundImages.add(image)
@@ -96,11 +69,9 @@ export const setupImageLoading = () => {
         once: true,
       })
 
-      if (image.dataset.src) {
-        const target = image.closest('picture') ?? image
-        if (lazyImageObserver) lazyImageObserver.observe(target)
-        else hydrateLazyImage(image)
-        return
+      if (!picture.dataset.imageRequested) {
+        if (lazyImageObserver) lazyImageObserver.observe(picture)
+        else picture.dataset.imageRequested = 'true'
       }
 
       if (image.complete) {

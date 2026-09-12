@@ -4,11 +4,12 @@ import '@/styles/components/external-link-card.css'
 type Props = {
   href: string
   label: string
-  host: string
+  host?: string
   className?: string
 }
 
 const { href, label, host, className } = Astro.props
+const hostLabel = host ?? new URL(href).hostname
 ---
 
 <a
@@ -19,7 +20,7 @@ const { href, label, host, className } = Astro.props
 >
   <span>
     <strong>{label}</strong>
-    <small>{host}</small>
+    <small>{hostLabel}</small>
   </span>
   <span class="external-card-link__arrow" aria-hidden="true">↗</span>
 </a>

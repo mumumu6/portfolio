@@ -12,6 +12,3 @@ export const navigationItems: NavigationItem[] = [
 
 export const matchesNavigationPath = (pathname: string, linkPath: string) =>
   pathname === linkPath || pathname.startsWith(linkPath)
-
-export const isNavigationItemActive = (pathname: string, href: string) =>
-  matchesNavigationPath(pathname, href)

@@ -11,8 +11,6 @@ cover:
   # 公開時にページのスクリーンショットへ差し替える。
   src: ./assets/portfolio-v2-cover.png
   alt: Portfolio v2のOGP画像
-  width: 1200
-  height: 630
 gallery: []
 links:
   - label: このサイトを見る

@@ -1,7 +1,9 @@
-const responsivePrefetchQuery = window.matchMedia('(max-width: 760px)')
+// Browser zoom changes CSS pixels, but it does not change the input device.
+// Keep mouse users on hover prefetch even when a zoomed desktop looks narrow.
+const touchInputQuery = window.matchMedia('(pointer: coarse)')
 
 export const syncResponsivePrefetch = () => {
-  const strategy = responsivePrefetchQuery.matches ? 'tap' : 'hover'
+  const strategy = touchInputQuery.matches ? 'tap' : 'hover'
 
   document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
     if (link.origin === window.location.origin) {
@@ -10,4 +12,4 @@ export const syncResponsivePrefetch = () => {
   })
 }
 
-responsivePrefetchQuery.addEventListener('change', syncResponsivePrefetch)
+touchInputQuery.addEventListener('change', syncResponsivePrefetch)

@@ -2,11 +2,7 @@
 import '@/styles/components/reply.css'
 import Avatar from '@/components/common/Avatar.astro'
 import { mdiChevronDown } from '@mdi/js'
-import {
-  authorNames,
-  formatReplyDate,
-  resolveReplyTo,
-} from '@/lib/portfolio/authors'
+import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
 import type { Reply } from '@/lib/portfolio/types'
 
 type Props = {
@@ -38,8 +34,7 @@ const { replies, label = 'AIのコメント', open = false } = Astro.props
   <div class="reply-thread-shell" data-disclosure-content>
     <div class="reply-thread">
       {
-        replies.map((reply, index) => {
-          const replyTo = resolveReplyTo(replies, index)
+        replies.map((reply) => {
           const dateLabel = formatReplyDate(reply.createdAt)
           return (
             <div class="reply">
@@ -54,8 +49,10 @@ const { replies, label = 'AIのコメント', open = false } = Astro.props
                     </>
                   )}
                 </header>
-                {replyTo && (
-                  <p class="reply-context">↳ {authorNames[replyTo]} への返信</p>
+                {reply.replyTo && (
+                  <p class="reply-context">
+                    ↳ {authorNames[reply.replyTo]} への返信
+                  </p>
                 )}
                 <div class="reply-bubble">
                   <p>{reply.body}</p>

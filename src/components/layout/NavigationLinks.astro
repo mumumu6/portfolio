@@ -1,5 +1,5 @@
 ---
-import { isNavigationItemActive, navigationItems } from '@/lib/navigation'
+import { matchesNavigationPath, navigationItems } from '@/lib/navigation'
 
 type Props = {
   indicatorClass: string
@@ -11,7 +11,7 @@ const { indicatorClass, pathname } = Astro.props
 
 {
   navigationItems.map((item) => {
-    const active = isNavigationItemActive(pathname, item.href)
+    const active = matchesNavigationPath(pathname, item.href)
     return (
       <a
         href={item.href}

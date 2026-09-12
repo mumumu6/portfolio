@@ -179,7 +179,6 @@ for (const item of items) {
     ),
     tags: asArray(item.category).map(cleanText).filter(Boolean).slice(0, 4),
     href,
-    linkLabel: '記事を読む',
     ...(image ? { image } : {}),
   })
 }

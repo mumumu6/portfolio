@@ -4,13 +4,15 @@ import type { FeedImage } from '@/lib/portfolio/types'
 type GeneratedBlogImage = {
   asset: string
   alt: string
-  source?: string
 }
 
-const blogImages = import.meta.glob('/src/assets/images/blog/*-1440.webp', {
-  eager: true,
-  import: 'default',
-}) as Record<string, ImageMetadata>
+const blogImages = import.meta.glob<ImageMetadata>(
+  '/src/assets/images/blog/*-1440.webp',
+  {
+    eager: true,
+    import: 'default',
+  },
+)
 
 export const resolveBlogImage = (
   image: GeneratedBlogImage | undefined,
@@ -27,8 +29,5 @@ export const resolveBlogImage = (
   return {
     src,
     alt: image.alt,
-    width: src.width,
-    height: src.height,
-    source: image.source,
   }
 }

@@ -1,14 +1,12 @@
 import { matchesNavigationPath } from '@/lib/navigation'
 import { createNavigationIndicatorController } from '@/scripts/navigation-indicator'
 
-let syncVersion = 0
 let pendingPathname: string | null = null
 
 const syncNavigation = (
   animate = false,
   targetPathname = location.pathname,
 ) => {
-  const version = ++syncVersion
   const pathname = targetPathname
   const containers = Array.from(
     document.querySelectorAll<HTMLElement>('[data-nav-container]'),
@@ -36,7 +34,6 @@ const syncNavigation = (
   if (animate) {
     // Start the indicator as soon as the new DOM is swapped in. It can move
     // alongside the page fade instead of waiting for the View Transition to finish.
-    if (version !== syncVersion) return
     indicators.read(pathname).forEach((state, index) => {
       indicators.apply({
         ...state,

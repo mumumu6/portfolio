@@ -10,8 +10,6 @@ tags:
 cover:
   src: ./assets/sci-schedule.webp
   alt: 科学大試験リンク生成サイトの検索画面
-  width: 1919
-  height: 798
 gallery: []
 links:
   - label: サイトを見る（更新停止中）

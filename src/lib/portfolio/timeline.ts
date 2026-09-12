@@ -7,10 +7,10 @@ export const getExperiences = async (): Promise<FeedEntry[]> => {
 
   return entries
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-    .map((entry) => ({
+    .map<FeedEntry>((entry) => ({
       id: entry.id,
-      kind: 'experience' as const,
-      author: 'mumumu' as const,
+      kind: 'experience',
+      author: 'mumumu',
       date: entry.data.date.toISOString().slice(0, 10),
       dateLabel: entry.data.date.toISOString().slice(0, 7).replace('-', '.'),
       title: entry.data.title,

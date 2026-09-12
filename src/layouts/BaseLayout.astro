@@ -1,32 +1,14 @@
 ---
 import '@/styles/global.css'
 import { ClientRouter } from 'astro:transitions'
+import type { ComponentProps } from 'astro/types'
 import SeoHead from '@/components/layout/SeoHead.astro'
 import SiteHeader from '@/components/layout/SiteHeader.astro'
 import ibmPlexSansJp400 from '@fontsource/ibm-plex-sans-jp/files/ibm-plex-sans-jp-latin-400-normal.woff2?url'
-import spaceGrotesk500 from '@fontsource/space-grotesk/files/space-grotesk-latin-500-normal.woff2?url'
 import spaceGrotesk600 from '@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2?url'
 import spaceGrotesk700 from '@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2?url'
 
-type Props = {
-  title: string
-  description: string
-  image?: string | undefined
-  imageAlt?: string | undefined
-  imageWidth?: number | undefined
-  imageHeight?: number | undefined
-  type?: 'website' | 'article' | undefined
-  publishedTime?: string | undefined
-  updatedTime?: string | undefined
-  schemaType?:
-    | 'WebPage'
-    | 'ProfilePage'
-    | 'CollectionPage'
-    | 'BlogPosting'
-    | 'CreativeWork'
-    | undefined
-  tags?: string[] | undefined
-  readingMinutes?: number | undefined
+type Props = ComponentProps<typeof SeoHead> & {
   shell?: 'default' | 'wide' | 'adaptive' | undefined
 }
 
@@ -47,13 +29,6 @@ const { shell = 'default', ...seoProps } = Astro.props
     />
     <link
       rel="preload"
-      href={spaceGrotesk500}
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
       href={spaceGrotesk600}
       as="font"
       type="font/woff2"
@@ -68,7 +43,6 @@ const { shell = 'default', ...seoProps } = Astro.props
     />
     <SeoHead {...seoProps} />
     <ClientRouter />
-    <title>{seoProps.title}</title>
     <script is:inline>
       ;(() => {
         document.documentElement.classList.add('js')

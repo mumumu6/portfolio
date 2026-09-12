@@ -30,10 +30,6 @@ function validateReply(reply, location) {
     reply.replyTo === undefined || replyTargets.has(reply.replyTo),
     `${location}.replyTo is invalid.`,
   )
-  assert(
-    reply.depth === undefined || reply.depth === 1 || reply.depth === 2,
-    `${location}.depth is invalid.`,
-  )
 }
 
 function validateReplyOrder(replies, location, parentDate) {

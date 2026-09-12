@@ -3,7 +3,7 @@ import generatedBlogPosts from '@/data/generated/blogs.json'
 import { getAiReplies } from '@/lib/portfolio/ai'
 import { resolveBlogImage } from '@/lib/portfolio/images'
 import type { FeedEntry } from '@/lib/portfolio/types'
-import { estimateReadingMinutes, toExcerpt } from '@/lib/portfolio/utils'
+import { estimateReadingMinutes } from '@/lib/portfolio/utils'
 
 const localBlogPosts: FeedEntry[] = (await getCollection('blogs')).map(
   (post) => {
@@ -21,13 +21,10 @@ const localBlogPosts: FeedEntry[] = (await getCollection('blogs')).map(
       readingMinutes: estimateReadingMinutes(post.body ?? data.description),
       tags: data.tags,
       href: `/blog/${post.id}/`,
-      linkLabel: '記事を読む',
       sourceLabel: 'この記事を読む',
       image: {
         src: data.cover,
         alt: data.coverAlt,
-        width: data.coverWidth,
-        height: data.coverHeight,
       },
       replies: getAiReplies('blog', post.id),
     }
@@ -35,14 +32,11 @@ const localBlogPosts: FeedEntry[] = (await getCollection('blogs')).map(
 )
 
 export const blogPosts: FeedEntry[] = [
-  ...generatedBlogPosts.map((post) => ({
+  ...generatedBlogPosts.map<FeedEntry>((post) => ({
     ...post,
     image: resolveBlogImage(post.image),
-    body: toExcerpt(post.body),
-    kind: 'blog' as const,
-    author: 'mumumu' as const,
-    href: post.href,
-    sourceHref: post.href,
+    kind: 'blog',
+    author: 'mumumu',
     sourceLabel: 'traP Blogで読む',
     replies: getAiReplies('blog', post.id),
   })),

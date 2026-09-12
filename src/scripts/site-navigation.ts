@@ -35,11 +35,8 @@ const animateThemeChange = (theme: Theme) => {
   const reducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
   ).matches
-  const transitionDocument = document as Document & {
-    startViewTransition?: (callback: () => void) => { finished: Promise<void> }
-  }
 
-  if (reducedMotion || !transitionDocument.startViewTransition) {
+  if (reducedMotion || !('startViewTransition' in document)) {
     applyTheme(theme)
     return
   }
@@ -47,9 +44,7 @@ const animateThemeChange = (theme: Theme) => {
   if (root.hasAttribute('data-theme-transitioning')) return
 
   root.setAttribute('data-theme-transitioning', '')
-  const transition = transitionDocument.startViewTransition(() =>
-    applyTheme(theme),
-  )
+  const transition = document.startViewTransition(() => applyTheme(theme))
   transition.finished.finally(() => {
     root.removeAttribute('data-theme-transitioning')
   })

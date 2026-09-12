@@ -3,7 +3,7 @@ type IndicatorGeometry = {
   width: number
 }
 
-export type IndicatorState = {
+type IndicatorState = {
   indicator: HTMLElement | null
   origin: IndicatorGeometry | null
   target: IndicatorGeometry | null
@@ -56,8 +56,6 @@ const getCurrentGeometry = (
 export const createNavigationIndicatorController = (
   navContainers: HTMLElement[],
 ) => {
-  let initialized = false
-
   const read = (targetPath: string): IndicatorState[] =>
     navContainers.map((nav) => {
       const indicator = nav.querySelector<HTMLElement>('[data-nav-indicator]')
@@ -108,23 +106,9 @@ export const createNavigationIndicatorController = (
     )
   }
 
-  const sync = (states: IndicatorState[], skipAnimation: boolean) => {
-    if (!skipAnimation) {
-      states.forEach((state) => apply(state, !initialized))
-      initialized = true
-    }
-  }
-
-  const hide = () => {
-    navContainers.forEach((nav) => {
-      const indicator = nav.querySelector<HTMLElement>('[data-nav-indicator]')
-      if (indicator && !indicator.hidden) indicator.hidden = true
-    })
-  }
-
   const reposition = (pathname: string) => {
     read(pathname).forEach((state) => apply(state, true))
   }
 
-  return { apply, hide, read, reposition, sync }
+  return { apply, read, reposition }
 }

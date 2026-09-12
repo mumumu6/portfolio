@@ -12,13 +12,9 @@ tags:
 cover:
   src: ./assets/portfolio.webp
   alt: Portfolio v1のプロフィール画面
-  width: 1910
-  height: 789
 gallery:
   - src: ./assets/portfolio1.webp
     alt: Portfolio v1のトップページ
-    width: 1893
-    height: 816
     caption: Ghostの記事と作品をまとめていたトップページ
 links:
   - label: 旧サイトを見る

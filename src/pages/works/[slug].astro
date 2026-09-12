@@ -10,13 +10,10 @@ import Avatar from '@/components/common/Avatar.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
-import {
-  authorNames,
-  formatReplyDate,
-  resolveReplyTo,
-} from '@/lib/portfolio/authors'
+import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
+import { getAiReplies } from '@/lib/portfolio/ai'
 import { statusLabels } from '@/lib/portfolio/constants'
-import { works as workEntries } from '@/lib/portfolio/works'
+import type { AuthorId, Reply } from '@/lib/portfolio/types'
 
 export async function getStaticPaths() {
   const works = await getCollection('works')
@@ -30,32 +27,49 @@ const data = work.data
 const publishedAt = data.publishedAt.toISOString().slice(0, 10)
 const dateLabel = publishedAt.slice(0, 7).replace('-', '.')
 const statusLabel = statusLabels[data.status]
-const coverImageSrc = data.cover.src.src
-const aiReplies =
-  workEntries.find((entry) => entry.id === work.id)?.replies ?? []
+const aiReplies = getAiReplies('work', work.id) ?? []
 const makerReplies = [
   ...data.comments.map((comment) => ({
     ...comment,
     date: comment.date ?? data.publishedAt,
   })),
 ]
+type ThreadItem =
+  | {
+      kind: 'maker'
+      author: 'mumumu'
+      body: string
+      label: string
+      date: string
+      replyTo?: undefined
+      sourceOrder: number
+    }
+  | {
+      kind: 'ai'
+      author: Reply['author']
+      body: string
+      label?: undefined
+      date: string
+      replyTo: AuthorId | undefined
+      sourceOrder: number
+    }
 const threadItems = [
-  ...makerReplies.map((reply, index) => ({
-    kind: 'maker' as const,
-    author: 'mumumu' as const,
+  ...makerReplies.map<ThreadItem>((reply, index) => ({
+    kind: 'maker',
+    author: 'mumumu',
     body: reply.body,
     label: reply.label,
     date: reply.date.toISOString().slice(0, 10),
     replyTo: undefined,
     sourceOrder: index,
   })),
-  ...aiReplies.map((reply, index) => ({
-    kind: 'ai' as const,
+  ...aiReplies.map<ThreadItem>((reply, index) => ({
+    kind: 'ai',
     author: reply.author,
     body: reply.body,
     label: undefined,
     date: reply.createdAt ?? publishedAt,
-    replyTo: resolveReplyTo(aiReplies, index),
+    replyTo: reply.replyTo,
     sourceOrder: makerReplies.length + index,
   })),
 ].sort((a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder)
@@ -64,14 +78,17 @@ const threadItems = [
 <BaseLayout
   title={`${data.title} — Works — mumumu`}
   description={data.summary}
-  image={coverImageSrc}
+  image={data.cover.src}
   imageAlt={data.cover.alt}
-  imageWidth={data.cover.width}
-  imageHeight={data.cover.height}
   type="article"
   publishedTime={publishedAt}
   schemaType="CreativeWork"
   tags={data.tags}
+  breadcrumbs={[
+    { name: 'ホーム', href: '/' },
+    { name: '作品', href: '/works/' },
+    { name: data.title, href: Astro.url.pathname },
+  ]}
 >
   <article class="work-thread-page">
     <a class="article-back" href="/works/">← Works</a>
@@ -100,8 +117,6 @@ const threadItems = [
           className="work-thread-cover"
           src={data.cover.src}
           alt={data.cover.alt}
-          width={data.cover.width}
-          height={data.cover.height}
           sizes="(max-width: 760px) calc(100vw - 92px), 680px"
           loading="eager"
           fetchPriority="high"
@@ -207,12 +222,7 @@ const threadItems = [
         {
           data.gallery.map((image) => (
             <figure class="work-thread-gallery">
-              <ResponsiveImage
-                src={image.src}
-                alt={image.alt}
-                width={image.width}
-                height={image.height}
-              />
+              <ResponsiveImage src={image.src} alt={image.alt} />
               {image.caption && <figcaption>{image.caption}</figcaption>}
             </figure>
           ))

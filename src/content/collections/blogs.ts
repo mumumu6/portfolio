@@ -13,7 +13,5 @@ export const blogs = defineCollection({
       tags: z.array(z.string()).optional(),
       cover: image(),
       coverAlt: z.string(),
-      coverWidth: z.number().int().positive(),
-      coverHeight: z.number().int().positive(),
     }),
 })

@@ -1,8 +1,3 @@
-export const toExcerpt = (value: string) => {
-  const text = value.trim().replace(/[.…]+$/u, '')
-  return text ? `${text}…` : ''
-}
-
 export const estimateReadingMinutes = (value: string) => {
   const text = value
     .replace(/<[^>]*>/g, ' ')

@@ -9,16 +9,11 @@ export type Reply = {
   body: string
   createdAt?: string | undefined
   replyTo?: AuthorId | undefined
-  /** Legacy nesting hint retained while older generated content is migrated. */
-  depth?: 1 | 2 | undefined
 }
 
 export type FeedImage = {
   src: ImageMetadata
   alt: string
-  width?: number | undefined
-  height?: number | undefined
-  source?: string | undefined
 }
 
 export type FeedEntry = {
@@ -31,8 +26,6 @@ export type FeedEntry = {
   body: string
   tags?: string[] | undefined
   href?: string | undefined
-  linkLabel?: string | undefined
-  sourceHref?: string | undefined
   sourceLabel?: string | undefined
   readingMinutes?: number | undefined
   image?: FeedImage | undefined
@@ -50,16 +43,4 @@ export type WorkEntry = FeedEntry & {
     body: string
     date?: string | undefined
   }
-}
-
-export type BlogFrontmatter = {
-  title: string
-  description: string
-  publishedAt: Date
-  updatedAt?: Date | undefined
-  tags?: string[] | undefined
-  cover: ImageMetadata
-  coverAlt: string
-  coverWidth: number
-  coverHeight: number
 }

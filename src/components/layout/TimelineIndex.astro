@@ -14,17 +14,9 @@ type Props = {
   groups: TimelineGroup[]
   total: number
   navLabel: string
-  totalLabel?: string
 }
 
-const {
-  eyebrow,
-  latestLabel,
-  groups,
-  total,
-  navLabel,
-  totalLabel = '件',
-} = Astro.props
+const { eyebrow, latestLabel, groups, total, navLabel } = Astro.props
 ---
 
 <aside class="experience-index">
@@ -43,5 +35,5 @@ const {
       ))
     }
   </nav>
-  <p class="experience-index__total">全{total}{totalLabel}</p>
+  <p class="experience-index__total">全{total}件</p>
 </aside>
