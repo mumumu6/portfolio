@@ -3,6 +3,10 @@ import '@/styles/global.css'
 import { ClientRouter } from 'astro:transitions'
 import SeoHead from '@/components/layout/SeoHead.astro'
 import SiteHeader from '@/components/layout/SiteHeader.astro'
+import ibmPlexSansJp400 from '@fontsource/ibm-plex-sans-jp/files/ibm-plex-sans-jp-latin-400-normal.woff2?url'
+import spaceGrotesk500 from '@fontsource/space-grotesk/files/space-grotesk-latin-500-normal.woff2?url'
+import spaceGrotesk600 from '@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2?url'
+import spaceGrotesk700 from '@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2?url'
 
 type Props = {
   title: string
@@ -33,7 +37,35 @@ const { shell = 'default', ...seoProps } = Astro.props
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" initial-scale="1.0/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="preload"
+      href={ibmPlexSansJp400}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={spaceGrotesk500}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={spaceGrotesk600}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={spaceGrotesk700}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <SeoHead {...seoProps} />
     <ClientRouter />
     <title>{seoProps.title}</title>

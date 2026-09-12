@@ -1,6 +1,8 @@
 .ogp-preview {
   position: relative;
   width: min(100%, 630px);
+  min-width: 0;
+  max-width: 100%;
   display: block;
   margin-top: 14px;
   overflow: hidden;

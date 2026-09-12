@@ -1,6 +1,8 @@
 picture[data-progressive-image] {
   position: relative;
   display: block;
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   background-color: var(--surface-soft);
 }
@@ -49,6 +51,8 @@ html.js
 
 picture[data-progressive-image] > img[data-progressive-image] {
   position: relative;
+  max-width: 100%;
+  height: auto;
   z-index: 0;
   transition: opacity 260ms ease;
 }
