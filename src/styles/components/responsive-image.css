@@ -4,7 +4,7 @@ picture[data-progressive-image] {
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  background-color: var(--surface-soft);
+  background-color: var(--surface);
 }
 
 picture[data-progressive-image]::before {

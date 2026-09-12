@@ -12,6 +12,7 @@ coverAlt: E資格のロゴと合格者向け素材
 ---
 
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+import LinkPreviewCard from '@/components/common/LinkPreviewCard.astro'
 import examResult from './assets/e-license-result.webp'
 
 珍しい資格だと思ったので、ブログにまとめます。このサイトのブログ機能も試してみたかったので、ちょうど良い機会でした。
@@ -19,7 +20,12 @@ import examResult from './assets/e-license-result.webp'
 ## E資格を受けた経緯
 
 4月から7月にかけて松尾研の[**Deep Learning基礎講座**](https://weblab.t.u-tokyo.ac.jp/lecture/deep-learning/)を受講し、修了しました。  
-[E資格](https://www.jdla.org/certificate/engineer/)は受験するのに特定の認定講座を受講する必要があり、松尾研のものはその一つでした。ちょうど夏休みで時間もあるので、確認がてら受験することにしました。
+E資格は受験するのに特定の認定講座を受講する必要があり、松尾研のものはその一つでした。ちょうど夏休みで時間もあるので、確認がてら受験することにしました。
+
+<LinkPreviewCard
+  href="https://www.jdla.org/certificate/engineer/"
+  label="E資格 — 日本ディープラーニング協会"
+/>
 
 ## 認定講座と受験費用
 
@@ -53,14 +59,22 @@ E資格を受けようか悩んでいる方は松尾研だと無料で受講で�
 
 #### AIciaさん
 
-[AIcia Solid Project](https://www.youtube.com/@AIcia_Solid)
+<LinkPreviewCard
+  href="https://www.youtube.com/@AIcia_Solid"
+  label="AIcia Solid Project"
+  imageRatio={1}
+/>
 
 強化学習や画像認識の各モデルのお気持ちなど非常にためになりました。なぜそうするのかの部分がめちゃくちゃかみ砕かれていてわかりやすいです。動画をみれば理解がかなり進みます。  
 大好き
 
 #### データサイエンス研究所
 
-[データサイエンス研究所](https://www.youtube.com/@dken)
+<LinkPreviewCard
+  href="https://www.youtube.com/@dken"
+  label="データサイエンス研究所"
+  imageRatio={1}
+/>
 
 生成モデルや画像認識の各モデルの構造などを理解するのにとても役立ちました。  
 モデルの構造をしっかりと説明してくれているので、各モデルが何をしているかがよくわかります。

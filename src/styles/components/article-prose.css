@@ -81,13 +81,21 @@
   font-size: 0.86em;
 }
 
-.article-prose img {
+.article-prose picture {
+  width: fit-content;
   max-width: 100%;
-  height: auto;
-  display: block;
   margin: 1.8em auto;
   border: 1px solid var(--line-strong);
   border-radius: 12px;
+}
+
+.article-prose picture > img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
 }
 
 .article-prose hr {

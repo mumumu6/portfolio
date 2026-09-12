@@ -51,9 +51,9 @@ const dimensions = {
   loading={loading}
   decoding="async"
   fetchpriority={fetchPriority}
-  class={className}
   data-progressive-image
   pictureAttributes={{
+    ...(className ? { class: className } : {}),
     'data-progressive-image': '',
     ...(isLazy ? {} : { 'data-image-requested': 'true' }),
   }}

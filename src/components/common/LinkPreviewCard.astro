@@ -1,0 +1,61 @@
+---
+import '@/styles/components/external-link-card.css'
+import { getOgp } from '@/lib/portfolio/ogp'
+
+type Props = {
+  href: string
+  label?: string
+  imageRatio?: number
+  className?: string
+}
+
+const { href, label, imageRatio, className } = Astro.props
+const url = new URL(href)
+const ogp = await getOgp(href)
+const title = ogp.title ?? label ?? url.hostname
+const host = ogp.siteName ?? url.hostname
+const resolvedImageRatio =
+  imageRatio ??
+  (ogp.imageWidth && ogp.imageHeight
+    ? ogp.imageWidth / ogp.imageHeight
+    : undefined)
+---
+
+<a
+  class:list={[
+    'external-card-link',
+    'link-preview-card',
+    { 'link-preview-card--with-image': ogp.image },
+    className,
+  ]}
+  style={resolvedImageRatio
+    ? `--link-image-ratio: ${resolvedImageRatio}`
+    : undefined}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  {
+    ogp.image && (
+      <span class="link-preview-card__thumbnail" aria-hidden="true">
+        <img
+          class="link-preview-card__image"
+          src={ogp.image}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          referrerpolicy="no-referrer"
+        />
+      </span>
+    )
+  }
+  <span class="link-preview-card__body">
+    <strong>{title}</strong>
+    {
+      ogp.description && (
+        <span class="link-preview-card__description">{ogp.description}</span>
+      )
+    }
+    <small>{host}</small>
+  </span>
+</a>
