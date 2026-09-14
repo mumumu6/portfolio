@@ -1,0 +1,45 @@
+---
+import '@/styles/components/feed.css'
+import '@/styles/components/work-status.css'
+import { authorNames } from '@/lib/portfolio/authors'
+import type { AuthorId } from '@/lib/portfolio/types'
+import type { WorkStatus } from '@/lib/portfolio/constants'
+
+type Props = {
+  author: AuthorId
+  date: string
+  dateLabel: string
+  readingMinutes?: number | undefined
+  status?: WorkStatus | undefined
+  statusLabel?: string | undefined
+}
+
+const { author, date, dateLabel, readingMinutes, status, statusLabel } =
+  Astro.props
+---
+
+<header class="entry-head">
+  <div class="entry-author">
+    <strong>{authorNames[author]}</strong>
+    <span aria-hidden="true">·</span>
+    <time datetime={date}>{dateLabel}</time>
+    {
+      readingMinutes && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>約{readingMinutes}分</span>
+        </>
+      )
+    }
+    {
+      statusLabel && status && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span class:list={['work-status', `work-status--${status}`]}>
+            {statusLabel}
+          </span>
+        </>
+      )
+    }
+  </div>
+</header>

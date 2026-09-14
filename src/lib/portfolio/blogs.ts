@@ -2,10 +2,10 @@ import { getCollection } from 'astro:content'
 import generatedBlogPosts from '@/data/generated/blogs.json'
 import { getAiReplies } from '@/lib/portfolio/ai'
 import { resolveBlogImage } from '@/lib/portfolio/images'
-import type { FeedEntry } from '@/lib/portfolio/types'
+import type { BlogEntry } from '@/lib/portfolio/types'
 import { estimateReadingMinutes } from '@/lib/portfolio/utils'
 
-const localBlogPosts: FeedEntry[] = (await getCollection('blogs')).map(
+const localBlogPosts: BlogEntry[] = (await getCollection('blogs')).map(
   (post) => {
     const data = post.data
     const publishedAt = data.publishedAt.toISOString().slice(0, 10)
@@ -31,8 +31,8 @@ const localBlogPosts: FeedEntry[] = (await getCollection('blogs')).map(
   },
 )
 
-export const blogPosts: FeedEntry[] = [
-  ...generatedBlogPosts.map<FeedEntry>((post) => ({
+export const blogPosts: BlogEntry[] = [
+  ...generatedBlogPosts.map<BlogEntry>((post) => ({
     ...post,
     image: resolveBlogImage(post.image),
     kind: 'blog',

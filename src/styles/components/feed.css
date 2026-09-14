@@ -35,52 +35,87 @@
 
 .entry-content {
   min-width: 0;
+  container: entry-card / inline-size;
 }
 
-.feed-list--compact .entry-content {
-  --preview-width: 280px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, var(--preview-width));
-  column-gap: 18px;
-}
-
-.feed-list--compact .entry-content > * {
+.entry-card-layout {
   min-width: 0;
 }
 
-.site-shell--adaptive .feed-list--compact .entry-content {
-  --preview-width: min(40%, 420px);
+.entry-card-copy {
+  grid-area: body;
+  min-width: 0;
 }
 
-.feed-list--compact .entry-head,
-.feed-list--compact .entry-title,
-.feed-list--compact .entry-body,
-.feed-list--compact .entry-source,
-.feed-list--compact .tag-list,
-.feed-list--compact .entry-link,
-.feed-list--compact .reply-disclosure {
-  grid-column: 1;
+.feed-list--compact .entry-card-layout--has-image {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'title'
+    'body'
+    'preview';
+  align-items: start;
+  margin-top: 8px;
 }
 
-.feed-list--compact .work-note-preview {
-  grid-column: 1;
-}
-
-.feed-list--compact .ogp-preview {
+.feed-list--compact .entry-card-layout--has-image > .ogp-preview {
+  grid-area: preview;
   width: 100%;
-  grid-column: 2;
-  grid-row: 1 / 8;
   align-self: start;
-  margin-top: 0;
+  margin-top: 12px;
 }
 
-.feed-list--compact .feed-entry--blog .entry-body {
+.feed-list--compact .entry-card-layout--has-image .entry-title {
+  grid-area: title;
+  min-width: 0;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.feed-list--compact .entry-body {
   display: -webkit-box;
-  min-block-size: calc(3 * 1.72em);
+  min-block-size: 0;
+  margin-top: 2px;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   line-clamp: 3;
+}
+
+@container entry-card (max-width: 720px) {
+  .feed-list--compact .entry-body {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+}
+
+@container entry-card (min-width: 360px) {
+  .feed-list--compact .entry-card-layout--has-image {
+    --preview-width: clamp(180px, 40cqi, 420px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--preview-width));
+    grid-template-areas:
+      'title title'
+      'body preview';
+    column-gap: 18px;
+  }
+
+  .feed-list--compact .entry-card-layout--has-image > .ogp-preview {
+    margin-top: 2px;
+  }
+}
+
+.feed-list--compact .entry-body--two-lines {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+@container entry-card (min-width: 700px) {
+  .feed-list--compact .entry-card-layout--has-image {
+    grid-template-areas:
+      'title preview'
+      'body preview';
+    grid-template-rows: auto 1fr;
+  }
 }
 
 .feed-list--timeline .entry-line {
@@ -166,6 +201,8 @@
   font-size: 1.08rem;
   line-height: 1.4;
   letter-spacing: -0.025em;
+  overflow-wrap: break-word;
+  text-wrap: normal;
 }
 
 .entry-title a {
@@ -211,32 +248,6 @@
     padding-right: 16px;
     padding-left: 16px;
   }
-
-  .feed-list--compact .entry-content,
-  .site-shell--adaptive .feed-list--compact .entry-content {
-    --preview-width: 145px;
-    column-gap: 14px;
-  }
-
-  .feed-list--compact .feed-entry--blog .entry-content {
-    display: block;
-  }
-
-  .feed-list--compact .feed-entry--blog .entry-body {
-    min-block-size: 0;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-  }
-
-  .feed-list--compact .feed-entry--blog .ogp-preview {
-    width: min(100%, 630px);
-    margin-top: 12px;
-  }
-
-  .feed-list--compact .feed-entry--blog .ogp-preview img {
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-  }
 }
 
 @media (max-width: 480px) {
@@ -255,24 +266,5 @@
 
   .entry-body {
     font-size: 0.8rem;
-  }
-
-  .feed-list--compact .entry-content,
-  .site-shell--adaptive .feed-list--compact .entry-content {
-    --preview-width: 92px;
-    column-gap: 10px;
-  }
-
-  .feed-list--compact .entry-body,
-  .feed-list--compact .tag-list {
-    display: none;
-  }
-
-  .feed-list--compact .feed-entry--blog .entry-body {
-    min-block-size: 0;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
   }
 }

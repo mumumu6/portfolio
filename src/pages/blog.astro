@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PageIntro from '@/components/layout/PageIntro.astro'
-import FeedEntry from '@/components/feed/FeedEntry.astro'
+import BlogCard from '@/components/feed/BlogCard.astro'
 import { blogPosts } from '@/lib/portfolio/blogs'
 ---
 
@@ -19,7 +19,7 @@ import { blogPosts } from '@/lib/portfolio/blogs'
   <div class="feed-list feed-list--compact">
     {
       blogPosts.map((entry, index) => (
-        <FeedEntry entry={entry} priority={index === 0} />
+        <BlogCard entry={entry} priority={index === 0} />
       ))
     }
   </div>

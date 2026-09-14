@@ -1,13 +1,13 @@
 import { getCollection } from 'astro:content'
 import { getAiReplies } from '@/lib/portfolio/ai'
-import type { FeedEntry } from '@/lib/portfolio/types'
+import type { TimelineEntry } from '@/lib/portfolio/types'
 
-export const getExperiences = async (): Promise<FeedEntry[]> => {
+export const getExperiences = async (): Promise<TimelineEntry[]> => {
   const entries = await getCollection('experiences')
 
   return entries
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-    .map<FeedEntry>((entry) => ({
+    .map<TimelineEntry>((entry) => ({
       id: entry.id,
       kind: 'experience',
       author: 'mumumu',

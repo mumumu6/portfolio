@@ -1,0 +1,79 @@
+---
+import '@/styles/components/feed.css'
+import EntryPreview from '@/components/feed/EntryPreview.astro'
+import type { FeedImage } from '@/lib/portfolio/types'
+
+type Props = {
+  headingLevel?: 2 | 3
+  title?: string | undefined
+  body: string
+  href?: string | undefined
+  image?: FeedImage | undefined
+  imageLabel?: string | undefined
+  imageSizes?: string
+  bodyLines?: 2 | 3
+  external?: boolean | undefined
+  priority?: boolean
+}
+
+const {
+  headingLevel = 2,
+  title,
+  body,
+  href,
+  image,
+  imageLabel,
+  imageSizes = 'auto, 100vw',
+  bodyLines = 3,
+  external = false,
+  priority = false,
+} = Astro.props
+const Heading = headingLevel === 3 ? 'h3' : 'h2'
+---
+
+<div
+  class:list={[
+    'entry-card-layout',
+    { 'entry-card-layout--has-image': Boolean(image) },
+  ]}
+>
+  {
+    title &&
+      (href ? (
+        <Heading class="entry-title">
+          <a
+            href={href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noreferrer' : undefined}
+          >
+            {title}
+          </a>
+        </Heading>
+      ) : (
+        <Heading class="entry-title">{title}</Heading>
+      ))
+  }
+
+  {
+    image && (
+      <EntryPreview
+        image={image}
+        href={href}
+        label={imageLabel ?? `${title ?? '記事'}を開く`}
+        sizes={imageSizes}
+        external={external}
+        priority={priority}
+        className="ogp-preview--entry"
+      />
+    )
+  }
+
+  <div class="entry-card-copy">
+    <p
+      class:list={['entry-body', { 'entry-body--two-lines': bodyLines === 2 }]}
+    >
+      {body}
+    </p>
+    <slot />
+  </div>
+</div>

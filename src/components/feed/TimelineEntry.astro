@@ -1,0 +1,47 @@
+---
+import '@/styles/components/entry-link.css'
+import TagList from '@/components/common/TagList.astro'
+import EntryBody from '@/components/feed/EntryBody.astro'
+import EntryFrame from '@/components/feed/EntryFrame.astro'
+import EntryHeader from '@/components/feed/EntryHeader.astro'
+import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro'
+import type { TimelineEntry as TimelineEntryData } from '@/lib/portfolio/types'
+
+type Props = {
+  entry: TimelineEntryData
+  headingLevel?: 2 | 3
+}
+
+const { entry, headingLevel = 2 } = Astro.props
+const external = entry.href?.startsWith('http')
+---
+
+<EntryFrame author={entry.author}>
+  <EntryHeader
+    author={entry.author}
+    date={entry.date}
+    dateLabel={entry.dateLabel}
+  />
+
+  <EntryBody
+    headingLevel={headingLevel}
+    title={entry.title}
+    body={entry.body}
+    href={entry.href}
+    image={entry.image}
+    imageLabel={`${entry.title ?? '記録'}を開く`}
+    external={external}
+  >
+    <div class="entry-card-meta">
+      <TagList tags={entry.tags} />
+      {
+        entry.replies && entry.replies.length > 0 && (
+          <ReplyDisclosure
+            replies={entry.replies}
+            label={entry.kind === 'thought' ? '返信' : 'AIのコメント'}
+          />
+        )
+      }
+    </div>
+  </EntryBody>
+</EntryFrame>

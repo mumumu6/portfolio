@@ -5,7 +5,7 @@ export type AuthorId = 'mumumu' | 'chatgpt' | 'codex'
 export type EntryKind = 'work' | 'blog' | 'experience' | 'thought'
 
 export type Reply = {
-  author: Exclude<AuthorId, 'mumumu'>
+  author: AuthorId
   body: string
   createdAt?: string | undefined
   replyTo?: AuthorId | undefined
@@ -16,9 +16,8 @@ export type FeedImage = {
   alt: string
 }
 
-export type FeedEntry = {
+type EntryBase = {
   id: string
-  kind: EntryKind
   author: AuthorId
   date: string
   dateLabel: string
@@ -32,7 +31,15 @@ export type FeedEntry = {
   replies?: Reply[] | undefined
 }
 
-export type WorkEntry = FeedEntry & {
+export type BlogEntry = EntryBase & {
+  kind: 'blog'
+}
+
+export type TimelineEntry = EntryBase & {
+  kind: 'experience' | 'thought'
+}
+
+export type WorkEntry = EntryBase & {
   kind: 'work'
   title: string
   href: string
@@ -44,3 +51,5 @@ export type WorkEntry = FeedEntry & {
     date?: string | undefined
   }
 }
+
+export type PortfolioEntry = BlogEntry | TimelineEntry | WorkEntry

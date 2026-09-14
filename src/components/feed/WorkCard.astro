@@ -1,0 +1,68 @@
+---
+import '@/styles/components/work-entry.css'
+import TagList from '@/components/common/TagList.astro'
+import EntryBody from '@/components/feed/EntryBody.astro'
+import EntryFrame from '@/components/feed/EntryFrame.astro'
+import EntryHeader from '@/components/feed/EntryHeader.astro'
+import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro'
+import Avatar from '@/components/common/Avatar.astro'
+import { statusLabels } from '@/lib/portfolio/constants'
+import type { WorkEntry } from '@/lib/portfolio/types'
+
+type Props = {
+  entry: WorkEntry
+  headingLevel?: 2 | 3
+  priority?: boolean
+}
+
+const { entry, headingLevel = 2, priority = false } = Astro.props
+---
+
+<EntryFrame
+  author={entry.author}
+  className="work-entry"
+  showAuthorClass={false}
+  showLine={false}
+>
+  <EntryHeader
+    author={entry.author}
+    date={entry.date}
+    dateLabel={entry.dateLabel}
+    status={entry.status}
+    statusLabel={statusLabels[entry.status]}
+  />
+
+  <EntryBody
+    headingLevel={headingLevel}
+    title={entry.title}
+    body={entry.body}
+    href={entry.href}
+    image={entry.image}
+    imageLabel={`${entry.title}の詳細を見る`}
+    priority={priority}
+  >
+    <div class="entry-card-meta">
+      <TagList tags={entry.tags} label="使用技術" />
+
+      <div class="work-note-preview">
+        <Avatar author="mumumu" size="small" />
+        <span>
+          <strong>
+            {entry.comment.label}
+            {
+              entry.comment.date &&
+                ` · ${entry.comment.date.replaceAll('-', '.')}`
+            }
+          </strong>
+          <span>{entry.comment.body}</span>
+        </span>
+      </div>
+
+      {
+        entry.replies && entry.replies.length > 0 && (
+          <ReplyDisclosure replies={entry.replies} label="AIのコメント" />
+        )
+      }
+    </div>
+  </EntryBody>
+</EntryFrame>

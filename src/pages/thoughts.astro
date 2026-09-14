@@ -2,7 +2,7 @@
 import '@/styles/components/ai-disclosure.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PageIntro from '@/components/layout/PageIntro.astro'
-import FeedEntry from '@/components/feed/FeedEntry.astro'
+import TimelineEntry from '@/components/feed/TimelineEntry.astro'
 import TimelineIndex from '@/components/layout/TimelineIndex.astro'
 import TimelineSection from '@/components/layout/TimelineSection.astro'
 import { thoughts } from '@/lib/portfolio/ai'
@@ -50,7 +50,7 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
             listClass="feed-list--thoughts"
           >
             {entries.map((entry) => (
-              <FeedEntry entry={entry} headingLevel={3} />
+              <TimelineEntry entry={entry} headingLevel={3} />
             ))}
           </TimelineSection>
         ))

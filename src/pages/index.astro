@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import FeedEntry from '@/components/feed/FeedEntry.astro'
-import WorkEntry from '@/components/feed/WorkEntry.astro'
+import BlogCard from '@/components/feed/BlogCard.astro'
+import WorkCard from '@/components/feed/WorkCard.astro'
 import SectionHeading from '@/components/layout/SectionHeading.astro'
 import { blogPosts } from '@/lib/portfolio/blogs'
 import { works } from '@/lib/portfolio/works'
@@ -26,7 +26,7 @@ import { works } from '@/lib/portfolio/works'
         works
           .slice(0, 2)
           .map((entry, index) => (
-            <WorkEntry entry={entry} headingLevel={3} priority={index === 0} />
+            <WorkCard entry={entry} headingLevel={3} priority={index === 0} />
           ))
       }
     </div>
@@ -44,7 +44,7 @@ import { works } from '@/lib/portfolio/works'
       {
         blogPosts
           .slice(0, 3)
-          .map((entry) => <FeedEntry entry={entry} headingLevel={3} />)
+          .map((entry) => <BlogCard entry={entry} headingLevel={3} />)
       }
     </div>
   </section>

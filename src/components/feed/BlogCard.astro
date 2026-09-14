@@ -1,0 +1,81 @@
+---
+import '@/styles/components/entry-link.css'
+import TagList from '@/components/common/TagList.astro'
+import EntryBody from '@/components/feed/EntryBody.astro'
+import EntryFrame from '@/components/feed/EntryFrame.astro'
+import EntryHeader from '@/components/feed/EntryHeader.astro'
+import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro'
+import type { BlogEntry } from '@/lib/portfolio/types'
+
+type Props = {
+  entry: BlogEntry
+  headingLevel?: 2 | 3
+  priority?: boolean
+}
+
+const { entry, headingLevel = 2, priority = false } = Astro.props
+const external = entry.href?.startsWith('http')
+const sourceUrl = entry.href
+  ? new URL(entry.href, Astro.site ?? Astro.url.origin)
+  : undefined
+const sourceLabel = sourceUrl
+  ? (entry.sourceLabel ??
+    `${sourceUrl.hostname.replace(/^www\./, '')}${sourceUrl.pathname.replace(/\/$/, '')}`)
+  : undefined
+---
+
+<EntryFrame author={entry.author}>
+  <EntryHeader
+    author={entry.author}
+    date={entry.date}
+    dateLabel={entry.dateLabel}
+    readingMinutes={entry.readingMinutes}
+  />
+
+  <EntryBody
+    headingLevel={headingLevel}
+    title={entry.title}
+    body={entry.body}
+    href={entry.href}
+    image={entry.image}
+    imageLabel={`${entry.title ?? '記事'}を開く`}
+    bodyLines={2}
+    external={external}
+    priority={priority}
+  >
+    {
+      entry.href && sourceLabel && (
+        <a
+          class="entry-source"
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
+          {sourceLabel}
+        </a>
+      )
+    }
+
+    {
+      entry.href && !entry.image && (
+        <a
+          class="entry-link"
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
+          詳しく見る
+        </a>
+      )
+    }
+
+    <div class="entry-card-meta">
+      <TagList tags={entry.tags} />
+      {
+        entry.replies && entry.replies.length > 0 && (
+          <ReplyDisclosure replies={entry.replies} label="AIのコメント" />
+        )
+      }
+    </div>
+  </EntryBody>
+</EntryFrame>

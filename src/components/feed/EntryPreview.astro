@@ -1,10 +1,10 @@
 ---
 import '@/styles/components/entry-preview.css'
-import type { FeedEntry } from '@/lib/portfolio/types'
+import type { FeedImage } from '@/lib/portfolio/types'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 
 type Props = {
-  image: NonNullable<FeedEntry['image']>
+  image: FeedImage
   href?: string | undefined
   label: string
   sizes: string
