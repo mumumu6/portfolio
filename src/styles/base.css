@@ -107,7 +107,7 @@ summary {
 h1,
 h2,
 h3 {
-  text-wrap: balance;
+  text-wrap: normal;
 }
 
 p {

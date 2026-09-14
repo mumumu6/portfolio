@@ -130,9 +130,3 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.external-card-link__arrow {
-  flex: 0 0 auto;
-  color: var(--link);
-  font-size: 1rem;
-}

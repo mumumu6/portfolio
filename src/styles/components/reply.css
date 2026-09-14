@@ -26,10 +26,6 @@
   color: var(--link);
 }
 
-.reply-disclosure__spark {
-  color: var(--muted);
-}
-
 .reply-disclosure__count {
   color: inherit;
 }

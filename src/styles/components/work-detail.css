@@ -135,9 +135,13 @@
 }
 
 .work-thread-highlights li::before {
-  padding-right: 9px;
-  color: var(--muted);
-  content: '→';
+  width: 4px;
+  height: 4px;
+  display: inline-block;
+  margin: 0 10px 2px 1px;
+  border-radius: 50%;
+  background: var(--muted);
+  content: '';
 }
 
 .work-thread-warning {

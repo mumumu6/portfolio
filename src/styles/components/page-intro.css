@@ -41,14 +41,6 @@
 
 @media (max-width: 760px) {
   .page-intro {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    border: 0;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    padding: 14px 16px 10px;
   }
 }
