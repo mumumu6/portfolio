@@ -11,9 +11,10 @@ import spaceGrotesk700 from '@fontsource/space-grotesk/files/space-grotesk-latin
 
 type Props = ComponentProps<typeof SeoHead> & {
   shell?: 'default' | 'adaptive' | undefined
+  showProfileHeader?: boolean | undefined
 }
 
-const { shell = 'default', ...seoProps } = Astro.props
+const { shell = 'default', showProfileHeader = true, ...seoProps } = Astro.props
 ---
 
 <!doctype html>
@@ -73,7 +74,7 @@ const { shell = 'default', ...seoProps } = Astro.props
       ]}
       id="main-content"
     >
-      <ProfileHeader adaptive={shell === 'adaptive'} />
+      {showProfileHeader && <ProfileHeader adaptive={shell === 'adaptive'} />}
       <SectionNavigation
         pathname={Astro.url.pathname}
         adaptive={shell === 'adaptive'}

@@ -4,6 +4,10 @@
   background: color-mix(in srgb, var(--surface) 72%, transparent);
 }
 
+.profile-header--adaptive {
+  width: 100%;
+}
+
 .profile-cover {
   position: relative;
   height: clamp(112px, calc(77.7px + 7.14vw), 132px);
@@ -142,12 +146,6 @@
   width: 100%;
   height: 100%;
   fill: currentColor;
-}
-
-@media (min-width: 1440px) {
-  .profile-header--adaptive {
-    width: 100%;
-  }
 }
 
 @media (max-width: 480px) {

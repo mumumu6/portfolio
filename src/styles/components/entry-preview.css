@@ -1,6 +1,7 @@
 .ogp-preview {
   position: relative;
   width: min(100%, 630px);
+  aspect-ratio: 16 / 9;
   min-width: 0;
   max-width: 100%;
   display: block;
@@ -14,14 +15,17 @@
 
 .ogp-preview picture {
   display: block;
+  height: 100%;
 }
 
 .ogp-preview:hover {
   border-color: var(--muted);
 }
 
-.ogp-preview img {
+.ogp-preview picture[data-progressive-image] > img[data-progressive-image] {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
+  object-fit: cover;
+  object-position: center;
 }

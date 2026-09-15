@@ -93,6 +93,9 @@ let traversalRestoreFrame: number | null = null
 let scrollFrame: number | null = null
 let historyScrollFrame: number | null = null
 let navigationFeedbackInitialized = false
+let navigationVisibilityInitialized = false
+let navigationVisibilityFrame: number | null = null
+let previousNavigationScrollY = window.scrollY
 
 const nativeScrollTo = window.scrollTo.bind(window)
 window.scrollTo = ((...args: Parameters<typeof window.scrollTo>) => {
@@ -299,6 +302,51 @@ const setupNavigationFeedback = () => {
   })
 }
 
+const setNavigationHidden = (hidden: boolean) => {
+  document
+    .querySelector('.section-nav')
+    ?.classList.toggle('section-nav--hidden', hidden)
+}
+
+const updateNavigationVisibility = () => {
+  navigationVisibilityFrame = null
+  const navigation = document.querySelector<HTMLElement>('.section-nav')
+  if (!navigation) return
+
+  const scrollY = window.scrollY
+  const delta = scrollY - previousNavigationScrollY
+  previousNavigationScrollY = scrollY
+
+  if (scrollY <= 4) {
+    setNavigationHidden(false)
+    return
+  }
+
+  // Do not hide the navigation while it is still below the sticky edge.
+  if (navigation.getBoundingClientRect().top > 1) return
+
+  if (delta >= 8) setNavigationHidden(true)
+  if (delta <= -8) setNavigationHidden(false)
+}
+
+const scheduleNavigationVisibility = () => {
+  if (navigationVisibilityFrame !== null) return
+  navigationVisibilityFrame = requestAnimationFrame(updateNavigationVisibility)
+}
+
+const setupNavigationVisibility = () => {
+  if (navigationVisibilityInitialized) return
+  navigationVisibilityInitialized = true
+  previousNavigationScrollY = window.scrollY
+  window.addEventListener('scroll', scheduleNavigationVisibility, {
+    passive: true,
+  })
+  document.addEventListener('astro:after-swap', () => {
+    previousNavigationScrollY = window.scrollY
+    if (window.scrollY <= 4) setNavigationHidden(false)
+  })
+}
+
 const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
   const currentMain = document.querySelector<HTMLElement>('main#main-content')
   const nextMain = newDocument.querySelector<HTMLElement>('main#main-content')
@@ -320,8 +368,7 @@ const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
     !nextMain ||
     !currentNavigation ||
     !nextNavigation ||
-    !currentProfile ||
-    !nextProfile
+    Boolean(currentProfile) !== Boolean(nextProfile)
   ) {
     return false
   }
@@ -332,10 +379,12 @@ const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
   const restoreFocus = swapFunctions.saveFocus()
 
   currentMain.className = nextMain.className
-  currentProfile.className = nextProfile.className
+  if (currentProfile && nextProfile) {
+    currentProfile.className = nextProfile.className
+  }
 
-  // Every page uses the same shell; only the content after the navigation
-  // changes. Keep that shell connected so the indicator animation continues.
+  // Keep the shared navigation shell connected so the indicator animation
+  // continues while only the page content after it is replaced.
   while (currentNavigation.nextSibling) {
     currentMain.removeChild(currentNavigation.nextSibling)
   }
@@ -352,6 +401,7 @@ const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
 export const setupSiteNavigation = () => {
   setupTheme()
   setupNavigationFeedback()
+  setupNavigationVisibility()
 }
 
 syncNavigation()
@@ -375,6 +425,13 @@ document.addEventListener('astro:before-swap', (event) => {
   pendingPathname = event.to.pathname
   pendingNavigationType = event.navigationType
   const navigation = document.querySelector<HTMLElement>('.section-nav')
+  const currentProfile = document.querySelector<HTMLElement>(
+    '#main-content > .profile-header',
+  )
+  const nextProfile = event.newDocument.querySelector<HTMLElement>(
+    '#main-content > .profile-header',
+  )
+  const profileShellChanged = Boolean(currentProfile) !== Boolean(nextProfile)
 
   if (event.navigationType !== 'traverse') captureScrollPosition()
 
@@ -386,7 +443,11 @@ document.addEventListener('astro:before-swap', (event) => {
     scrollResetGuardY = typeof savedY === 'number' && savedY > 0 ? savedY : null
     disableTraversalScrollAnimation()
     event.viewTransition?.skipTransition()
-  } else if (navigation && getComputedStyle(navigation).display !== 'none') {
+  } else if (
+    navigation &&
+    !profileShellChanged &&
+    getComputedStyle(navigation).display !== 'none'
+  ) {
     pendingScroll = {
       viewportTop: navigation.getBoundingClientRect().top,
     }

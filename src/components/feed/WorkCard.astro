@@ -24,45 +24,47 @@ const { entry, headingLevel = 2, priority = false } = Astro.props
   showAuthorClass={false}
   showLine={false}
 >
-  <EntryHeader
-    author={entry.author}
-    date={entry.date}
-    dateLabel={entry.dateLabel}
-    status={entry.status}
-    statusLabel={statusLabels[entry.status]}
-  />
+  <div class="work-entry-layout">
+    <EntryHeader
+      author={entry.author}
+      date={entry.date}
+      dateLabel={entry.dateLabel}
+      status={entry.status}
+      statusLabel={statusLabels[entry.status]}
+    />
 
-  <EntryBody
-    headingLevel={headingLevel}
-    title={entry.title}
-    body={entry.body}
-    href={entry.href}
-    image={entry.image}
-    imageLabel={`${entry.title}の詳細を見る`}
-    priority={priority}
-  >
-    <div class="entry-card-meta">
-      <TagList tags={entry.tags} label="使用技術" />
+    <EntryBody
+      headingLevel={headingLevel}
+      title={entry.title}
+      body={entry.body}
+      href={entry.href}
+      image={entry.image}
+      imageLabel={`${entry.title}の詳細を見る`}
+      priority={priority}
+    >
+      <div class="entry-card-meta">
+        <TagList tags={entry.tags} label="使用技術" />
 
-      <div class="work-note-preview">
-        <Avatar author="mumumu" size="small" />
-        <span>
-          <strong>
-            {entry.comment.label}
-            {
-              entry.comment.date &&
-                ` · ${entry.comment.date.replaceAll('-', '.')}`
-            }
-          </strong>
-          <span>{entry.comment.body}</span>
-        </span>
+        <div class="work-note-preview">
+          <Avatar author="mumumu" size="small" />
+          <span>
+            <strong>
+              {entry.comment.label}
+              {
+                entry.comment.date &&
+                  ` · ${entry.comment.date.replaceAll('-', '.')}`
+              }
+            </strong>
+            <span>{entry.comment.body}</span>
+          </span>
+        </div>
+
+        {
+          entry.replies && entry.replies.length > 0 && (
+            <ReplyDisclosure replies={entry.replies} label="AIのコメント" />
+          )
+        }
       </div>
-
-      {
-        entry.replies && entry.replies.length > 0 && (
-          <ReplyDisclosure replies={entry.replies} label="AIのコメント" />
-        )
-      }
-    </div>
-  </EntryBody>
+    </EntryBody>
+  </div>
 </EntryFrame>

@@ -24,58 +24,60 @@ const sourceLabel = sourceUrl
   : undefined
 ---
 
-<EntryFrame author={entry.author}>
-  <EntryHeader
-    author={entry.author}
-    date={entry.date}
-    dateLabel={entry.dateLabel}
-    readingMinutes={entry.readingMinutes}
-  />
+<EntryFrame author={entry.author} className="blog-entry">
+  <div class="blog-entry-layout">
+    <EntryHeader
+      author={entry.author}
+      date={entry.date}
+      dateLabel={entry.dateLabel}
+      readingMinutes={entry.readingMinutes}
+    />
 
-  <EntryBody
-    headingLevel={headingLevel}
-    title={entry.title}
-    body={entry.body}
-    href={entry.href}
-    image={entry.image}
-    imageLabel={`${entry.title ?? '記事'}を開く`}
-    bodyLines={2}
-    external={external}
-    priority={priority}
-  >
-    {
-      entry.href && sourceLabel && (
-        <a
-          class="entry-source"
-          href={entry.href}
-          target={external ? '_blank' : undefined}
-          rel={external ? 'noreferrer' : undefined}
-        >
-          {sourceLabel}
-        </a>
-      )
-    }
-
-    {
-      entry.href && !entry.image && (
-        <a
-          class="entry-link"
-          href={entry.href}
-          target={external ? '_blank' : undefined}
-          rel={external ? 'noreferrer' : undefined}
-        >
-          詳しく見る
-        </a>
-      )
-    }
-
-    <div class="entry-card-meta">
-      <TagList tags={entry.tags} />
+    <EntryBody
+      headingLevel={headingLevel}
+      title={entry.title}
+      body={entry.body}
+      href={entry.href}
+      image={entry.image}
+      imageLabel={`${entry.title ?? '記事'}を開く`}
+      bodyLines={2}
+      external={external}
+      priority={priority}
+    >
       {
-        entry.replies && entry.replies.length > 0 && (
-          <ReplyDisclosure replies={entry.replies} label="AIのコメント" />
+        entry.href && sourceLabel && (
+          <a
+            class="entry-source"
+            href={entry.href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noreferrer' : undefined}
+          >
+            {sourceLabel}
+          </a>
         )
       }
-    </div>
-  </EntryBody>
+
+      {
+        entry.href && !entry.image && (
+          <a
+            class="entry-link"
+            href={entry.href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noreferrer' : undefined}
+          >
+            詳しく見る
+          </a>
+        )
+      }
+
+      <div class="entry-card-meta">
+        <TagList tags={entry.tags} />
+        {
+          entry.replies && entry.replies.length > 0 && (
+            <ReplyDisclosure replies={entry.replies} label="AIのコメント" />
+          )
+        }
+      </div>
+    </EntryBody>
+  </div>
 </EntryFrame>

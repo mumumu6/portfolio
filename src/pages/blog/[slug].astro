@@ -41,6 +41,8 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
   image={data.cover}
   imageAlt={data.coverAlt}
   type="article"
+  shell="adaptive"
+  showProfileHeader={false}
   publishedTime={publishedAt}
   updatedTime={updatedAt}
   schemaType="BlogPosting"
@@ -57,8 +59,6 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
       <span data-reading-progress-label>0%</span>
     </div>
     <header class="article-header">
-      <a class="article-back" href="/blog/">Blog一覧</a>
-      <p class="eyebrow">MUMUMU'S BLOG</p>
       <h1>{data.title}</h1>
       <p class="article-lead">{data.description}</p>
       <div class="article-meta">
@@ -155,5 +155,49 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
   window.addEventListener('scroll', scheduleReadingProgress, { passive: true })
   window.addEventListener('resize', scheduleReadingProgress)
   document.addEventListener('astro:page-load', scheduleReadingProgress)
+
+  const handleTocClick = (event: MouseEvent) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return
+    }
+
+    const clicked = event.target
+    if (!(clicked instanceof Element)) return
+    const link = clicked.closest<HTMLAnchorElement>(
+      '.article-toc a, .article-toc-mobile a',
+    )
+    if (
+      !link ||
+      !link.hash ||
+      link.origin !== location.origin ||
+      link.pathname !== location.pathname
+    ) {
+      return
+    }
+
+    const heading = document.getElementById(
+      decodeURIComponent(link.hash.slice(1)),
+    )
+    if (!heading) return
+
+    event.preventDefault()
+    history.pushState({ ...history.state }, '', `${link.pathname}${link.hash}`)
+    heading.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
+      block: 'start',
+    })
+    link.closest('details')?.removeAttribute('open')
+  }
+
+  document.addEventListener('click', handleTocClick, { capture: true })
   scheduleReadingProgress()
 </script>

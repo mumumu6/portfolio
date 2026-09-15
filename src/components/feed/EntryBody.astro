@@ -68,11 +68,16 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
   }
 
   <div class="entry-card-copy">
-    <p
-      class:list={['entry-body', { 'entry-body--two-lines': bodyLines === 2 }]}
-    >
-      {body}
-    </p>
-    <slot />
+    <div class="entry-copy-content">
+      <p
+        class:list={[
+          'entry-body',
+          { 'entry-body--two-lines': bodyLines === 2 },
+        ]}
+      >
+        {body}
+      </p>
+      <slot />
+    </div>
   </div>
 </div>

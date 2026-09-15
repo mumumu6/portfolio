@@ -13,8 +13,19 @@
   border-block: 0;
   background-color: color-mix(in srgb, var(--surface) 88%, transparent);
   isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
   -webkit-backdrop-filter: blur(12px) saturate(115%);
   backdrop-filter: blur(12px) saturate(115%);
+}
+
+.section-nav--adaptive {
+  width: 100%;
+}
+
+.section-nav--hidden {
+  transform: translate3d(0, -100%, 0);
 }
 
 /* Let the page-level theme cross-fade include the nav surface as one layer. */
@@ -75,9 +86,9 @@
   will-change: transform;
 }
 
-@media (min-width: 1440px) {
-  .section-nav--adaptive {
-    width: 100%;
+@media (prefers-reduced-motion: reduce) {
+  .section-nav {
+    transition: none;
   }
 }
 
