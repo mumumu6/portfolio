@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/layout/PageIntro.astro'
 import TimelineEntry from '@/components/feed/TimelineEntry.astro'
 import TimelineIndex from '@/components/layout/TimelineIndex.astro'
 import TimelineSection from '@/components/layout/TimelineSection.astro'
@@ -25,11 +24,6 @@ const timelineGroups = experienceGroups.map(([year, entries]) => ({
   schemaType="CollectionPage"
   shell="adaptive"
 >
-  <PageIntro
-    eyebrow="ALONG THE WAY"
-    title="Experience"
-    description="活動の節目を、新しいものから順にまとめています。"
-  />
   <div class="experience-layout">
     <TimelineIndex
       eyebrow="EXPERIENCE INDEX"

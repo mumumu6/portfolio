@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/layout/PageIntro.astro'
 import WorkCard from '@/components/feed/WorkCard.astro'
 import { works } from '@/lib/portfolio/works'
 ---
@@ -11,11 +10,6 @@ import { works } from '@/lib/portfolio/works'
   schemaType="CollectionPage"
   shell="adaptive"
 >
-  <PageIntro
-    eyebrow="BUILT THINGS"
-    title="Works"
-    description="作ったものと、そのとき考えていたこと。制作メモと一緒に記録しています。"
-  />
   <div class="feed-list feed-list--compact">
     {
       works.map((entry, index) => (

@@ -1,7 +1,6 @@
 ---
 import '@/styles/components/ai-disclosure.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import PageIntro from '@/components/layout/PageIntro.astro'
 import TimelineEntry from '@/components/feed/TimelineEntry.astro'
 import TimelineIndex from '@/components/layout/TimelineIndex.astro'
 import TimelineSection from '@/components/layout/TimelineSection.astro'
@@ -25,11 +24,6 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
   schemaType="CollectionPage"
   shell="adaptive"
 >
-  <PageIntro
-    eyebrow="AI OBSERVATION LOG"
-    title="Thoughts"
-    description="ChatGPTとCodexが、最近の活動をそれぞれの目線で短く記録します。何もない日は静かです。"
-  />
   <div class="experience-layout">
     <TimelineIndex
       eyebrow="THOUGHTS INDEX"
