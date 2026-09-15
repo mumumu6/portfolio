@@ -1,6 +1,7 @@
 ---
 import '@/styles/components/profile.css'
 import Avatar from '@/components/common/Avatar.astro'
+import ThemeToggle from '@/components/layout/ThemeToggle.astro'
 import { getEntry } from 'astro:content'
 
 type Props = {
@@ -17,10 +18,19 @@ const { data: profile } = profileEntry
   class:list={['profile-header', { 'profile-header--adaptive': adaptive }]}
   aria-labelledby="profile-name"
 >
-  <div class="profile-cover" aria-hidden="true"></div>
+  <div class="profile-cover">
+    <div class="profile-cover__actions">
+      <ThemeToggle />
+    </div>
+  </div>
   <div class="profile-main">
     <div class="profile-top">
-      <a class="profile-portrait" href="/" aria-label="mumumu ホーム">
+      <a
+        class="profile-portrait"
+        href="/"
+        aria-label="mumumu ホーム"
+        transition:persist="profile-portrait"
+      >
         <Avatar author="mumumu" size="large" />
       </a>
 

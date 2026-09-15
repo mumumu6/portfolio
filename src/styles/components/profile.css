@@ -1,13 +1,12 @@
 .profile-header {
   width: min(100%, var(--site-width));
   margin-inline: auto;
-  border-inline: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface) 72%, transparent);
 }
 
 .profile-cover {
   position: relative;
-  height: 132px;
+  height: clamp(112px, calc(77.7px + 7.14vw), 132px);
   overflow: hidden;
   background:
     linear-gradient(
@@ -41,19 +40,26 @@
   left: -60px;
 }
 
+.profile-cover__actions {
+  position: absolute;
+  top: 11px;
+  right: 16px;
+  z-index: 1;
+}
+
 .profile-main {
-  padding: 0 20px 22px;
+  padding: 0 var(--content-gutter) 22px;
 }
 
 .profile-top {
-  height: 56px;
+  height: clamp(50px, calc(39.7px + 2.14vw), 56px);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
 }
 
 .profile-portrait {
-  height: 56px;
+  height: clamp(50px, calc(39.7px + 2.14vw), 56px);
 }
 
 .profile-copy h1 {
@@ -140,27 +146,7 @@
 
 @media (min-width: 1440px) {
   .profile-header--adaptive {
-    width: min(92%, var(--adaptive-wide-width));
-  }
-}
-
-@media (max-width: 760px) {
-  .profile-header {
     width: 100%;
-    border-inline: 0;
-  }
-
-  .profile-cover {
-    height: 112px;
-  }
-
-  .profile-main {
-    padding-inline: 16px;
-  }
-
-  .profile-top,
-  .profile-portrait {
-    height: 50px;
   }
 }
 

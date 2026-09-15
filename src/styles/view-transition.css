@@ -1,4 +1,4 @@
-/* Capture header, profile, tabs, and content together after ClientRouter prepares the page. */
+/* Keep page content transitions quiet while the persisted navigation stays in place. */
 :root {
   --page-transition-duration: 150ms;
   --page-transition-ease: ease-out;

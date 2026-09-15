@@ -2,118 +2,85 @@
   position: sticky;
   top: 0;
   z-index: 60;
+  width: min(100%, var(--site-width));
+  height: 49px;
   min-height: 49px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: stretch;
+  margin-inline: auto;
   overflow: hidden;
-  border-top: 0;
-  border-bottom: 0;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border-block: 0;
+  background-color: color-mix(in srgb, var(--surface) 88%, transparent);
   isolation: isolate;
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(12px) saturate(115%);
+  backdrop-filter: blur(12px) saturate(115%);
+}
+
+/* Let the page-level theme cross-fade include the nav surface as one layer. */
+:root[data-theme-transitioning] .section-nav {
+  view-transition-name: none !important;
+  transition: none;
 }
 
 .section-nav a {
+  position: relative;
   min-width: 0;
-  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  padding-inline: clamp(4px, calc(-2.86px + 1.43vw), 8px);
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: clamp(0.68rem, calc(0.543rem + 0.457vw), 0.76rem);
+  font-weight: 600;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 140ms ease;
 }
 
-.desktop-nav__indicator[data-nav-ready='true'],
+.section-nav a:hover,
+.section-nav a.active {
+  color: var(--text);
+}
+
+.section-nav a > span {
+  display: inline-block;
+  padding: 6px;
+  border-radius: 3px;
+  transition: background-color 120ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .section-nav a:not(.active):hover > span {
+    background: color-mix(in srgb, var(--text) 4%, transparent);
+  }
+}
+
 .section-nav__indicator[data-nav-ready='true'] {
   visibility: visible;
 }
 
-@media (min-width: 761px) {
-  .section-nav {
-    display: none;
+.section-nav__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 36px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  pointer-events: none;
+  visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+@media (min-width: 1440px) {
+  .section-nav--adaptive {
+    width: 100%;
   }
 }
 
-@media (max-width: 760px) {
-  .site-chrome:not(.site-chrome--profile) {
-    position: sticky;
-    top: -49px;
-    height: 98px;
-    z-index: 60;
-    display: block;
-    background: transparent;
-  }
-
-  .header-inner,
-  .section-nav,
-  .site-shell {
-    width: 100%;
-    border-inline: 0;
-  }
-
-  .header-inner {
-    min-height: 49px;
-    padding: 0 16px;
-    border: 0;
-  }
-
-  .desktop-nav {
-    display: none;
-  }
-
-  .site-name {
-    display: block;
-  }
-
-  .header-actions {
-    margin-left: auto;
-  }
-
-  .site-header {
-    min-height: 49px;
-    border-bottom: 0;
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    -webkit-backdrop-filter: blur(12px) saturate(115%);
-    backdrop-filter: blur(12px) saturate(115%);
-  }
-
-  .site-chrome--profile .site-header {
-    min-height: 0;
-    border-bottom: 0;
-    background: transparent;
-  }
-
-  .site-chrome--profile .site-header .header-inner {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 2;
-    min-height: 0;
-    padding: 11px 16px 0;
-    pointer-events: none;
-  }
-
-  .site-chrome--profile .site-header .site-name {
-    display: none;
-  }
-
-  .site-chrome--profile .site-header .header-actions {
-    pointer-events: auto;
-  }
-
-  .section-nav {
-    min-height: 49px;
-    border-top: 0;
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    -webkit-backdrop-filter: blur(12px) saturate(115%);
-    backdrop-filter: blur(12px) saturate(115%);
-  }
-
-  .site-chrome:not(.site-chrome--profile) .section-nav {
-    position: static;
-  }
-
-  .section-nav a {
-    padding-inline: 4px;
-    font-size: 0.68rem;
-    white-space: nowrap;
-  }
+.section-nav a {
+  white-space: nowrap;
 }
