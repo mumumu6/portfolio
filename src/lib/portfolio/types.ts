@@ -51,5 +51,3 @@ export type WorkEntry = EntryBase & {
     date?: string | undefined
   }
 }
-
-export type PortfolioEntry = BlogEntry | TimelineEntry | WorkEntry

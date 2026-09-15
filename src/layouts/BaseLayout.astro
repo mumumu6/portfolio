@@ -10,7 +10,7 @@ import spaceGrotesk600 from '@fontsource/space-grotesk/files/space-grotesk-latin
 import spaceGrotesk700 from '@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2?url'
 
 type Props = ComponentProps<typeof SeoHead> & {
-  shell?: 'default' | 'wide' | 'adaptive' | undefined
+  shell?: 'default' | 'adaptive' | undefined
 }
 
 const { shell = 'default', ...seoProps } = Astro.props
@@ -68,7 +68,6 @@ const { shell = 'default', ...seoProps } = Astro.props
       class:list={[
         'site-shell',
         {
-          'site-shell--wide': shell === 'wide',
           'site-shell--adaptive': shell === 'adaptive',
         },
       ]}

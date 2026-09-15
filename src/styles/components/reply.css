@@ -109,7 +109,6 @@
   font-size: 0.64rem;
 }
 
-.reply-context,
 .work-thread-reply-context {
   margin: -3px 0 2px;
   color: var(--muted);
