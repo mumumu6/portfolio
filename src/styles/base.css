@@ -63,6 +63,8 @@ html {
   min-width: 320px;
   background: var(--bg);
   scroll-behavior: smooth;
+  /* Keep the content width stable when a page gains or loses a scrollbar. */
+  scrollbar-gutter: stable;
   overscroll-behavior-x: none;
 }
 
