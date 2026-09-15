@@ -67,7 +67,7 @@
 }
 
 .experience-stream {
-  --timeline-gutter: 20px;
+  --timeline-gutter: var(--content-gutter);
   --timeline-center: 19px;
   --timeline-axis: calc(var(--timeline-gutter) + var(--timeline-center));
   position: relative;
@@ -134,12 +134,6 @@
 
   .experience-stream {
     border-inline: 0;
-  }
-}
-
-@media (max-width: 760px) {
-  .experience-stream {
-    --timeline-gutter: 16px;
   }
 }
 

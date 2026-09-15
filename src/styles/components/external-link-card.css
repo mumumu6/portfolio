@@ -19,6 +19,7 @@
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   align-items: stretch;
   min-height: 80px;
   padding: 0;

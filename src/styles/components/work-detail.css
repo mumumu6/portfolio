@@ -1,7 +1,7 @@
 .work-thread-page {
-  width: min(calc(100% - 40px), 860px);
+  width: min(calc(100% - var(--content-gutter) - var(--content-gutter)), 860px);
   margin: 0 auto;
-  padding: 28px 0 60px;
+  padding: clamp(20px, calc(6.29px + 2.86vw), 28px) 0 60px;
   background: var(--surface);
 }
 
@@ -198,18 +198,6 @@
 .work-details__body {
   margin-top: 26px;
 }
-@media (max-width: 760px) {
-  .work-thread-page {
-    width: calc(100% - 32px);
-    padding-top: 20px;
-  }
-
-  .work-thread-cover {
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-  }
-}
-
 @media (max-width: 480px) {
   .work-thread-post {
     grid-template-columns: 34px minmax(0, 1fr);

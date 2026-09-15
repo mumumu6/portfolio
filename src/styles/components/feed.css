@@ -5,7 +5,7 @@
 .feed-entry {
   content-visibility: auto;
   contain-intrinsic-block-size: auto 320px;
-  padding: 18px 20px;
+  padding: 18px var(--content-gutter);
   border-bottom: 1px solid var(--line);
   background: var(--surface);
   transition: background-color 120ms ease;
@@ -107,15 +107,6 @@
 .feed-list--compact .entry-body--two-lines {
   -webkit-line-clamp: 2;
   line-clamp: 2;
-}
-
-@container entry-card (min-width: 700px) {
-  .feed-list--compact .entry-card-layout--has-image {
-    grid-template-areas:
-      'title preview'
-      'body preview';
-    grid-template-rows: auto 1fr;
-  }
 }
 
 .feed-list--timeline .entry-line {
@@ -241,13 +232,6 @@
 .entry-source:hover {
   color: var(--link);
   text-decoration: underline;
-}
-
-@media (max-width: 760px) {
-  .feed-entry {
-    padding-right: 16px;
-    padding-left: 16px;
-  }
 }
 
 @media (max-width: 480px) {

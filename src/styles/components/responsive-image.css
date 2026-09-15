@@ -51,6 +51,7 @@ html.js
 
 picture[data-progressive-image] > img[data-progressive-image] {
   position: relative;
+  display: block;
   max-width: 100%;
   height: auto;
   z-index: 0;

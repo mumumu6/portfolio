@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 13px 20px 11px;
+  padding: 13px var(--content-gutter) 11px;
   border-bottom: 1px solid var(--line);
   background: var(--surface-soft);
 }
@@ -43,10 +43,4 @@
 
 .section-more:hover {
   color: var(--link);
-}
-@media (max-width: 760px) {
-  .feed-heading {
-    padding-right: 16px;
-    padding-left: 16px;
-  }
 }
