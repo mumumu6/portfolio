@@ -34,6 +34,18 @@
   }
 }
 
+/* Keep the sticky navigation and its indicator live on mobile page swaps.
+   Theme changes still use the document transition. */
+@media (max-width: 767px), (pointer: coarse) {
+  :root:not([data-theme-transitioning]) {
+    view-transition-name: none;
+  }
+
+  :root:not([data-theme-transitioning]) [data-astro-transition-scope] {
+    view-transition-name: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {

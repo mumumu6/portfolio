@@ -1,5 +1,6 @@
 import { matchesNavigationPath } from '@/lib/navigation'
 import { createNavigationIndicatorController } from '@/scripts/navigation-indicator'
+import { swapFunctions } from 'astro:transitions/client'
 
 type Theme = 'light' | 'dark'
 
@@ -99,6 +100,14 @@ window.scrollTo = ((...args: Parameters<typeof window.scrollTo>) => {
   const targetTop =
     typeof firstArg === 'object' && firstArg !== null ? firstArg.top : args[1]
 
+  // Astro resets the viewport to the top during a normal page swap. When the
+  // persisted navigation is already visible, that reset briefly moves the
+  // navigation away from its old viewport position before our restoration
+  // callback runs. Keep the current position until the swap is complete.
+  if (pendingScroll !== null && targetTop === 0 && window.scrollY > 0) {
+    return
+  }
+
   // Astro resets the viewport to the top before restoring a traversed history
   // entry. Ignore that intermediate reset when the destination has a saved
   // position, so the back navigation never visibly travels through the top.
@@ -175,6 +184,17 @@ const setScrollPosition = (top: number) => {
   root.style.scrollBehavior = previousBehavior
 }
 
+const getNavigationDocumentTop = (navigation: HTMLElement) => {
+  // The profile immediately precedes the sticky navigation in normal flow.
+  // Measure its bottom instead of temporarily disabling sticky positioning,
+  // which can briefly drop the navigation's compositor layer on mobile.
+  const profile = navigation.previousElementSibling
+  if (profile?.classList.contains('profile-header')) {
+    return profile.getBoundingClientRect().bottom + window.scrollY
+  }
+  return navigation.getBoundingClientRect().top + window.scrollY
+}
+
 const restorePendingScroll = () => {
   scrollFrame = null
   if (!pendingScroll) return
@@ -184,14 +204,15 @@ const restorePendingScroll = () => {
   const navigation = document.querySelector<HTMLElement>('.section-nav')
   if (!navigation) return
 
-  const nextTop =
-    window.scrollY + navigation.getBoundingClientRect().top - scroll.viewportTop
+  const nextTop = getNavigationDocumentTop(navigation) - scroll.viewportTop
   setScrollPosition(nextTop)
 }
 
 const schedulePendingScrollRestore = () => {
   if (scrollFrame !== null) cancelAnimationFrame(scrollFrame)
-  scrollFrame = requestAnimationFrame(restorePendingScroll)
+  scrollFrame = requestAnimationFrame(() => {
+    scrollFrame = requestAnimationFrame(restorePendingScroll)
+  })
 }
 
 const setNavigationLoading = (loading: boolean) => {
@@ -278,6 +299,56 @@ const setupNavigationFeedback = () => {
   })
 }
 
+const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
+  const currentMain = document.querySelector<HTMLElement>('main#main-content')
+  const nextMain = newDocument.querySelector<HTMLElement>('main#main-content')
+  const currentNavigation = currentMain?.querySelector<HTMLElement>(
+    ':scope > .section-nav',
+  )
+  const nextNavigation = nextMain?.querySelector<HTMLElement>(
+    ':scope > .section-nav',
+  )
+  const currentProfile = currentMain?.querySelector<HTMLElement>(
+    ':scope > .profile-header',
+  )
+  const nextProfile = nextMain?.querySelector<HTMLElement>(
+    ':scope > .profile-header',
+  )
+
+  if (
+    !currentMain ||
+    !nextMain ||
+    !currentNavigation ||
+    !nextNavigation ||
+    !currentProfile ||
+    !nextProfile
+  ) {
+    return false
+  }
+
+  swapFunctions.deselectScripts(newDocument)
+  swapFunctions.swapRootAttributes(newDocument)
+  swapFunctions.swapHeadElements(newDocument)
+  const restoreFocus = swapFunctions.saveFocus()
+
+  currentMain.className = nextMain.className
+  currentProfile.className = nextProfile.className
+
+  // Every page uses the same shell; only the content after the navigation
+  // changes. Keep that shell connected so the indicator animation continues.
+  while (currentNavigation.nextSibling) {
+    currentMain.removeChild(currentNavigation.nextSibling)
+  }
+  const nextContent = document.createDocumentFragment()
+  while (nextNavigation.nextSibling) {
+    nextContent.append(nextNavigation.nextSibling)
+  }
+  currentNavigation.after(nextContent)
+
+  restoreFocus()
+  return true
+}
+
 export const setupSiteNavigation = () => {
   setupTheme()
   setupNavigationFeedback()
@@ -297,6 +368,10 @@ window.addEventListener(
 )
 
 document.addEventListener('astro:before-swap', (event) => {
+  const defaultSwap = event.swap
+  event.swap = () => {
+    if (!swapPageKeepingNavigationInPlace(event.newDocument)) defaultSwap()
+  }
   pendingPathname = event.to.pathname
   pendingNavigationType = event.navigationType
   const navigation = document.querySelector<HTMLElement>('.section-nav')
@@ -326,8 +401,7 @@ document.addEventListener('astro:after-swap', () => {
   pendingPathname = null
   pendingNavigationType = null
   syncNavigation(pathname, navigationType !== 'traverse')
-  if (navigationType !== 'traverse') restorePendingScroll()
-  else scheduleTraversalScrollAnimationRestore()
+  if (navigationType === 'traverse') scheduleTraversalScrollAnimationRestore()
 })
 
 document.addEventListener('astro:page-load', () => {
