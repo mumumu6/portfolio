@@ -138,6 +138,11 @@
   max-height: calc(100vh - 100px);
   overflow-y: auto;
   padding-right: 10px;
+  scrollbar-width: none;
+}
+
+.article-toc::-webkit-scrollbar {
+  display: none;
 }
 
 .article-toc-mobile {
