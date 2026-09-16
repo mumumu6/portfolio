@@ -2,16 +2,37 @@
   padding-bottom: 64px;
 }
 
+.article-hero {
+  position: relative;
+  width: calc(100% - var(--content-gutter) - var(--content-gutter));
+  margin: var(--content-gutter);
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  isolation: isolate;
+}
+
 .article-header {
-  padding: 34px 28px 28px;
-  border-bottom: 1px solid var(--line);
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(22px, 5vw, 42px);
+  background: linear-gradient(
+    180deg,
+    transparent 18%,
+    color-mix(in srgb, #000 72%, transparent) 100%
+  );
+  color: #fff;
 }
 
 .article-header h1 {
   max-width: 700px;
   margin: 7px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 7vw, 3rem);
+  font-size: clamp(1.85rem, 6vw, 2.4rem);
   line-height: 1.15;
   letter-spacing: -0.055em;
 }
@@ -19,7 +40,7 @@
 .article-lead {
   max-width: 650px;
   margin: 16px 0 0;
-  color: var(--muted);
+  color: rgb(255 255 255 / 78%);
   font-size: 0.88rem;
   line-height: 1.75;
 }
@@ -34,12 +55,12 @@
 
 .article-meta time,
 .article-meta > span {
-  color: var(--muted);
+  color: rgb(255 255 255 / 72%);
   font-family: var(--font-mono);
   font-size: 0.66rem;
 }
 
-.article-meta ul {
+.article-tags ul {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -48,7 +69,7 @@
   list-style: none;
 }
 
-.article-meta li {
+.article-tags li {
   padding: 3px 7px;
   border-radius: 999px;
   background: var(--surface-soft);
@@ -57,18 +78,33 @@
   font-size: 0.56rem;
 }
 
-.article-cover {
-  width: calc(100% - var(--content-gutter) - var(--content-gutter));
-  height: auto;
-  display: block;
-  margin: var(--content-gutter);
-  border: 1px solid var(--line-strong);
-  border-radius: 14px;
+.article-intro {
+  padding: 0 var(--content-gutter);
 }
 
-.article-cover > img {
+.article-intro .article-lead {
   width: 100%;
-  height: auto;
+  max-width: none;
+  margin: 0;
+  padding: 18px 8px 0;
+  color: var(--muted);
+}
+
+.article-tags {
+  padding: 12px 8px 0;
+}
+
+.article-cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  overflow: hidden;
+}
+
+.article-cover > img[data-progressive-image] {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .article-comments {
@@ -195,12 +231,11 @@
 
 @media (max-width: 760px) {
   .article-header {
-    padding: 30px 20px 24px;
+    padding: 22px 20px 20px;
   }
 
-  .article-cover {
+  .article-hero {
     width: calc(100% - var(--content-gutter) - var(--content-gutter));
-    margin: var(--content-gutter);
   }
 
   .article-layout {
