@@ -187,6 +187,13 @@ const setScrollPosition = (top: number) => {
   root.style.scrollBehavior = previousBehavior
 }
 
+const isBlogDetailPath = (pathname: string) => {
+  const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`
+  return (
+    normalizedPathname.startsWith('/blog/') && normalizedPathname !== '/blog/'
+  )
+}
+
 const getNavigationDocumentTop = (navigation: HTMLElement) => {
   // The profile immediately precedes the sticky navigation in normal flow.
   // Measure its bottom instead of temporarily disabling sticky positioning,
@@ -208,6 +215,9 @@ const restorePendingScroll = () => {
   if (!navigation) return
 
   const nextTop = getNavigationDocumentTop(navigation) - scroll.viewportTop
+  // This scroll restores the navigation's viewport position; it must not be
+  // mistaken for a user's downward scroll that hides the navigation.
+  previousNavigationScrollY = nextTop
   setScrollPosition(nextTop)
 }
 
@@ -216,6 +226,25 @@ const schedulePendingScrollRestore = () => {
   scrollFrame = requestAnimationFrame(() => {
     scrollFrame = requestAnimationFrame(restorePendingScroll)
   })
+}
+
+const getPendingNavigationScroll = (
+  navigation: HTMLElement | null,
+  targetPathname: string,
+  navigationType: string,
+) => {
+  if (
+    navigationType === 'traverse' ||
+    isBlogDetailPath(targetPathname) ||
+    !navigation ||
+    getComputedStyle(navigation).display === 'none'
+  ) {
+    return null
+  }
+
+  return {
+    viewportTop: navigation.getBoundingClientRect().top,
+  }
 }
 
 const setNavigationLoading = (loading: boolean) => {
@@ -363,13 +392,7 @@ const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
     ':scope > .profile-header',
   )
 
-  if (
-    !currentMain ||
-    !nextMain ||
-    !currentNavigation ||
-    !nextNavigation ||
-    Boolean(currentProfile) !== Boolean(nextProfile)
-  ) {
+  if (!currentMain || !nextMain || !currentNavigation || !nextNavigation) {
     return false
   }
 
@@ -381,6 +404,10 @@ const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
   currentMain.className = nextMain.className
   if (currentProfile && nextProfile) {
     currentProfile.className = nextProfile.className
+  } else if (!currentProfile && nextProfile) {
+    currentNavigation.before(document.importNode(nextProfile, true))
+  } else if (currentProfile && !nextProfile) {
+    currentProfile.remove()
   }
 
   // Keep the shared navigation shell connected so the indicator animation
@@ -425,15 +452,11 @@ document.addEventListener('astro:before-swap', (event) => {
   pendingPathname = event.to.pathname
   pendingNavigationType = event.navigationType
   const navigation = document.querySelector<HTMLElement>('.section-nav')
-  const currentProfile = document.querySelector<HTMLElement>(
-    '#main-content > .profile-header',
-  )
-  const nextProfile = event.newDocument.querySelector<HTMLElement>(
-    '#main-content > .profile-header',
-  )
-  const profileShellChanged = Boolean(currentProfile) !== Boolean(nextProfile)
 
-  if (event.navigationType !== 'traverse') captureScrollPosition()
+  if (event.navigationType !== 'traverse') {
+    setNavigationHidden(false)
+    captureScrollPosition()
+  }
 
   if (event.navigationType === 'traverse') {
     // Astro restores the destination history entry's saved scroll position.
@@ -443,16 +466,12 @@ document.addEventListener('astro:before-swap', (event) => {
     scrollResetGuardY = typeof savedY === 'number' && savedY > 0 ? savedY : null
     disableTraversalScrollAnimation()
     event.viewTransition?.skipTransition()
-  } else if (
-    navigation &&
-    !profileShellChanged &&
-    getComputedStyle(navigation).display !== 'none'
-  ) {
-    pendingScroll = {
-      viewportTop: navigation.getBoundingClientRect().top,
-    }
   } else {
-    pendingScroll = null
+    pendingScroll = getPendingNavigationScroll(
+      navigation,
+      event.to.pathname,
+      event.navigationType,
+    )
   }
 })
 
@@ -462,6 +481,7 @@ document.addEventListener('astro:after-swap', () => {
   pendingPathname = null
   pendingNavigationType = null
   syncNavigation(pathname, navigationType !== 'traverse')
+  if (navigationType !== 'traverse') setNavigationHidden(false)
   if (navigationType === 'traverse') scheduleTraversalScrollAnimationRestore()
 })
 

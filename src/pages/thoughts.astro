@@ -59,3 +59,43 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
     </p>
   </aside>
 </BaseLayout>
+
+<script>
+  const handleThoughtsIndexClick = (event: MouseEvent) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return
+    }
+
+    const clicked = event.target
+    if (!(clicked instanceof Element)) return
+    const link = clicked.closest<HTMLAnchorElement>('.experience-index nav a')
+    if (
+      !link ||
+      !link.hash ||
+      link.origin !== location.origin ||
+      link.pathname !== location.pathname
+    ) {
+      return
+    }
+
+    const section = document.getElementById(
+      decodeURIComponent(link.hash.slice(1)),
+    )
+    if (!section) return
+
+    event.preventDefault()
+    history.pushState({ ...history.state }, '', `${link.pathname}${link.hash}`)
+    section.scrollIntoView({ behavior: 'auto', block: 'start' })
+  }
+
+  document.addEventListener('click', handleThoughtsIndexClick, {
+    capture: true,
+  })
+</script>
