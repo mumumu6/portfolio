@@ -14,7 +14,7 @@
 .article-prose h4 {
   color: var(--text);
   font-family: var(--font-display);
-  scroll-margin-top: 78px;
+  scroll-margin-top: 65px;
   letter-spacing: -0.035em;
 }
 

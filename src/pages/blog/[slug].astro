@@ -189,11 +189,17 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
 
     event.preventDefault()
     history.pushState({ ...history.state }, '', `${link.pathname}${link.hash}`)
-    heading.scrollIntoView({
+    const navigation = document.querySelector<HTMLElement>('.section-nav')
+    const navigationOffset =
+      (navigation?.getBoundingClientRect().height ?? 0) + 16
+    const targetTop =
+      heading.getBoundingClientRect().top + window.scrollY - navigationOffset
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
         ? 'auto'
         : 'smooth',
-      block: 'start',
     })
     link.closest('details')?.removeAttribute('open')
   }
