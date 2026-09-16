@@ -187,6 +187,19 @@
   }
 }
 
+@container entry-card (min-width: 720px) {
+  .feed-list--compact .blog-entry-layout,
+  .feed-list--compact .work-entry-layout {
+    grid-template-areas:
+      'head preview'
+      'title preview'
+      'body preview'
+      'source preview'
+      'link preview'
+      'meta preview';
+  }
+}
+
 @container entry-card (max-width: 720px) {
   .feed-list--compact .entry-body {
     -webkit-line-clamp: 2;
