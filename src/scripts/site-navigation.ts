@@ -91,10 +91,12 @@ let scrollResetGuardY: number | null = null
 let traversalScrollBehavior: string | null = null
 let traversalRestoreFrame: number | null = null
 let scrollFrame: number | null = null
-let historyScrollFrame: number | null = null
+let historyScrollTimer: number | null = null
 let navigationFeedbackInitialized = false
 let navigationVisibilityInitialized = false
 let navigationVisibilityFrame: number | null = null
+let navigationElement: HTMLElement | null = null
+let navigationStickyStart = 0
 let previousNavigationScrollY = window.scrollY
 
 const nativeScrollTo = window.scrollTo.bind(window)
@@ -273,12 +275,18 @@ const captureScrollPosition = () => {
   }
 }
 
+const cancelScheduledScrollPositionCapture = () => {
+  if (historyScrollTimer === null) return
+  window.clearTimeout(historyScrollTimer)
+  historyScrollTimer = null
+}
+
 const scheduleScrollPositionCapture = () => {
-  if (historyScrollFrame !== null) return
-  historyScrollFrame = requestAnimationFrame(() => {
-    historyScrollFrame = null
+  if (historyScrollTimer !== null) return
+  historyScrollTimer = window.setTimeout(() => {
+    historyScrollTimer = null
     captureScrollPosition()
-  })
+  }, 120)
 }
 
 const disableTraversalScrollAnimation = () => {
@@ -332,27 +340,43 @@ const setupNavigationFeedback = () => {
 }
 
 const setNavigationHidden = (hidden: boolean) => {
-  document
-    .querySelector('.section-nav')
-    ?.classList.toggle('section-nav--hidden', hidden)
+  navigationElement?.classList.toggle('section-nav--hidden', hidden)
+}
+
+const getElementDocumentTop = (element: HTMLElement) => {
+  let top = 0
+  let current: HTMLElement | null = element
+  while (current) {
+    top += current.offsetTop
+    current = current.offsetParent as HTMLElement | null
+  }
+  return top
+}
+
+const refreshNavigationVisibilityMetrics = () => {
+  navigationElement = document.querySelector<HTMLElement>('.section-nav')
+  navigationStickyStart = navigationElement
+    ? getElementDocumentTop(navigationElement)
+    : 0
+  previousNavigationScrollY = window.scrollY
+
+  if (window.scrollY <= 4 || window.scrollY < navigationStickyStart) {
+    setNavigationHidden(false)
+  }
 }
 
 const updateNavigationVisibility = () => {
   navigationVisibilityFrame = null
-  const navigation = document.querySelector<HTMLElement>('.section-nav')
-  if (!navigation) return
+  if (!navigationElement) return
 
   const scrollY = window.scrollY
   const delta = scrollY - previousNavigationScrollY
   previousNavigationScrollY = scrollY
 
-  if (scrollY <= 4) {
+  if (scrollY <= 4 || scrollY < navigationStickyStart) {
     setNavigationHidden(false)
     return
   }
-
-  // Do not hide the navigation while it is still below the sticky edge.
-  if (navigation.getBoundingClientRect().top > 1) return
 
   if (delta >= 8) setNavigationHidden(true)
   if (delta <= -8) setNavigationHidden(false)
@@ -366,14 +390,14 @@ const scheduleNavigationVisibility = () => {
 const setupNavigationVisibility = () => {
   if (navigationVisibilityInitialized) return
   navigationVisibilityInitialized = true
-  previousNavigationScrollY = window.scrollY
+  refreshNavigationVisibilityMetrics()
   window.addEventListener('scroll', scheduleNavigationVisibility, {
     passive: true,
   })
-  document.addEventListener('astro:after-swap', () => {
-    previousNavigationScrollY = window.scrollY
-    if (window.scrollY <= 4) setNavigationHidden(false)
-  })
+  document.addEventListener(
+    'astro:after-swap',
+    refreshNavigationVisibilityMetrics,
+  )
 }
 
 const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
@@ -437,6 +461,7 @@ setupSiteNavigation()
 window.addEventListener(
   'popstate',
   () => {
+    cancelScheduledScrollPositionCapture()
     const savedY = history.state?.scrollY
     scrollResetGuardY = typeof savedY === 'number' && savedY > 0 ? savedY : null
     disableTraversalScrollAnimation()
@@ -455,6 +480,7 @@ document.addEventListener('astro:before-swap', (event) => {
 
   if (event.navigationType !== 'traverse') {
     setNavigationHidden(false)
+    cancelScheduledScrollPositionCapture()
     captureScrollPosition()
   }
 
@@ -489,7 +515,14 @@ document.addEventListener('astro:page-load', () => {
   if (pendingScroll) schedulePendingScrollRestore()
 })
 
-window.addEventListener('resize', () => syncNavigation(), { passive: true })
+window.addEventListener(
+  'resize',
+  () => {
+    syncNavigation()
+    refreshNavigationVisibilityMetrics()
+  },
+  { passive: true },
+)
 window.addEventListener('scroll', scheduleScrollPositionCapture, {
   passive: true,
 })

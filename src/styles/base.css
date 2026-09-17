@@ -71,13 +71,7 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
-  background:
-    radial-gradient(
-      circle at top left,
-      color-mix(in srgb, var(--text) 3.5%, transparent),
-      transparent 28%
-    ),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   line-height: 1.65;
