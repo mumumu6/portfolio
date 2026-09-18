@@ -221,7 +221,11 @@ const threadItems = [
         {
           data.gallery.map((image) => (
             <figure class="work-thread-gallery">
-              <ResponsiveImage src={image.src} alt={image.alt} />
+              <ResponsiveImage
+                src={image.src}
+                alt={image.alt}
+                sizes="(max-width: 760px) calc(100vw - 84px), 680px"
+              />
               {image.caption && <figcaption>{image.caption}</figcaption>}
             </figure>
           ))

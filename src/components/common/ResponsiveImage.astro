@@ -4,12 +4,13 @@ import type { ImageMetadata } from 'astro'
 import '@/styles/components/responsive-image.css'
 
 type Props = {
-  src: ImageMetadata
+  src: ImageMetadata | string
   alt: string
   width?: number | undefined
   height?: number | undefined
   sizes?: string | undefined
   widths?: number[] | undefined
+  quality?: 'low' | 'mid' | 'high' | 'max' | number | undefined
   loading?: 'lazy' | 'eager' | undefined
   fetchPriority?: 'high' | 'low' | 'auto' | undefined
   className?: string | undefined
@@ -22,39 +23,84 @@ const {
   height,
   sizes = '100vw',
   widths: customWidths,
+  quality,
   loading = 'lazy',
   fetchPriority = 'low',
   className,
 } = Astro.props
 
+const isRemoteImage = typeof src === 'string'
+
+if (isRemoteImage && (width === undefined || height === undefined)) {
+  throw new Error(
+    'ResponsiveImage requires width and height for remote image sources.',
+  )
+}
+
+const sourceWidth = isRemoteImage ? width : src.width
+const sourceHeight = isRemoteImage ? height : src.height
+const resolvedWidth = width ?? sourceWidth
+const resolvedHeight = height ?? sourceHeight
+
+if (resolvedWidth === undefined || resolvedHeight === undefined) {
+  throw new Error('ResponsiveImage could not determine the image dimensions.')
+}
+
+const maximumGeneratedWidth = Math.min(sourceWidth ?? 2400, 2400)
 const defaultWidths = [
   ...new Set(
-    [480, 960, 1440, src.width].filter((candidate) => candidate <= src.width),
+    [480, 960, 1440, 1920, 2400, maximumGeneratedWidth].filter(
+      (candidate) => candidate <= maximumGeneratedWidth,
+    ),
   ),
 ]
 const widths = customWidths ?? defaultWidths
 const isLazy = loading === 'lazy'
-const dimensions = {
-  ...(width === undefined ? {} : { width }),
-  ...(height === undefined ? {} : { height }),
-}
+const qualityAttribute = quality === undefined ? {} : { quality }
 ---
 
-<Picture
-  src={src}
-  formats={['avif']}
-  fallbackFormat="webp"
-  alt={alt}
-  {...dimensions}
-  widths={widths}
-  sizes={sizes}
-  loading={loading}
-  decoding="async"
-  fetchpriority={fetchPriority}
-  data-progressive-image
-  pictureAttributes={{
-    ...(className ? { class: className } : {}),
-    'data-progressive-image': '',
-    ...(isLazy ? {} : { 'data-image-requested': 'true' }),
-  }}
-/>
+{
+  typeof src === 'string' ? (
+    <Picture
+      src={src}
+      formats={['avif']}
+      fallbackFormat="webp"
+      alt={alt}
+      width={resolvedWidth}
+      height={resolvedHeight}
+      widths={widths}
+      sizes={sizes}
+      {...qualityAttribute}
+      loading={loading}
+      decoding="async"
+      fetchpriority={fetchPriority}
+      data-progressive-image
+      pictureAttributes={{
+        ...(className ? { class: className } : {}),
+        'data-progressive-image': '',
+        ...(isLazy ? {} : { 'data-image-requested': 'true' }),
+      }}
+    />
+  ) : (
+    <Picture
+      src={src}
+      formats={['avif']}
+      fallbackFormat="webp"
+      alt={alt}
+      width={resolvedWidth}
+      height={resolvedHeight}
+      widths={widths}
+      sizes={sizes}
+      {...qualityAttribute}
+      loading={loading}
+      decoding="async"
+      fetchpriority={fetchPriority}
+      data-progressive-image
+      pictureAttributes={{
+        ...(className ? { class: className } : {}),
+        'data-progressive-image': '',
+        ...(isLazy ? {} : { 'data-image-requested': 'true' }),
+      }}
+    />
+  )
+}

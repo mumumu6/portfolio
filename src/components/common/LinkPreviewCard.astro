@@ -1,5 +1,6 @@
 ---
 import '@/styles/components/external-link-card.css'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 import { getOgp } from '@/lib/portfolio/ogp'
 
 type Props = {
@@ -18,7 +19,11 @@ const resolvedImageRatio =
   imageRatio ??
   (ogp.imageWidth && ogp.imageHeight
     ? ogp.imageWidth / ogp.imageHeight
-    : undefined)
+    : 16 / 9)
+const optimizedImageWidth = 640
+const optimizedImageHeight = Math.round(
+  optimizedImageWidth / resolvedImageRatio,
+)
 ---
 
 <a
@@ -38,13 +43,16 @@ const resolvedImageRatio =
   {
     ogp.image && (
       <span class="link-preview-card__thumbnail" aria-hidden="true">
-        <img
-          class="link-preview-card__image"
+        <ResponsiveImage
+          className="link-preview-card__image"
           src={ogp.image}
           alt=""
+          width={optimizedImageWidth}
+          height={optimizedImageHeight}
+          widths={[optimizedImageWidth]}
+          sizes={`${optimizedImageWidth}px`}
+          quality="mid"
           loading="lazy"
-          decoding="async"
-          referrerpolicy="no-referrer"
         />
       </span>
     )

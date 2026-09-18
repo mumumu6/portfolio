@@ -42,6 +42,14 @@ const runtimeCaching = [
 export default defineConfig({
   site: 'https://mumumu6.net',
   output: 'static',
+  image: {
+    domains: [
+      'files.speakerdeck.com',
+      'gocon.github.io',
+      'gocon.jp',
+      'yt3.googleusercontent.com',
+    ],
+  },
   build: {
     // Inline small route styles so ClientRouter can swap immediately without
     // waiting for several extra stylesheet requests. Larger styles remain cached assets.
