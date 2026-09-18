@@ -15,11 +15,12 @@
 .article-header {
   position: absolute;
   inset: 0;
+  container-type: inline-size;
   z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: clamp(22px, 5vw, 42px);
+  padding: clamp(16px, 4vw, 32px);
   background: linear-gradient(
     180deg,
     transparent 18%,
@@ -32,9 +33,10 @@
   max-width: 700px;
   margin: 7px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 6vw, 2.4rem);
+  font-size: clamp(0.9rem, 4.6cqi, 2.4rem);
   line-height: 1.15;
   letter-spacing: -0.055em;
+  white-space: nowrap;
 }
 
 .article-lead {
@@ -51,6 +53,10 @@
   align-items: center;
   gap: 12px;
   margin-top: 20px;
+}
+
+.article-header .article-meta {
+  margin-top: 12px;
 }
 
 .article-meta time,
@@ -246,10 +252,6 @@
 }
 
 @media (max-width: 760px) {
-  .article-header {
-    padding: 22px 20px 20px;
-  }
-
   .article-hero {
     width: calc(100% - var(--content-gutter) - var(--content-gutter));
   }

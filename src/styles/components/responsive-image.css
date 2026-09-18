@@ -22,10 +22,19 @@ picture[data-progressive-image]::before {
     transparent 62%
   );
   background-size: 100% 100%;
-  transform: translate3d(-50%, 0, 0);
+  transform: translate3d(-100%, 0, 0);
   /* Keep a quiet placeholder visible even before JS promotes the image. */
   opacity: 0.42;
   transition: opacity 260ms ease;
+}
+
+html.js
+  picture[data-progressive-image]:not([data-image-state='loaded']):not(
+    [data-image-state='error']
+  )::before {
+  /* Start immediately; page-load can wait for the eager article cover. */
+  animation: image-skeleton 1.4s linear infinite;
+  will-change: transform;
 }
 
 html.js
@@ -33,9 +42,6 @@ html.js
     [data-image-state='loaded']
   ):not([data-image-state='error'])::before {
   opacity: 0.82;
-  /* Only requested, near-viewport images animate; stop when decoding finishes. */
-  animation: image-skeleton 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-  will-change: transform;
 }
 
 html.js
@@ -80,19 +86,19 @@ picture[data-progressive-image][data-image-state='error']
 
 @keyframes image-skeleton {
   0% {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
   }
 
   100% {
-    transform: translate3d(50%, 0, 0);
+    transform: translate3d(100%, 0, 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html.js
-    picture[data-progressive-image][data-image-requested='true']:not(
-      [data-image-state='loaded']
-    ):not([data-image-state='error'])::before {
+    picture[data-progressive-image]:not([data-image-state='loaded']):not(
+      [data-image-state='error']
+    )::before {
     animation: none;
     opacity: 0.82;
   }
