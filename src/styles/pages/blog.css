@@ -137,19 +137,34 @@
   place-items: center;
   border: 1px solid var(--line-strong);
   border-radius: 50%;
-  background: conic-gradient(
-    var(--accent) 0 var(--reading-progress, 0deg),
-    var(--line) var(--reading-progress, 0deg) 360deg
-  );
+  background: var(--surface);
+  contain: layout paint;
   pointer-events: none;
 }
 
-.reading-progress::before {
+.reading-progress__ring {
   position: absolute;
-  inset: 5px;
-  border-radius: 50%;
-  background: var(--surface);
-  content: '';
+  inset: 0;
+  width: 48px;
+  height: 48px;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+
+.reading-progress__track,
+.reading-progress__value {
+  fill: none;
+  stroke-width: 5;
+}
+
+.reading-progress__track {
+  stroke: var(--line);
+}
+
+.reading-progress__value {
+  stroke: var(--accent);
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
 }
 
 .reading-progress > span {

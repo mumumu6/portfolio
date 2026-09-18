@@ -56,6 +56,17 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
 >
   <article class="article-page">
     <div class="reading-progress" data-reading-progress aria-hidden="true">
+      <svg class="reading-progress__ring" viewBox="0 0 48 48">
+        <circle class="reading-progress__track" cx="24" cy="24" r="21.5"
+        ></circle>
+        <circle
+          class="reading-progress__value"
+          cx="24"
+          cy="24"
+          r="21.5"
+          pathLength="100"
+          data-reading-progress-ring></circle>
+      </svg>
       <span data-reading-progress-label>0%</span>
     </div>
     <div class="article-hero">
@@ -112,6 +123,7 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
   let previousProgressPercent = -1
   let previousHeadingId: string | null | undefined
   let progressRing: HTMLElement | null = null
+  let progressRingValue: SVGCircleElement | null = null
   let progressLabels: HTMLElement[] = []
   let progressHeadings: { id: string; top: number }[] = []
   let progressLinks: HTMLAnchorElement[] = []
@@ -121,6 +133,9 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
     const article = document.querySelector<HTMLElement>('.article-page')
     progressRing = document.querySelector<HTMLElement>(
       '[data-reading-progress]',
+    )
+    progressRingValue = document.querySelector<SVGCircleElement>(
+      '[data-reading-progress-ring]',
     )
     progressLabels = [
       ...document.querySelectorAll<HTMLElement>(
@@ -181,10 +196,11 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
 
     if (progressPercent !== previousProgressPercent) {
       previousProgressPercent = progressPercent
-      progressRing.style.setProperty(
-        '--reading-progress',
-        `${progressPercent * 3.6}deg`,
-      )
+      if (progressRingValue) {
+        progressRingValue.style.strokeDasharray =
+          progressPercent === 100 ? 'none' : '100'
+        progressRingValue.style.strokeDashoffset = `${100 - progressPercent}`
+      }
       progressLabels.forEach((label) => {
         label.textContent = `${progressPercent}%`
       })
