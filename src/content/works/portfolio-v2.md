@@ -25,6 +25,9 @@ comments:
   - label: 制作メモ
     date: 2026-08-23
     body: AIのコメントが毎回同じコメントで面白くないので最近AIからのコメント追加PRをはじいています
+  - label: 制作メモ
+    date: 2026-09-18
+    body: astroでアニメーションをするのしんどいですね... vueやreactを乗せれるのは分かってはいるのですがもったいないとか思ってしまっています
 
 highlights:
   - Markdownで管理するWorksと自サイトの記事
