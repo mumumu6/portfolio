@@ -131,8 +131,8 @@
   right: max(12px, calc((100vw - var(--site-width)) / 2 + 12px));
   bottom: 18px;
   z-index: 40;
-  width: 50px;
-  height: 50px;
+  width: 39px;
+  height: 39px;
   display: grid;
   place-items: center;
   border: 1px solid var(--line-strong);
@@ -144,17 +144,18 @@
 
 .reading-progress__ring {
   position: absolute;
-  inset: 0;
-  width: 48px;
-  height: 48px;
+  top: 50%;
+  left: 50%;
+  width: 38px;
+  height: 38px;
   overflow: visible;
-  transform: rotate(-90deg);
+  transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 .reading-progress__track,
 .reading-progress__value {
   fill: none;
-  stroke-width: 5;
+  stroke-width: 4;
 }
 
 .reading-progress__track {
