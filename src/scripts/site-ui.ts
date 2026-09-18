@@ -12,5 +12,4 @@ const setupPage = () => {
 }
 
 registerServiceWorkerWhenIdle()
-setupPage()
 document.addEventListener('astro:page-load', setupPage)

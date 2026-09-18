@@ -91,9 +91,9 @@ let scrollResetGuardY: number | null = null
 let traversalScrollBehavior: string | null = null
 let traversalRestoreFrame: number | null = null
 let scrollFrame: number | null = null
-let historyScrollTimer: number | null = null
 let navigationFeedbackInitialized = false
 let navigationVisibilityInitialized = false
+let navigationSyncInitialized = false
 let navigationVisibilityFrame: number | null = null
 let navigationElement: HTMLElement | null = null
 let navigationStickyStart = 0
@@ -253,40 +253,6 @@ const setNavigationLoading = (loading: boolean) => {
   document
     .querySelector('main#main-content')
     ?.setAttribute('aria-busy', String(loading))
-}
-
-const captureScrollPosition = () => {
-  if (scrollResetGuardY !== null || traversalScrollBehavior !== null) return
-
-  const state = history.state
-  if (!state || typeof state !== 'object') return
-
-  try {
-    history.replaceState(
-      {
-        ...state,
-        scrollX: window.scrollX,
-        scrollY: window.scrollY,
-      },
-      '',
-    )
-  } catch {
-    // History can be unavailable in embedded or restricted browsers.
-  }
-}
-
-const cancelScheduledScrollPositionCapture = () => {
-  if (historyScrollTimer === null) return
-  window.clearTimeout(historyScrollTimer)
-  historyScrollTimer = null
-}
-
-const scheduleScrollPositionCapture = () => {
-  if (historyScrollTimer !== null) return
-  historyScrollTimer = window.setTimeout(() => {
-    historyScrollTimer = null
-    captureScrollPosition()
-  }, 120)
 }
 
 const disableTraversalScrollAnimation = () => {
@@ -450,18 +416,18 @@ const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
 }
 
 export const setupSiteNavigation = () => {
+  if (!navigationSyncInitialized) {
+    navigationSyncInitialized = true
+    syncNavigation()
+  }
   setupTheme()
   setupNavigationFeedback()
   setupNavigationVisibility()
 }
 
-syncNavigation()
-setupSiteNavigation()
-
 window.addEventListener(
   'popstate',
   () => {
-    cancelScheduledScrollPositionCapture()
     const savedY = history.state?.scrollY
     scrollResetGuardY = typeof savedY === 'number' && savedY > 0 ? savedY : null
     disableTraversalScrollAnimation()
@@ -480,8 +446,6 @@ document.addEventListener('astro:before-swap', (event) => {
 
   if (event.navigationType !== 'traverse') {
     setNavigationHidden(false)
-    cancelScheduledScrollPositionCapture()
-    captureScrollPosition()
   }
 
   if (event.navigationType === 'traverse') {
@@ -523,6 +487,3 @@ window.addEventListener(
   },
   { passive: true },
 )
-window.addEventListener('scroll', scheduleScrollPositionCapture, {
-  passive: true,
-})
