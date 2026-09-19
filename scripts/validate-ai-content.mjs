@@ -5,7 +5,7 @@ const path = resolve('src/data/generated/ai-content.json')
 const value = JSON.parse(await readFile(path, 'utf8'))
 const authors = new Set(['chatgpt', 'codex'])
 const replyTargets = new Set(['mumumu', ...authors])
-const targetKinds = new Set(['work', 'blog', 'experience'])
+const targetKinds = new Set(['work', 'experience'])
 
 function assert(condition, message) {
   if (!condition) throw new Error(message)

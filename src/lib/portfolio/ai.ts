@@ -1,9 +1,11 @@
 import generatedAiContent from '@/data/generated/ai-content.json'
 import type { EntryKind, Reply, TimelineEntry } from '@/lib/portfolio/types'
 
+type AiCommentTargetKind = Extract<EntryKind, 'work' | 'experience'>
+
 type PublishedAiContent = {
   comments: Array<{
-    target: { kind: Exclude<EntryKind, 'thought'>; id: string }
+    target: { kind: AiCommentTargetKind; id: string }
     replies: Reply[]
   }>
   thoughts: Array<Omit<TimelineEntry, 'kind'>>
@@ -11,7 +13,7 @@ type PublishedAiContent = {
 
 const aiContent = generatedAiContent as PublishedAiContent
 
-export const getAiReplies = (kind: Exclude<EntryKind, 'thought'>, id: string) =>
+export const getAiReplies = (kind: AiCommentTargetKind, id: string) =>
   aiContent.comments.find(
     (comment) => comment.target.kind === kind && comment.target.id === id,
   )?.replies

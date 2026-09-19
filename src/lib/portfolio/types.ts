@@ -28,7 +28,6 @@ type EntryBase = {
   sourceLabel?: string | undefined
   readingMinutes?: number | undefined
   image?: FeedImage | undefined
-  replies?: Reply[] | undefined
 }
 
 export type BlogEntry = EntryBase & {
@@ -37,6 +36,7 @@ export type BlogEntry = EntryBase & {
 
 export type TimelineEntry = EntryBase & {
   kind: 'experience' | 'thought'
+  replies?: Reply[] | undefined
 }
 
 export type WorkEntry = EntryBase & {

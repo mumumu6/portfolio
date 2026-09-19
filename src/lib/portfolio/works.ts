@@ -1,5 +1,4 @@
 import { getCollection } from 'astro:content'
-import { getAiReplies } from '@/lib/portfolio/ai'
 import type { WorkEntry } from '@/lib/portfolio/types'
 
 const workDocuments = await getCollection('works')
@@ -26,7 +25,6 @@ export const works: WorkEntry[] = workDocuments
         body: latestComment.body,
         date: latestComment.date?.toISOString().slice(0, 10),
       },
-      replies: getAiReplies('work', work.id),
     }
   })
   .sort((a, b) => b.date.localeCompare(a.date))

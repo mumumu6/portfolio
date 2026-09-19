@@ -1,6 +1,5 @@
 import { getCollection } from 'astro:content'
 import generatedBlogPosts from '@/data/generated/blogs.json'
-import { getAiReplies } from '@/lib/portfolio/ai'
 import { resolveBlogImage } from '@/lib/portfolio/images'
 import type { BlogEntry } from '@/lib/portfolio/types'
 import { estimateReadingMinutes } from '@/lib/portfolio/utils'
@@ -26,7 +25,6 @@ const localBlogPosts: BlogEntry[] = (await getCollection('blogs')).map(
         src: data.cover,
         alt: data.coverAlt,
       },
-      replies: getAiReplies('blog', post.id),
     }
   },
 )
@@ -38,7 +36,6 @@ export const blogPosts: BlogEntry[] = [
     kind: 'blog',
     author: 'mumumu',
     sourceLabel: 'traP Blogで読む',
-    replies: getAiReplies('blog', post.id),
   })),
   ...localBlogPosts,
 ].sort((a, b) => b.date.localeCompare(a.date))

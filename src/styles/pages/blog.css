@@ -113,25 +113,6 @@
   object-fit: cover;
 }
 
-.article-comments {
-  width: min(calc(100% - 40px), 650px);
-  margin: 42px auto 0;
-  padding-top: 24px;
-  border-top: 1px solid var(--line-strong);
-}
-
-.article-comments__head h2 {
-  margin: 4px 0 0;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  letter-spacing: -0.035em;
-}
-
-.article-comments .reply-disclosure {
-  max-width: none;
-  margin-top: 12px;
-}
-
 .reading-progress {
   position: fixed;
   right: max(12px, calc((100% - var(--adaptive-shell-width)) / 2 + 12px));

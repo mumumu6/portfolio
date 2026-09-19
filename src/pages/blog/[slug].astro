@@ -4,13 +4,10 @@ import { getCollection, render } from 'astro:content'
 import '@/styles/pages/blog.css'
 import '@/styles/components/article-prose.css'
 import '@/styles/components/article-nav.css'
-import '@/styles/components/eyebrow.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ArticleToc from '@/components/article/ArticleToc.astro'
-import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 import TagList from '@/components/common/TagList.astro'
-import { getAiReplies } from '@/lib/portfolio/ai'
 import { estimateReadingMinutes } from '@/lib/portfolio/utils'
 
 type Props = { post: CollectionEntry<'blogs'> }
@@ -27,7 +24,6 @@ const props: Props = Astro.props
 const post = props.post
 const { Content, headings } = await render(post)
 const data = post.data
-const aiReplies = getAiReplies('blog', post.id) ?? []
 const readingMinutes = estimateReadingMinutes(post.body ?? data.description)
 const publishedAt = data.publishedAt.toISOString().slice(0, 10)
 const updatedAt = data.updatedAt?.toISOString().slice(0, 10)
@@ -96,20 +92,5 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
       <ArticleToc headings={tocHeadings} mode="desktop" />
       <div class="article-prose"><Content /></div>
     </div>
-
-    {
-      aiReplies.length > 0 && (
-        <section
-          class="article-comments"
-          aria-labelledby="article-comments-title"
-        >
-          <div class="article-comments__head">
-            <p class="eyebrow">MARGIN NOTES</p>
-            <h2 id="article-comments-title">AIのコメント</h2>
-          </div>
-          <ReplyDisclosure replies={aiReplies} label="コメント" open />
-        </section>
-      )
-    }
   </article>
 </BaseLayout>

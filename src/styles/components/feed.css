@@ -207,6 +207,32 @@
   }
 }
 
+@container entry-card (min-width: 300px) and (max-width: 640px) {
+  .feed-list--compact .work-entry-layout {
+    grid-template-areas:
+      'head head'
+      'title title'
+      'body preview'
+      'source preview'
+      'link preview'
+      'meta preview'
+      'notes notes';
+  }
+
+  .feed-list--compact .work-entry-layout .entry-card-meta {
+    display: contents;
+  }
+
+  .feed-list--compact .work-entry-layout .entry-card-meta > .tag-list {
+    grid-area: meta;
+  }
+
+  .feed-list--compact .work-entry-layout .work-entry-notes {
+    min-width: 0;
+    grid-area: notes;
+  }
+}
+
 .feed-list--compact .entry-body--two-lines {
   -webkit-line-clamp: 2;
   line-clamp: 2;
