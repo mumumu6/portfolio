@@ -134,7 +134,7 @@
 
 .reading-progress {
   position: fixed;
-  right: max(12px, calc((100vw - var(--site-width)) / 2 + 12px));
+  right: max(12px, calc((100% - var(--adaptive-shell-width)) / 2 + 12px));
   bottom: 18px;
   z-index: 40;
   width: 39px;
@@ -152,8 +152,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 38px;
-  height: 38px;
+  width: 39px;
+  height: 39px;
   overflow: visible;
   transform: translate(-50%, -50%) rotate(-90deg);
 }
@@ -184,9 +184,9 @@
 
 .article-layout {
   display: grid;
-  grid-template-columns: 150px minmax(0, 602px);
+  grid-template-columns: 150px minmax(0, 1fr);
   gap: 28px;
-  padding: 34px 20px 0;
+  padding: 34px 60px 0 20px;
 }
 
 .article-toc {

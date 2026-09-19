@@ -144,10 +144,11 @@ summary:focus-visible {
   background: color-mix(in srgb, var(--surface) 94%, transparent);
 }
 .site-shell--adaptive {
-  width: min(
+  --adaptive-shell-width: min(
     100%,
     var(--adaptive-wide-width),
     max(var(--site-width), calc(100vw - 412px))
   );
+  width: var(--adaptive-shell-width);
   overflow: visible;
 }
