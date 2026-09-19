@@ -2,16 +2,13 @@
 import '@/styles/components/site-header-nav.css'
 import NavigationLinks from '@/components/layout/NavigationLinks.astro'
 
-type Props = {
-  adaptive?: boolean
-  pathname: string
-}
+type Props = { pathname: string }
 
-const { adaptive = false, pathname } = Astro.props
+const { pathname } = Astro.props
 ---
 
 <nav
-  class:list={['section-nav', { 'section-nav--adaptive': adaptive }]}
+  class="section-nav"
   data-nav-container
   aria-label="メインナビゲーション"
   transition:persist="section-nav"

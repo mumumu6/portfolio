@@ -1,11 +1,7 @@
 .profile-header {
-  width: min(100%, var(--site-width));
+  width: 100%;
   margin-inline: auto;
   background: color-mix(in srgb, var(--surface) 72%, transparent);
-}
-
-.profile-header--adaptive {
-  width: 100%;
 }
 
 .profile-cover {

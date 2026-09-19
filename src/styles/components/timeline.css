@@ -76,7 +76,7 @@
 }
 
 @media (min-width: 1440px) {
-  .site-shell--adaptive .experience-layout {
+  .site-shell .experience-layout {
     grid-template-columns: 180px minmax(0, 1fr);
     justify-content: stretch;
   }

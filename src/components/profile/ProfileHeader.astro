@@ -4,20 +4,12 @@ import Avatar from '@/components/common/Avatar.astro'
 import ThemeToggle from '@/components/layout/ThemeToggle.astro'
 import { getEntry } from 'astro:content'
 
-type Props = {
-  adaptive?: boolean
-}
-
-const { adaptive = false } = Astro.props
 const profileEntry = await getEntry('site', 'profile')
 if (!profileEntry) throw new Error('Missing site profile content')
 const { data: profile } = profileEntry
 ---
 
-<section
-  class:list={['profile-header', { 'profile-header--adaptive': adaptive }]}
-  aria-labelledby="profile-name"
->
+<section class="profile-header" aria-labelledby="profile-name">
   <div class="profile-cover">
     <div class="profile-cover__actions">
       <ThemeToggle />

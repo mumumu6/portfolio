@@ -136,19 +136,15 @@ summary:focus-visible {
 }
 
 .site-shell {
-  width: min(100%, var(--site-width));
-  min-height: calc(100vh - var(--header-height));
-  margin: 0 auto;
-  overflow: visible;
-  border-inline: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 94%, transparent);
-}
-.site-shell--adaptive {
   --adaptive-shell-width: min(
     100%,
     var(--adaptive-wide-width),
     max(var(--site-width), calc(100vw - 412px))
   );
   width: var(--adaptive-shell-width);
+  min-height: calc(100vh - var(--header-height));
+  margin: 0 auto;
   overflow: visible;
+  border-inline: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
 }

@@ -166,14 +166,6 @@ const syncNavigation = (
       else link.removeAttribute('aria-current')
     })
 
-  const adaptive =
-    document
-      .querySelector('main')
-      ?.classList.contains('site-shell--adaptive') ?? false
-  document
-    .querySelector('.section-nav')
-    ?.classList.toggle('section-nav--adaptive', adaptive)
-
   if (animateIndicator) {
     indicators.read(pathname).forEach((state) => indicators.apply(state))
   } else {

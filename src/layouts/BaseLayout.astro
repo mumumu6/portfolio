@@ -10,11 +10,10 @@ import spaceGrotesk600 from '@fontsource/space-grotesk/files/space-grotesk-latin
 import spaceGrotesk700 from '@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2?url'
 
 type Props = ComponentProps<typeof SeoHead> & {
-  shell?: 'default' | 'adaptive' | undefined
   showProfileHeader?: boolean | undefined
 }
 
-const { shell = 'default', showProfileHeader = true, ...seoProps } = Astro.props
+const { showProfileHeader = true, ...seoProps } = Astro.props
 ---
 
 <!doctype html>
@@ -65,20 +64,9 @@ const { shell = 'default', showProfileHeader = true, ...seoProps } = Astro.props
   </head>
   <body>
     <a class="skip-link" href="#main-content">本文へ移動</a>
-    <main
-      class:list={[
-        'site-shell',
-        {
-          'site-shell--adaptive': shell === 'adaptive',
-        },
-      ]}
-      id="main-content"
-    >
-      {showProfileHeader && <ProfileHeader adaptive={shell === 'adaptive'} />}
-      <SectionNavigation
-        pathname={Astro.url.pathname}
-        adaptive={shell === 'adaptive'}
-      />
+    <main class="site-shell" id="main-content">
+      {showProfileHeader && <ProfileHeader />}
+      <SectionNavigation pathname={Astro.url.pathname} />
       <slot />
     </main>
 
