@@ -1,5 +1,6 @@
 import { matchesNavigationPath } from '@/lib/navigation'
 import { createNavigationIndicatorController } from '@/scripts/navigation-indicator'
+import { prefersReducedMotion } from '@/scripts/motion'
 import { swapFunctions } from 'astro:transitions/client'
 
 type Theme = 'light' | 'dark'
@@ -42,16 +43,13 @@ const applyTheme = (theme: Theme) => {
 
 const animateThemeChange = (theme: Theme) => {
   const root = document.documentElement
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-  ).matches
   const transitionDocument = document as Document & {
     startViewTransition?: (callback: () => void) => {
       finished: Promise<void>
     }
   }
 
-  if (reducedMotion || !transitionDocument.startViewTransition) {
+  if (prefersReducedMotion() || !transitionDocument.startViewTransition) {
     applyTheme(theme)
     return
   }
@@ -91,9 +89,7 @@ let scrollResetGuardY: number | null = null
 let traversalScrollBehavior: string | null = null
 let traversalRestoreFrame: number | null = null
 let scrollFrame: number | null = null
-let navigationFeedbackInitialized = false
-let navigationVisibilityInitialized = false
-let navigationSyncInitialized = false
+let navigationInitialized = false
 let navigationVisibilityFrame: number | null = null
 let navigationElement: HTMLElement | null = null
 let navigationStickyStart = 0
@@ -148,10 +144,9 @@ try {
 }
 
 const syncNavigation = (
-  targetPathname = location.pathname,
+  pathname = location.pathname,
   animateIndicator = false,
 ) => {
-  const pathname = targetPathname
   const containers = Array.from(
     document.querySelectorAll<HTMLElement>('[data-nav-container]'),
   )
@@ -166,11 +161,9 @@ const syncNavigation = (
       else link.removeAttribute('aria-current')
     })
 
-  if (animateIndicator) {
-    indicators.read(pathname).forEach((state) => indicators.apply(state))
-  } else {
-    indicators.reposition(pathname)
-  }
+  indicators
+    .read(pathname)
+    .forEach((state) => indicators.apply(state, !animateIndicator))
 }
 
 const setScrollPosition = (top: number) => {
@@ -225,10 +218,8 @@ const schedulePendingScrollRestore = () => {
 const getPendingNavigationScroll = (
   navigation: HTMLElement | null,
   targetPathname: string,
-  navigationType: string,
 ) => {
   if (
-    navigationType === 'traverse' ||
     isBlogDetailPath(targetPathname) ||
     !navigation ||
     getComputedStyle(navigation).display === 'none'
@@ -252,6 +243,12 @@ const disableTraversalScrollAnimation = () => {
   const root = document.documentElement
   traversalScrollBehavior = root.style.scrollBehavior
   root.style.scrollBehavior = 'auto'
+}
+
+const prepareTraversalScroll = () => {
+  const savedY = history.state?.scrollY
+  scrollResetGuardY = typeof savedY === 'number' && savedY > 0 ? savedY : null
+  disableTraversalScrollAnimation()
 }
 
 const restoreTraversalScrollAnimation = () => {
@@ -279,9 +276,6 @@ const scheduleTraversalScrollAnimationRestore = () => {
 }
 
 const setupNavigationFeedback = () => {
-  if (navigationFeedbackInitialized) return
-  navigationFeedbackInitialized = true
-
   document.addEventListener('astro:before-preparation', () =>
     setNavigationLoading(true),
   )
@@ -346,8 +340,6 @@ const scheduleNavigationVisibility = () => {
 }
 
 const setupNavigationVisibility = () => {
-  if (navigationVisibilityInitialized) return
-  navigationVisibilityInitialized = true
   refreshNavigationVisibilityMetrics()
   window.addEventListener('scroll', scheduleNavigationVisibility, {
     passive: true,
@@ -408,24 +400,15 @@ const swapPageKeepingNavigationInPlace = (newDocument: Document) => {
 }
 
 export const setupSiteNavigation = () => {
-  if (!navigationSyncInitialized) {
-    navigationSyncInitialized = true
-    syncNavigation()
-  }
   setupTheme()
+  if (navigationInitialized) return
+  navigationInitialized = true
+  syncNavigation()
   setupNavigationFeedback()
   setupNavigationVisibility()
 }
 
-window.addEventListener(
-  'popstate',
-  () => {
-    const savedY = history.state?.scrollY
-    scrollResetGuardY = typeof savedY === 'number' && savedY > 0 ? savedY : null
-    disableTraversalScrollAnimation()
-  },
-  { passive: true },
-)
+window.addEventListener('popstate', prepareTraversalScroll, { passive: true })
 
 document.addEventListener('astro:before-swap', (event) => {
   const defaultSwap = event.swap
@@ -444,16 +427,10 @@ document.addEventListener('astro:before-swap', (event) => {
     // Astro restores the destination history entry's saved scroll position.
     // Skip the page transition as well, so going back lands there immediately.
     pendingScroll = null
-    const savedY = history.state?.scrollY
-    scrollResetGuardY = typeof savedY === 'number' && savedY > 0 ? savedY : null
-    disableTraversalScrollAnimation()
+    prepareTraversalScroll()
     event.viewTransition?.skipTransition()
   } else {
-    pendingScroll = getPendingNavigationScroll(
-      navigation,
-      event.to.pathname,
-      event.navigationType,
-    )
+    pendingScroll = getPendingNavigationScroll(navigation, event.to.pathname)
   }
 })
 

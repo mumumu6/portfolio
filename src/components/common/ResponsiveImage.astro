@@ -57,50 +57,31 @@ const defaultWidths = [
 const widths = customWidths ?? defaultWidths
 const isLazy = loading === 'lazy'
 const qualityAttribute = quality === undefined ? {} : { quality }
+// Picture requires explicit dimensions for remote sources, while local
+// metadata already contains them. Preserve that distinction in its props.
+const sourceAttributes =
+  typeof src === 'string'
+    ? { src, width: resolvedWidth, height: resolvedHeight }
+    : { src }
 ---
 
-{
-  typeof src === 'string' ? (
-    <Picture
-      src={src}
-      formats={['avif']}
-      fallbackFormat="webp"
-      alt={alt}
-      width={resolvedWidth}
-      height={resolvedHeight}
-      widths={widths}
-      sizes={sizes}
-      {...qualityAttribute}
-      loading={loading}
-      decoding="async"
-      fetchpriority={fetchPriority}
-      data-progressive-image
-      pictureAttributes={{
-        ...(className ? { class: className } : {}),
-        'data-progressive-image': '',
-        ...(isLazy ? {} : { 'data-image-requested': 'true' }),
-      }}
-    />
-  ) : (
-    <Picture
-      src={src}
-      formats={['avif']}
-      fallbackFormat="webp"
-      alt={alt}
-      width={resolvedWidth}
-      height={resolvedHeight}
-      widths={widths}
-      sizes={sizes}
-      {...qualityAttribute}
-      loading={loading}
-      decoding="async"
-      fetchpriority={fetchPriority}
-      data-progressive-image
-      pictureAttributes={{
-        ...(className ? { class: className } : {}),
-        'data-progressive-image': '',
-        ...(isLazy ? {} : { 'data-image-requested': 'true' }),
-      }}
-    />
-  )
-}
+<Picture
+  {...sourceAttributes}
+  formats={['avif']}
+  fallbackFormat="webp"
+  alt={alt}
+  width={resolvedWidth}
+  height={resolvedHeight}
+  widths={widths}
+  sizes={sizes}
+  {...qualityAttribute}
+  loading={loading}
+  decoding="async"
+  fetchpriority={fetchPriority}
+  data-progressive-image
+  pictureAttributes={{
+    ...(className ? { class: className } : {}),
+    'data-progressive-image': '',
+    ...(isLazy ? {} : { 'data-image-requested': 'true' }),
+  }}
+/>

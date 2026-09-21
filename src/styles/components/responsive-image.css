@@ -29,29 +29,20 @@ picture[data-progressive-image]::before {
 }
 
 html.js
-  picture[data-progressive-image]:not([data-image-state='loaded']):not(
-    [data-image-state='error']
-  )::before {
-  /* Start immediately; page-load can wait for the eager article cover. */
-  animation: image-skeleton 1.4s linear infinite;
-  will-change: transform;
-}
-
-html.js
   picture[data-progressive-image][data-image-requested='true']:not(
     [data-image-state='loaded']
   ):not([data-image-state='error'])::before {
+  /* Animate only images near the viewport while they are loading. */
+  animation: image-skeleton 1.4s linear infinite;
+  will-change: transform;
   opacity: 0.82;
 }
 
 html.js
-  picture[data-progressive-image]:not([data-image-requested='true'])
-  > img[data-progressive-image],
-html.js
-  picture[data-progressive-image][data-image-requested='true']:not(
-    [data-image-state='loaded']
-  ):not([data-image-state='error'])
-  > img[data-progressive-image] {
+  picture[data-progressive-image]:not([data-image-state='loaded']):not(
+    [data-image-state='error']
+  )
+  > img[data-progressive-image][loading='lazy'] {
   opacity: 0;
 }
 
@@ -81,7 +72,7 @@ picture[data-progressive-image][data-image-state='error']::before {
 
 picture[data-progressive-image][data-image-state='error']
   > img[data-progressive-image] {
-  opacity: 0;
+  opacity: 1;
 }
 
 @keyframes image-skeleton {

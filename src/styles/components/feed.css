@@ -106,17 +106,7 @@
     column-gap: 18px;
   }
 
-  .feed-list--compact .blog-entry-layout {
-    grid-template-areas:
-      'head head'
-      'title title'
-      'body preview'
-      'source preview'
-      'link preview'
-      'meta preview';
-  }
-
-  .feed-list--compact .work-entry-layout {
+  .feed-list--compact :is(.blog-entry-layout, .work-entry-layout) {
     grid-template-areas:
       'head head'
       'title title'

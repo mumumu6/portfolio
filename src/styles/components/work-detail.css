@@ -5,10 +5,6 @@
   background: var(--surface);
 }
 
-.work-thread-page > .article-back {
-  margin-bottom: 12px;
-}
-
 .work-thread-post {
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr);

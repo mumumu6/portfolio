@@ -9,7 +9,7 @@ let readingProgressModule: Promise<
 > | null = null
 
 const setupReadingProgressForPage = async () => {
-  if (!document.querySelector('.article-page') && !readingProgressModule) return
+  if (!document.querySelector('.article-page')) return
 
   readingProgressModule ??= import('@/scripts/reading-progress')
   const { setupReadingProgress } = await readingProgressModule

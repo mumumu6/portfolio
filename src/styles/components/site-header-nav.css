@@ -18,7 +18,7 @@
   will-change: transform;
 }
 
-.section-nav--hidden {
+.section-nav--hidden:not(:focus-within) {
   transform: translate3d(0, -100%, 0);
 }
 
@@ -39,13 +39,17 @@
   font-size: clamp(0.68rem, calc(0.543rem + 0.457vw), 0.76rem);
   font-weight: 600;
   text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
   transition: color 140ms ease;
 }
 
 .section-nav a:hover,
 .section-nav a.active {
   color: var(--text);
+}
+
+.section-nav a:focus-visible {
+  outline-offset: -4px;
 }
 
 .section-nav a > span {
@@ -84,8 +88,4 @@
   .section-nav {
     transition: none;
   }
-}
-
-.section-nav a {
-  white-space: nowrap;
 }

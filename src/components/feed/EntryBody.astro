@@ -9,7 +9,6 @@ type Props = {
   href?: string | undefined
   image?: FeedImage | undefined
   imageLabel?: string | undefined
-  imageSizes?: string
   bodyLines?: 2 | 3
   external?: boolean | undefined
   priority?: boolean
@@ -22,7 +21,6 @@ const {
   href,
   image,
   imageLabel,
-  imageSizes = 'auto, 100vw',
   bodyLines = 3,
   external = false,
   priority = false,
@@ -59,10 +57,9 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
         image={image}
         href={href}
         label={imageLabel ?? `${title ?? '記事'}を開く`}
-        sizes={imageSizes}
+        sizes="auto, 100vw"
         external={external}
         priority={priority}
-        className="ogp-preview--entry"
       />
     )
   }

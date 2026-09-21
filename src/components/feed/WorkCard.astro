@@ -17,12 +17,7 @@ type Props = {
 const { entry, headingLevel = 2, priority = false } = Astro.props
 ---
 
-<EntryFrame
-  author={entry.author}
-  className="work-entry"
-  showAuthorClass={false}
-  showLine={false}
->
+<EntryFrame author={entry.author} className="work-entry">
   <div class="work-entry-layout">
     <EntryHeader
       author={entry.author}

@@ -8,10 +8,9 @@ import type { Reply } from '@/lib/portfolio/types'
 type Props = {
   replies: Reply[]
   label?: string
-  open?: boolean
 }
 
-const { replies, label = 'AIのコメント', open = false } = Astro.props
+const { replies, label = 'AIのコメント' } = Astro.props
 ---
 
 <details
@@ -19,7 +18,6 @@ const { replies, label = 'AIのコメント', open = false } = Astro.props
     'reply-disclosure',
     { 'reply-disclosure--ai': label !== '返信' },
   ]}
-  open={open}
 >
   <summary>
     <span>{label}</span>

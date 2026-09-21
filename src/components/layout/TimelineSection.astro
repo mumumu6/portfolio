@@ -6,17 +6,16 @@ type Props = {
   headingId: string
   label: string
   count: number
-  listClass?: string
 }
 
-const { id, headingId, label, count, listClass } = Astro.props
+const { id, headingId, label, count } = Astro.props
 ---
 
 <section class="timeline-group" id={id} aria-labelledby={headingId}>
   <h2 class="timeline-group__heading" id={headingId}>
     <span>{label}</span><small>{count}件</small>
   </h2>
-  <div class:list={['feed-list', 'feed-list--timeline', listClass]}>
+  <div class="feed-list feed-list--timeline">
     <slot />
   </div>
 </section>

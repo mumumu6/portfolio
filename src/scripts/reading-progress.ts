@@ -1,3 +1,5 @@
+import { prefersReducedMotion } from '@/scripts/motion'
+
 let cleanupReadingProgress: (() => void) | null = null
 
 export const setupReadingProgress = () => {
@@ -163,21 +165,24 @@ export const setupReadingProgress = () => {
 
     window.scrollTo({
       top: Math.max(0, targetTop),
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'auto'
-        : 'smooth',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
     })
     link.closest('details')?.removeAttribute('open')
   }
 
   const cleanup = () => {
     active = false
+    resizeObserver.disconnect()
     if (progressFrame) cancelAnimationFrame(progressFrame)
     if (measurementFrame) cancelAnimationFrame(measurementFrame)
     window.removeEventListener('scroll', scheduleReadingProgress)
     window.removeEventListener('resize', scheduleReadingProgressMeasurement)
     document.removeEventListener('click', handleTocClick, { capture: true })
   }
+
+  // Images, fonts and disclosures can move headings without a window resize.
+  const resizeObserver = new ResizeObserver(scheduleReadingProgressMeasurement)
+  resizeObserver.observe(article)
 
   cleanupReadingProgress = cleanup
   window.addEventListener('scroll', scheduleReadingProgress, { passive: true })

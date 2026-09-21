@@ -1,3 +1,6 @@
+import { matchesNavigationPath } from '@/lib/navigation'
+import { prefersReducedMotion } from '@/scripts/motion'
+
 type IndicatorGeometry = {
   x: number
   width: number
@@ -15,7 +18,7 @@ const indicatorEasing = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
 const findLinkForPath = (nav: HTMLElement, pathname: string) =>
   Array.from(nav.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')).find(
-    (link) => pathname === link.pathname || pathname.startsWith(link.pathname),
+    (link) => matchesNavigationPath(pathname, link.pathname),
   )
 
 const getTargetGeometry = (
@@ -82,10 +85,7 @@ export const createNavigationIndicatorController = (
     indicator.style.width = `${target.width}px`
     indicator.style.transform = `translate3d(${target.x}px, 0, 0)`
 
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-    if (immediate || reducedMotion) return
+    if (immediate || prefersReducedMotion()) return
     // Home has no active tab: slide into the first selection from outside the nav.
     const start =
       origin && origin.width > 0
@@ -106,9 +106,5 @@ export const createNavigationIndicatorController = (
     )
   }
 
-  const reposition = (pathname: string) => {
-    read(pathname).forEach((state) => apply(state, true))
-  }
-
-  return { apply, read, reposition }
+  return { apply, read }
 }

@@ -7,10 +7,9 @@ type Props = {
   href: string
   label?: string
   imageRatio?: number
-  className?: string
 }
 
-const { href, label, imageRatio, className } = Astro.props
+const { href, label, imageRatio } = Astro.props
 const url = new URL(href)
 const ogp = await getOgp(href)
 const title = ogp.title ?? label ?? url.hostname
@@ -31,7 +30,6 @@ const optimizedImageHeight = Math.round(
     'external-card-link',
     'link-preview-card',
     { 'link-preview-card--with-image': ogp.image },
-    className,
   ]}
   style={resolvedImageRatio
     ? `--link-image-ratio: ${resolvedImageRatio}`

@@ -1,46 +1,10 @@
-const linkPreviewSkeletonMinimumMs = 320
-const decodedImages = new WeakSet<HTMLImageElement>()
-const imageRequestTimes = new WeakMap<HTMLElement, number>()
-const imageReadyTimers = new WeakMap<HTMLImageElement, number>()
-
-const commitImageReady = (
-  image: HTMLImageElement,
-  state: 'loaded' | 'error',
-) => {
+const markImageReady = (image: HTMLImageElement, state: 'loaded' | 'error') => {
   image.dataset.imageState = state
 
   const picture = image.closest('picture')
   if (picture) {
     picture.dataset.imageState = state
   }
-}
-
-const markImageReady = (image: HTMLImageElement, state: 'loaded' | 'error') => {
-  const picture = image.closest<HTMLElement>('picture')
-  if (
-    state !== 'loaded' ||
-    !picture?.classList.contains('link-preview-card__image')
-  ) {
-    commitImageReady(image, state)
-    return
-  }
-
-  decodedImages.add(image)
-  const requestedAt = imageRequestTimes.get(picture)
-  if (requestedAt === undefined) return
-
-  const remaining = Math.max(
-    0,
-    linkPreviewSkeletonMinimumMs - (performance.now() - requestedAt),
-  )
-  const previousTimer = imageReadyTimers.get(image)
-  if (previousTimer !== undefined) window.clearTimeout(previousTimer)
-
-  const timer = window.setTimeout(() => {
-    imageReadyTimers.delete(image)
-    commitImageReady(image, 'loaded')
-  }, remaining)
-  imageReadyTimers.set(image, timer)
 }
 
 const markImageDecoded = async (image: HTMLImageElement) => {
@@ -77,13 +41,6 @@ export const setupImageLoading = () => {
               const target = entry.target
               if (!(target instanceof HTMLElement)) return
               target.dataset.imageRequested = 'true'
-              imageRequestTimes.set(target, performance.now())
-              const image = target.querySelector<HTMLImageElement>(
-                'img[data-progressive-image]',
-              )
-              if (image && decodedImages.has(image)) {
-                markImageReady(image, 'loaded')
-              }
               lazyImageObserver?.unobserve(target)
             })
           },

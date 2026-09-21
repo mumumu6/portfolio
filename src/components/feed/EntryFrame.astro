@@ -6,28 +6,19 @@ import type { AuthorId } from '@/lib/portfolio/types'
 type Props = {
   author: AuthorId
   className?: string
-  showAuthorClass?: boolean
-  showLine?: boolean
 }
 
-const {
-  author,
-  className,
-  showAuthorClass = true,
-  showLine = true,
-} = Astro.props
-const classes = [
-  'feed-entry',
-  className,
-  showAuthorClass ? `feed-entry--author-${author}` : undefined,
-]
+const { author, className } = Astro.props
+const authorClass =
+  author === 'mumumu' ? undefined : `feed-entry--author-${author}`
+const classes = ['feed-entry', className, authorClass]
 ---
 
 <article class:list={classes}>
   <div class="entry-grid">
     <div class="entry-rail">
       <Avatar author={author} />
-      {showLine && <span class="entry-line" aria-hidden="true" />}
+      <span class="entry-line" aria-hidden="true"></span>
     </div>
     <div class="entry-content">
       <slot />

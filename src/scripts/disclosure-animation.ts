@@ -1,3 +1,5 @@
+import { prefersReducedMotion } from '@/scripts/motion'
+
 const boundDisclosures = new WeakSet<HTMLDetailsElement>()
 
 export const setupDisclosureAnimations = () => {
@@ -48,6 +50,11 @@ export const setupDisclosureAnimations = () => {
         content.style.maxHeight = '0px'
       }
 
+      const finishOpen = () => {
+        window.clearTimeout(finishTimer)
+        if (details.open && !isClosing) content.style.maxHeight = 'none'
+      }
+
       const openDisclosure = (animate = true) => {
         clearPendingAnimation()
         isClosing = false
@@ -55,10 +62,7 @@ export const setupDisclosureAnimations = () => {
         details.removeAttribute('data-closing')
         details.open = true
 
-        if (
-          !animate ||
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ) {
+        if (!animate || prefersReducedMotion()) {
           content.classList.add('is-open')
           content.style.maxHeight = 'none'
           return
@@ -71,7 +75,10 @@ export const setupDisclosureAnimations = () => {
           content.classList.add('is-open')
           const expandedHeight = measureExpandedHeight()
           animationFrame = requestAnimationFrame(() => {
-            if (details.open) content.style.maxHeight = `${expandedHeight}px`
+            if (details.open) {
+              content.style.maxHeight = `${expandedHeight}px`
+              finishTimer = window.setTimeout(finishOpen, 480)
+            }
           })
         })
       }
@@ -82,7 +89,7 @@ export const setupDisclosureAnimations = () => {
         closeTransitionStarted = false
         details.dataset.closing = 'true'
 
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (prefersReducedMotion()) {
           finishClose()
           return
         }
@@ -111,6 +118,8 @@ export const setupDisclosureAnimations = () => {
         if (event.propertyName !== 'max-height') return
         if (isClosing && closeTransitionStarted) {
           finishClose()
+        } else if (!isClosing) {
+          finishOpen()
         }
       })
 

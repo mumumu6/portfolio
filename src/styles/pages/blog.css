@@ -233,10 +233,6 @@
 }
 
 @media (max-width: 760px) {
-  .article-hero {
-    width: calc(100% - var(--content-gutter) - var(--content-gutter));
-  }
-
   .article-layout {
     display: block;
     padding: 30px 20px 0;

@@ -3,7 +3,6 @@ import type { CollectionEntry } from 'astro:content'
 import { getCollection, render } from 'astro:content'
 import '@/styles/components/work-detail.css'
 import '@/styles/components/article-prose.css'
-import '@/styles/components/article-nav.css'
 import '@/styles/components/eyebrow.css'
 import '@/styles/components/work-status.css'
 import Avatar from '@/components/common/Avatar.astro'
@@ -125,17 +124,9 @@ const threadItems = [
         {
           data.links.length > 0 && (
             <nav class="work-thread-links" aria-label="作品へのリンク">
-              {data.links.map((link) => {
-                const hostname = new URL(link.href).hostname
-                return (
-                  <ExternalLinkCard
-                    href={link.href}
-                    label={link.label}
-                    host={hostname}
-                    className="external-card-link--work"
-                  />
-                )
-              })}
+              {data.links.map((link) => (
+                <ExternalLinkCard href={link.href} label={link.label} />
+              ))}
             </nav>
           )
         }
@@ -147,11 +138,7 @@ const threadItems = [
         const replyDate = formatReplyDate(item.date)
         return (
           <section
-            class:list={[
-              'work-thread-post',
-              'work-thread-post--reply',
-              { 'work-thread-post--ai': item.kind === 'ai' },
-            ]}
+            class:list={['work-thread-post', 'work-thread-post--reply']}
             aria-label={
               item.kind === 'ai'
                 ? `${authorNames[item.author]}のコメント ${index + 1}`

@@ -10,7 +10,6 @@ type Props = {
   sizes: string
   external?: boolean | undefined
   priority?: boolean | undefined
-  className?: string | undefined
 }
 
 const {
@@ -20,9 +19,7 @@ const {
   sizes,
   external = false,
   priority = false,
-  className,
 } = Astro.props
-const classes = ['ogp-preview', className]
 const Wrapper = href ? 'a' : 'div'
 const wrapperAttributes = href
   ? {
@@ -33,7 +30,7 @@ const wrapperAttributes = href
   : {}
 ---
 
-<Wrapper class:list={classes} {...wrapperAttributes}>
+<Wrapper class="ogp-preview" {...wrapperAttributes}>
   <ResponsiveImage
     src={image.src}
     alt={image.alt}
