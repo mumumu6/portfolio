@@ -37,9 +37,10 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
   {
     title &&
       (href ? (
-        <Heading class="entry-title">
+        <Heading class="entry-title" aria-label={title}>
           <a
             href={href}
+            aria-label={title}
             target={external ? '_blank' : undefined}
             rel={external ? 'noreferrer' : undefined}
           >
@@ -47,7 +48,9 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
           </a>
         </Heading>
       ) : (
-        <Heading class="entry-title">{title}</Heading>
+        <Heading class="entry-title" aria-label={title}>
+          {title}
+        </Heading>
       ))
   }
 

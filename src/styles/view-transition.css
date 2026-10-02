@@ -1,4 +1,4 @@
-/* Keep page content transitions quiet while the persisted navigation stays in place. */
+/* ナビの位置を保ちながら、ページ本文は控えめに切り替える。 */
 :root {
   --page-transition-duration: 150ms;
   --page-transition-ease: ease-out;
@@ -13,7 +13,7 @@
   isolation: isolate;
 }
 
-/* Keep the old full-screen image opaque as the new image fades over it. */
+/* 新しい画面を重ねてフェードさせる間、古い画面は不透明に保つ。 */
 ::view-transition-old(root) {
   animation: none;
   mix-blend-mode: normal;
@@ -34,13 +34,14 @@
   }
 }
 
-/* Keep the sticky navigation and its indicator live on mobile page swaps.
-   Theme changes still use the document transition. */
+/* モバイルのページ遷移では、追従ナビとインジケーターをそのまま表示する。
+   テーマ切り替え時は、ページ全体の遷移を利用する。 */
 @media (max-width: 767px), (pointer: coarse) {
   :root:not([data-theme-transitioning]) {
     view-transition-name: none;
   }
 
+  :root:not([data-theme-transitioning]) .section-nav,
   :root:not([data-theme-transitioning]) [data-astro-transition-scope] {
     view-transition-name: none !important;
   }

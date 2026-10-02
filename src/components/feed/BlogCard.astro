@@ -47,6 +47,9 @@ const sourceLabel = sourceUrl
         entry.href && sourceLabel && (
           <a
             class="entry-source"
+            aria-label={
+              entry.title ? `${sourceLabel}: ${entry.title}` : sourceLabel
+            }
             href={entry.href}
             target={external ? '_blank' : undefined}
             rel={external ? 'noreferrer' : undefined}

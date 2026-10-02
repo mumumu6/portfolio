@@ -4,14 +4,14 @@ import { getCollection, render } from 'astro:content'
 import '@/styles/pages/blog.css'
 import '@/styles/components/article-prose.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import ArticleToc from '@/components/article/ArticleToc.astro'
+import ArticleControls from '@/components/article/ArticleControls.vue'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 import TagList from '@/components/common/TagList.astro'
 import { estimateReadingMinutes } from '@/lib/portfolio/utils'
 
 type Props = { post: CollectionEntry<'blogs'> }
 
-export async function getStaticPaths() {
+export const getStaticPaths = async () => {
   const localPosts = await getCollection('blogs')
   return localPosts.map((post) => ({
     params: { slug: post.id },
@@ -48,48 +48,30 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
     { name: data.title, href: Astro.url.pathname },
   ]}
 >
-  <article class="article-page">
-    <div class="reading-progress" data-reading-progress aria-hidden="true">
-      <svg class="reading-progress__ring" viewBox="0 0 48 48">
-        <circle class="reading-progress__track" cx="24" cy="24" r="21.5"
-        ></circle>
-        <circle
-          class="reading-progress__value"
-          cx="24"
-          cy="24"
-          r="21.5"
-          pathLength="100"
-          data-reading-progress-ring></circle>
-      </svg>
-      <span data-reading-progress-label>0%</span>
-    </div>
-    <div class="article-hero">
-      <ResponsiveImage
-        className="article-cover"
-        src={data.cover}
-        sizes="(max-width: 760px) calc(100vw - 32px), 780px"
-        alt={data.coverAlt}
-        loading="eager"
-        fetchPriority="high"
-      />
-      <header class="article-header">
-        <h1>{data.title}</h1>
-        <div class="article-meta">
-          <time datetime={publishedAt}>{dateLabel}</time>
-          <span>約{readingMinutes}分</span>
-        </div>
-      </header>
-    </div>
-    <div class="article-intro">
-      <p class="article-lead">{data.description}</p>
-      <div class="article-tags"><TagList tags={data.tags} /></div>
-    </div>
-
-    <ArticleToc headings={tocHeadings} mode="mobile" />
-
-    <div class="article-layout">
-      <ArticleToc headings={tocHeadings} mode="desktop" />
-      <div class="article-prose"><Content /></div>
-    </div>
-  </article>
+  <ArticleControls headings={tocHeadings} client:load>
+    <Fragment slot="header">
+      <div class="article-hero">
+        <ResponsiveImage
+          className="article-cover"
+          src={data.cover}
+          sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 862px) calc(100vw - 42px), (max-width: 1232px) 778px, min(calc(100vw - 454px), 1398px)"
+          alt={data.coverAlt}
+          loading="eager"
+          fetchPriority="high"
+        />
+        <header class="article-header">
+          <h1>{data.title}</h1>
+          <div class="article-meta">
+            <time datetime={publishedAt}>{dateLabel}</time>
+            <span>約{readingMinutes}分</span>
+          </div>
+        </header>
+      </div>
+      <div class="article-intro">
+        <p class="article-lead">{data.description}</p>
+        <div class="article-tags"><TagList tags={data.tags} /></div>
+      </div>
+    </Fragment>
+    <Content />
+  </ArticleControls>
 </BaseLayout>

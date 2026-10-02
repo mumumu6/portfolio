@@ -7,11 +7,11 @@ const authors = new Set(['chatgpt', 'codex'])
 const replyTargets = new Set(['mumumu', ...authors])
 const targetKinds = new Set(['work', 'experience'])
 
-function assert(condition, message) {
+const assert = (condition, message) => {
   if (!condition) throw new Error(message)
 }
 
-function validateReply(reply, location) {
+const validateReply = (reply, location) => {
   assert(
     reply && typeof reply === 'object' && !Array.isArray(reply),
     `${location} must be an object.`,
@@ -32,7 +32,7 @@ function validateReply(reply, location) {
   )
 }
 
-function validateReplyOrder(replies, location, parentDate) {
+const validateReplyOrder = (replies, location, parentDate) => {
   let previous = parentDate
   for (const [index, reply] of replies.entries()) {
     validateReply(reply, `${location}[${index}]`)

@@ -1,14 +1,15 @@
 import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
+import vue from '@astrojs/vue'
 import AstroPWA from '@vite-pwa/astro'
 
 const defaultThemeColor = '#090d12'
 
 const runtimeCaching = [
   {
-    // This is a static site. Return prefetched or previously visited HTML
-    // immediately instead of revalidating on every Astro transition.
+    // 静的サイトのため、先読み済み・訪問済みの HTML は
+    // 遷移のたびに再検証せず、キャッシュからすぐに返す。
     urlPattern: ({ request, url }) =>
       url.origin === self.location.origin &&
       (request.mode === 'navigate' ||
@@ -42,6 +43,10 @@ const runtimeCaching = [
 export default defineConfig({
   site: 'https://mumumu6.net',
   output: 'static',
+  vite: {
+    // すべてのislandが Composition API を使うため、未使用の Options API を除外する。
+    define: { __VUE_OPTIONS_API__: false },
+  },
   image: {
     domains: [
       'files.speakerdeck.com',
@@ -51,17 +56,18 @@ export default defineConfig({
     ],
   },
   build: {
-    // Inline small route styles so ClientRouter can swap immediately without
-    // waiting for several extra stylesheet requests. Larger styles remain cached assets.
+    // 小さなページ用スタイルをインライン化し、CSS の追加取得を待たずに遷移する。
+    // 大きなスタイルは別ファイルにしてキャッシュを利用する。
     inlineStylesheets: 'auto',
   },
   integrations: [
     mdx(),
+    vue(),
     sitemap(),
     AstroPWA({
       filename: 'sw.js',
-      // Astro does not rewrite static HTML with Vite's injected registration
-      // tag, so the existing client entry imports the virtual registration module.
+      // Astro の静的 HTML には Vite の登録タグが挿入されないため、
+      // クライアント側で仮想モジュールを読み込み、Service Worker を登録する。
       injectRegister: 'auto',
       registerType: 'autoUpdate',
       scope: '/',

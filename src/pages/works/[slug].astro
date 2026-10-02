@@ -14,7 +14,7 @@ import { getAiReplies } from '@/lib/portfolio/ai'
 import { statusLabels } from '@/lib/portfolio/constants'
 import type { AuthorId, Reply } from '@/lib/portfolio/types'
 
-export async function getStaticPaths() {
+export const getStaticPaths = async () => {
   const works = await getCollection('works')
   return works.map((work) => ({ params: { slug: work.id }, props: { work } }))
 }

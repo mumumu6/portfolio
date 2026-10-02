@@ -1,5 +1,6 @@
 ---
-import { Picture } from 'astro:assets'
+import { getImage } from 'astro:assets'
+import ResponsivePicture from '@/components/common/ResponsivePicture.vue'
 import type { ImageMetadata } from 'astro'
 import '@/styles/components/responsive-image.css'
 
@@ -55,33 +56,50 @@ const defaultWidths = [
   ),
 ]
 const widths = customWidths ?? defaultWidths
-const isLazy = loading === 'lazy'
 const qualityAttribute = quality === undefined ? {} : { quality }
-// Picture requires explicit dimensions for remote sources, while local
-// metadata already contains them. Preserve that distinction in its props.
-const sourceAttributes =
-  typeof src === 'string'
-    ? { src, width: resolvedWidth, height: resolvedHeight }
-    : { src }
+const optimize = (format: 'avif' | 'webp', candidate: number) =>
+  getImage({
+    src,
+    width: candidate,
+    ...(isRemoteImage
+      ? { height: Math.round((candidate * resolvedHeight) / resolvedWidth) }
+      : {}),
+    format,
+    ...qualityAttribute,
+  })
+const [avif, webp, fallback] = await Promise.all([
+  Promise.all(widths.map((candidate) => optimize('avif', candidate))),
+  Promise.all(widths.map((candidate) => optimize('webp', candidate))),
+  optimize('webp', Math.min(resolvedWidth, maximumGeneratedWidth)),
+])
+const pictureProps = {
+  src: fallback.src,
+  avifSrcset: avif
+    .map((image, index) => `${image.src} ${widths[index]}w`)
+    .join(', '),
+  webpSrcset: webp
+    .map((image, index) => `${image.src} ${widths[index]}w`)
+    .join(', '),
+  alt,
+  width: resolvedWidth,
+  height: resolvedHeight,
+  sizes,
+  loading,
+  fetchPriority,
+  className,
+}
 ---
 
-<Picture
-  {...sourceAttributes}
-  formats={['avif']}
-  fallbackFormat="webp"
-  alt={alt}
-  width={resolvedWidth}
-  height={resolvedHeight}
-  widths={widths}
-  sizes={sizes}
-  {...qualityAttribute}
-  loading={loading}
-  decoding="async"
-  fetchpriority={fetchPriority}
-  data-progressive-image
-  pictureAttributes={{
-    ...(className ? { class: className } : {}),
-    'data-progressive-image': '',
-    ...(isLazy ? {} : { 'data-image-requested': 'true' }),
-  }}
-/>
+{
+  alt === '' ? (
+    <ResponsivePicture {...pictureProps} progressive={false} />
+  ) : loading === 'eager' ? (
+    <ResponsivePicture {...pictureProps} progressive={true} client:load />
+  ) : (
+    <ResponsivePicture
+      {...pictureProps}
+      progressive={true}
+      client:visible={{ rootMargin: '160px' }}
+    />
+  )
+}

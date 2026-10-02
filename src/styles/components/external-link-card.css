@@ -77,14 +77,18 @@
   min-width: 0;
   display: grid;
   align-content: center;
+  grid-template-columns: minmax(0, 1fr);
   gap: 7px;
   grid-column: 1;
   grid-row: 1;
   padding: 18px 12px 18px 20px;
 }
 
-.link-preview-card strong,
-.link-preview-card__description {
+.link-preview-card__body > * {
+  min-width: 0;
+}
+
+.link-preview-card strong {
   display: -webkit-box;
   overflow: hidden;
   line-clamp: 2;
@@ -99,6 +103,10 @@
 }
 
 .link-preview-card__description {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--muted);
   font-size: 0.72rem;
   line-height: 1.55;

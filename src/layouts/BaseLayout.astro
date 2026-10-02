@@ -3,7 +3,7 @@ import '@/styles/global.css'
 import { ClientRouter } from 'astro:transitions'
 import type { ComponentProps } from 'astro/types'
 import SeoHead from '@/components/layout/SeoHead.astro'
-import SectionNavigation from '@/components/layout/SectionNavigation.astro'
+import SectionNavigation from '@/components/layout/SectionNavigation.vue'
 import ProfileHeader from '@/components/profile/ProfileHeader.astro'
 import ibmPlexSansJp400 from '@fontsource/ibm-plex-sans-jp/files/ibm-plex-sans-jp-latin-400-normal.woff2?url'
 import spaceGrotesk600 from '@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2?url'
@@ -51,7 +51,7 @@ const { showProfileHeader = true, ...seoProps } = Astro.props
         try {
           saved = localStorage.getItem('theme')
         } catch {
-          // Storage can be unavailable in privacy-restricted contexts.
+          // プライバシー設定によってストレージが利用できない場合がある。
         }
         const theme = saved || 'dark'
         document.documentElement.dataset.theme = theme
@@ -66,12 +66,25 @@ const { showProfileHeader = true, ...seoProps } = Astro.props
     <a class="skip-link" href="#main-content">本文へ移動</a>
     <main class="site-shell" id="main-content">
       {showProfileHeader && <ProfileHeader />}
-      <SectionNavigation pathname={Astro.url.pathname} />
+      <SectionNavigation
+        pathname={Astro.url.pathname}
+        client:load
+        transition:persist="section-nav"
+        transition:persist-props
+      />
       <slot />
     </main>
 
     <script>
-      import '@/scripts/site-ui'
+      import '@/scripts/page-enhancements'
+
+      const register = async () => {
+        const { registerSW } = await import('virtual:pwa-register')
+        registerSW()
+      }
+      if ('requestIdleCallback' in window)
+        window.requestIdleCallback(register, { timeout: 1200 })
+      else setTimeout(register, 1200)
     </script>
   </body>
 </html>
