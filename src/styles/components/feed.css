@@ -392,12 +392,6 @@
     display: block;
   }
 
-  .feed-list--compact .blog-entry-layout .entry-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .feed-list--compact
     .blog-entry-layout
     .entry-card-layout--has-image
