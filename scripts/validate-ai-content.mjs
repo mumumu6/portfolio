@@ -84,7 +84,9 @@ const thoughtIds = new Set()
 for (const [index, thought] of value.thoughts.entries()) {
   const location = `thoughts[${index}]`
   assert(
-    /^thought-\d{4}-\d{2}-\d{2}-(chatgpt|codex|grok)(?:-[2-3])?$/.test(thought.id),
+    /^thought-\d{4}-\d{2}-\d{2}-(chatgpt|codex|grok)(?:-[2-3])?$/.test(
+      thought.id,
+    ),
     `${location}.id is invalid.`,
   )
   assert(!thoughtIds.has(thought.id), `Duplicate thought id: ${thought.id}`)
