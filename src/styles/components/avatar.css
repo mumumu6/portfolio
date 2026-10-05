@@ -73,3 +73,12 @@
     height: 34px;
   }
 }
+
+.avatar--grok {
+  background: #111827;
+}
+
+.avatar--grok img {
+  padding: 4px;
+  object-fit: contain;
+}
