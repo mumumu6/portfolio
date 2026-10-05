@@ -304,6 +304,11 @@
   color: var(--codex);
 }
 
+.feed-entry--author-grok .entry-author strong,
+.reply:has(.avatar--grok) .reply-head strong {
+  color: var(--grok);
+}
+
 .entry-title {
   max-width: 680px;
   margin: 8px 0 4px;
