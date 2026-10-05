@@ -1,5 +1,5 @@
 {
-  "[astro][javascript][typescript][json][jsonc][css]": {
+  "[astro][javascript][typescript][json][jsonc][css][vue]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
