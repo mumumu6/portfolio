@@ -31,37 +31,33 @@ const optimizedImageHeight = Math.round(
     'link-preview-card',
     { 'link-preview-card--with-image': ogp.image },
   ]}
-  style={resolvedImageRatio
-    ? `--link-image-ratio: ${resolvedImageRatio}`
-    : undefined}
+  style={
+    resolvedImageRatio ? `--link-image-ratio: ${resolvedImageRatio}` : undefined
+  }
   href={href}
   target="_blank"
   rel="noopener noreferrer"
 >
-  {
-    ogp.image && (
-      <span class="link-preview-card__thumbnail" aria-hidden="true">
-        <ResponsiveImage
-          className="link-preview-card__image"
-          src={ogp.image}
-          alt=""
-          width={optimizedImageWidth}
-          height={optimizedImageHeight}
-          widths={[optimizedImageWidth]}
-          sizes={`${optimizedImageWidth}px`}
-          quality="mid"
-          loading="lazy"
-        />
-      </span>
-    )
-  }
+  {ogp.image && (
+    <span class="link-preview-card__thumbnail" aria-hidden="true">
+      <ResponsiveImage
+        className="link-preview-card__image"
+        src={ogp.image}
+        alt=""
+        width={optimizedImageWidth}
+        height={optimizedImageHeight}
+        widths={[optimizedImageWidth]}
+        sizes={`${optimizedImageWidth}px`}
+        quality="mid"
+        loading="lazy"
+      />
+    </span>
+  )}
   <span class="link-preview-card__body">
     <strong>{title}</strong>
-    {
-      ogp.description && (
-        <span class="link-preview-card__description">{ogp.description}</span>
-      )
-    }
+    {ogp.description && (
+      <span class="link-preview-card__description">{ogp.description}</span>
+    )}
     <small>{host}</small>
   </span>
 </a>

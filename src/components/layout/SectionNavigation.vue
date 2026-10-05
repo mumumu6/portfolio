@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
+import { nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import { useEventListener, useRafFn, useWindowScroll } from '@vueuse/core'
-import type { TransitionBeforeSwapEvent } from 'astro:transitions/client'
+import type {
+  TransitionBeforePreparationEvent,
+  TransitionBeforeSwapEvent,
+} from 'astro:transitions/client'
 import { navigationItems, matchesNavigationPath } from '@/lib/navigation'
 import '@/styles/components/site-header-nav.css'
 
@@ -14,17 +17,15 @@ const indicatorStyle = shallowRef<{ width: string; transform: string }>()
 const { y } = useWindowScroll()
 let stickyStart = 0
 let lastY = 0
-let pendingViewportTop: number | null = null
-let previousScrollBehavior: string | null = null
+let activePreparation: AbortSignal | undefined
 const isActive = (href: string) => matchesNavigationPath(pathname.value, href)
 
-const getStickyStart = () => {
-  const profile = document.querySelector('.profile-header')
-  return profile ? profile.getBoundingClientRect().bottom + window.scrollY : 0
-}
 const measure = () => {
   if (!nav.value) return
-  stickyStart = getStickyStart()
+  const profile = document.querySelector('.profile-header')
+  stickyStart = profile
+    ? profile.getBoundingClientRect().bottom + window.scrollY
+    : 0
   const link = nav.value.querySelector<HTMLElement>('a.active')
   const label = link?.querySelector<HTMLElement>('span')
   if (!link || !label) {
@@ -38,11 +39,12 @@ const measure = () => {
     transform: `translate3d(${link.offsetLeft + (link.offsetWidth - width) / 2}px, 0, 0)`,
   }
 }
-// 連続するイベントを1フレームにまとめ、破棄時の予約解除は VueUse に任せる。
-const { resume: scheduleLayout } = useRafFn(measure, {
+
+const { resume: scheduleMeasure } = useRafFn(measure, {
   immediate: false,
   once: true,
 })
+
 watch(y, (scrollY) => {
   const delta = scrollY - lastY
   if (scrollY <= 4 || scrollY < stickyStart) {
@@ -53,57 +55,52 @@ watch(y, (scrollY) => {
     lastY = scrollY
   }
 })
-const beforePreparation = () => {
-  loading.value = true
-}
-const beforeSwap = (transition: TransitionBeforeSwapEvent) => {
-  const traversal = transition.navigationType === 'traverse'
-  pendingViewportTop =
-    !traversal && transition.newDocument.querySelector('.profile-header')
-      ? Math.max(0, nav.value?.getBoundingClientRect().top ?? 0)
-      : null
-  hidden.value = false
-  if (traversal && previousScrollBehavior === null) {
-    previousScrollBehavior = document.documentElement.style.scrollBehavior
-    document.documentElement.style.scrollBehavior = 'auto'
-  }
-  if (traversal)
-    transition.newDocument.documentElement.style.scrollBehavior = 'auto'
-  pathname.value = transition.to.pathname
-}
-const afterSwap = () => {
-  loading.value = false
-  // Astro が遷移後のスナップショットを取得する前に、スクロール位置を復元する。
-  if (pendingViewportTop !== null) {
-    stickyStart = getStickyStart()
-    lastY = Math.max(0, stickyStart - pendingViewportTop)
-    window.scrollTo({ top: lastY, behavior: 'instant' })
-    pendingViewportTop = null
-  }
-  if (previousScrollBehavior !== null) {
-    document.documentElement.style.scrollBehavior = previousScrollBehavior
-    previousScrollBehavior = null
-  }
-  lastY = window.scrollY
+watch(
+  () => props.pathname,
+  (nextPathname) => {
+    pathname.value = nextPathname
+  },
+)
+watch(pathname, () => {
   void nextTick().then(measure)
-}
+})
+
+useEventListener('resize', scheduleMeasure)
 const documentTarget = () =>
   typeof document === 'undefined' ? undefined : document
-useEventListener('resize', scheduleLayout)
-useEventListener(documentTarget, 'astro:before-preparation', beforePreparation)
-useEventListener(documentTarget, 'astro:before-swap', beforeSwap)
-useEventListener(documentTarget, 'astro:after-swap', afterSwap)
+useEventListener(documentTarget, 'astro:before-preparation', (event) => {
+  const { signal } = event as TransitionBeforePreparationEvent
+  activePreparation = signal
+  loading.value = true
+  signal.addEventListener(
+    'abort',
+    () => {
+      if (activePreparation !== signal) return
+      activePreparation = undefined
+      loading.value = false
+    },
+    { once: true },
+  )
+})
+useEventListener(documentTarget, 'astro:before-swap', (event) => {
+  const transition = event as TransitionBeforeSwapEvent
+  hidden.value = false
+  pathname.value = transition.to.pathname
+})
+useEventListener(documentTarget, 'astro:after-swap', () => {
+  activePreparation = undefined
+  loading.value = false
+  lastY = window.scrollY
+  void nextTick().then(measure)
+})
 
 onMounted(() => {
+  pathname.value = window.location.pathname
   lastY = window.scrollY
   measure()
   void document.fonts.ready.then(() => {
-    if (nav.value) scheduleLayout()
+    if (nav.value) scheduleMeasure()
   })
-})
-onUnmounted(() => {
-  if (previousScrollBehavior !== null)
-    document.documentElement.style.scrollBehavior = previousScrollBehavior
 })
 </script>
 
@@ -120,9 +117,10 @@ onUnmounted(() => {
       v-for="item in navigationItems"
       :key="item.href"
       :href="item.href"
-      :class="{ active: isActive(item.href) }"
+      :class="['section-nav__link', { active: isActive(item.href) }]"
       :aria-current="isActive(item.href) ? 'page' : undefined"
       data-nav-link
+      data-astro-prefetch
       ><span>{{ item.label }}</span></a
     >
     <span

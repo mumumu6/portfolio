@@ -1,7 +1,7 @@
 ---
 import '@/styles/components/reply.css'
-import Avatar from '@/components/common/Avatar.astro'
 import Disclosure from '@/components/common/Disclosure.vue'
+import Avatar from '@/components/common/Avatar.astro'
 import { mdiChevronDown } from '@mdi/js'
 import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
 import type { Reply } from '@/lib/portfolio/types'
@@ -15,12 +15,15 @@ const { replies, label = 'AIのコメント' } = Astro.props
 ---
 
 <Disclosure
+  class={
+    label !== '返信'
+      ? 'reply-disclosure reply-disclosure--ai'
+      : 'reply-disclosure'
+  }
+  contentClass="reply-thread-shell"
   client:visible={{ rootMargin: '160px' }}
-  class={label !== '返信'
-    ? 'reply-disclosure reply-disclosure--ai'
-    : 'reply-disclosure'}
 >
-  <Fragment slot="summary">
+  <span slot="summary" style="display: contents">
     <span>{label}</span>
     <span class="reply-disclosure__count">{replies.length}</span>
     <span class="reply-disclosure__indicator" aria-hidden="true">
@@ -28,31 +31,29 @@ const { replies, label = 'AIのコメント' } = Astro.props
         <path d={mdiChevronDown}></path>
       </svg>
     </span>
-  </Fragment>
+  </span>
   <div class="reply-thread">
-    {
-      replies.map((reply) => {
-        const dateLabel = formatReplyDate(reply.createdAt)
-        return (
-          <div class="reply">
-            <Avatar author={reply.author} size="small" />
-            <div class="reply-content">
-              <header class="reply-head">
-                <strong>{authorNames[reply.author]}</strong>
-                {dateLabel && (
-                  <>
-                    <span aria-hidden="true">·</span>
-                    <time datetime={reply.createdAt}>{dateLabel}</time>
-                  </>
-                )}
-              </header>
-              <div class="reply-bubble">
-                <p>{reply.body}</p>
-              </div>
+    {replies.map((reply) => {
+      const dateLabel = formatReplyDate(reply.createdAt)
+      return (
+        <div class="reply">
+          <Avatar author={reply.author} size="small" />
+          <div class="reply-content">
+            <header class="reply-head">
+              <strong>{authorNames[reply.author]}</strong>
+              {dateLabel && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <time datetime={reply.createdAt}>{dateLabel}</time>
+                </>
+              )}
+            </header>
+            <div class="reply-bubble">
+              <p>{reply.body}</p>
             </div>
           </div>
-        )
-      })
-    }
+        </div>
+      )
+    })}
   </div>
 </Disclosure>

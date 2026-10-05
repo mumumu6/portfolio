@@ -1,38 +1,112 @@
 import { prefetch } from 'astro:prefetch'
-import type { TransitionBeforeSwapEvent } from 'astro:transitions/client'
+import type {
+  TransitionBeforePreparationEvent,
+  TransitionBeforeSwapEvent,
+} from 'astro:transitions/client'
 import { applyTheme } from '@/lib/theme'
+import { entryTransitionName } from '@/lib/entry-transition'
 
-// ページ全体の処理は、遷移で維持されるナビのハイドレーションに依存させない。
-const imageObserver = new IntersectionObserver((entries, observer) => {
-  for (const entry of entries) {
-    const image = entry.target as HTMLImageElement
-    const top = entry.boundingClientRect.top + window.scrollY
-    if (entry.isIntersecting && top <= window.innerHeight)
-      image.loading = 'eager'
-    else if (entry.boundingClientRect.height > 0 && top > window.innerHeight)
-      image.loading = 'lazy'
-    observer.unobserve(image)
-  }
-})
-const syncImages = () => {
-  imageObserver.disconnect()
-  for (const image of document.images) {
-    if (!image.closest('astro-island[ssr], details:not([open])'))
-      imageObserver.observe(image)
+const nav = () => document.querySelector<HTMLElement>('[data-nav-container]')
+const isEntryDetail = (url: URL) =>
+  /^\/(?:blog|works)\/[^/]+\/?$/.test(url.pathname)
+
+let entryNavigation = 0
+const clearEntryParticipants = (target: Document) => {
+  target.documentElement.removeAttribute('data-entry-transition-scoped')
+  for (const card of target.querySelectorAll('[data-entry-transition-active]'))
+    card.removeAttribute('data-entry-transition-active')
+}
+const selectEntryParticipants = (target: Document, from: URL, to: URL) => {
+  clearEntryParticipants(target)
+  target.documentElement.setAttribute('data-entry-transition-scoped', '')
+  const names = new Set(
+    [from, to]
+      .filter(isEntryDetail)
+      .map((url) =>
+        entryTransitionName(`${url.pathname.replace(/\/$/, '')}/`, 'title'),
+      ),
+  )
+  for (const title of target.querySelectorAll<HTMLElement>(
+    '.feed-entry .entry-title[style]',
+  )) {
+    if (names.has(title.style.viewTransitionName))
+      title
+        .closest('.feed-entry')
+        ?.setAttribute('data-entry-transition-active', '')
   }
 }
-let imageFrame: number | undefined
-window.addEventListener('resize', () => {
-  if (imageFrame !== undefined) return
-  imageFrame = requestAnimationFrame(() => {
-    imageFrame = undefined
-    syncImages()
-  })
-})
-document.addEventListener('astro:page-load', syncImages)
-syncImages()
 
-// PC のホバー先読みは Astro に任せ、タッチ操作だけ標準 API に渡す。
+document.addEventListener('astro:before-preparation', (event) => {
+  const transition = event as TransitionBeforePreparationEvent
+  const current = ++entryNavigation
+  selectEntryParticipants(document, transition.from, transition.to)
+  transition.signal.addEventListener(
+    'abort',
+    () => {
+      if (current === entryNavigation) clearEntryParticipants(document)
+    },
+    { once: true },
+  )
+})
+
+document.addEventListener('astro:before-swap', (event) => {
+  const transition = event as TransitionBeforeSwapEvent
+  const current = entryNavigation
+  selectEntryParticipants(
+    transition.newDocument,
+    transition.from,
+    transition.to,
+  )
+  const cleanup = () => {
+    if (current === entryNavigation) clearEntryParticipants(document)
+  }
+  void transition.viewTransition.finished.then(cleanup, cleanup)
+})
+
+let pendingViewportTop: number | null = null
+let previousScrollBehavior: string | null = null
+
+const getStickyStart = () => {
+  const profile = document.querySelector('.profile-header')
+  return profile ? profile.getBoundingClientRect().bottom + window.scrollY : 0
+}
+
+document.addEventListener('astro:before-swap', (event) => {
+  const transition = event as TransitionBeforeSwapEvent
+  // Keep native detail transitions; simpler index-to-index swaps include / -> /works/.
+  if (!isEntryDetail(transition.from) && !isEntryDetail(transition.to))
+    transition.viewTransition.skipTransition()
+
+  const traversal = transition.navigationType === 'traverse'
+  const currentNav = nav()
+  pendingViewportTop =
+    !traversal && transition.newDocument.querySelector('.profile-header')
+      ? Math.max(0, currentNav?.getBoundingClientRect().top ?? 0)
+      : null
+  if (traversal) {
+    if (previousScrollBehavior === null) {
+      previousScrollBehavior = document.documentElement.style.scrollBehavior
+      document.documentElement.style.scrollBehavior = 'auto'
+    }
+    transition.newDocument.documentElement.style.scrollBehavior = 'auto'
+  }
+})
+
+document.addEventListener('astro:after-swap', () => {
+  if (pendingViewportTop !== null) {
+    window.scrollTo({
+      top: Math.max(0, getStickyStart() - pendingViewportTop),
+      behavior: 'instant',
+    })
+    pendingViewportTop = null
+  }
+  if (previousScrollBehavior !== null) {
+    document.documentElement.style.scrollBehavior = previousScrollBehavior
+    previousScrollBehavior = null
+  }
+})
+
+// タッチ操作時だけ、押されたリンクを Astro の先読み機能に渡す。
 const coarsePointer = matchMedia('(pointer: coarse)')
 const prefetchTouchedLink = (event: Event) => {
   if (!coarsePointer.matches || !(event.target instanceof Element)) return

@@ -49,10 +49,11 @@ onMounted(sync)
 </script>
 
 <template>
-  <button
+  <UButton
     class="icon-button theme-toggle"
     type="button"
-    data-theme-toggle
+    color="neutral"
+    variant="ghost"
     :aria-label="label"
     :aria-pressed="dark"
     @click="toggle"
@@ -65,5 +66,5 @@ onMounted(sync)
         <path :d="mdiWeatherNight" />
       </svg>
     </span>
-  </button>
+  </UButton>
 </template>

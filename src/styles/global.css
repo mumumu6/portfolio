@@ -1,3 +1,5 @@
+@import 'tailwindcss' theme, utilities;
+@import '@nuxt/ui';
 @import '@/styles/base.css';
 @import '@/styles/motion.css';
 @import '@/styles/view-transition.css';

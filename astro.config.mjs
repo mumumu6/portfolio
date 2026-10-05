@@ -3,6 +3,7 @@ import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
 import vue from '@astrojs/vue'
 import AstroPWA from '@vite-pwa/astro'
+import nuxtUI from '@nuxt/ui/vite'
 
 const defaultThemeColor = '#090d12'
 
@@ -44,8 +45,15 @@ export default defineConfig({
   site: 'https://mumumu6.net',
   output: 'static',
   vite: {
-    // すべてのislandが Composition API を使うため、未使用の Options API を除外する。
     define: { __VUE_OPTIONS_API__: false },
+    plugins: [
+      nuxtUI({
+        router: false,
+        colorMode: false,
+        fonts: false,
+        experimental: { componentDetection: true },
+      }),
+    ],
   },
   image: {
     domains: [
@@ -62,6 +70,7 @@ export default defineConfig({
   },
   integrations: [
     mdx(),
+    // 使用中のNuxt UI部品は自己完結しているため、全island向けの共通プラグインは載せない。
     vue(),
     sitemap(),
     AstroPWA({
@@ -103,7 +112,9 @@ export default defineConfig({
     }),
   ],
   prefetch: {
-    prefetchAll: true,
+    // 内部の詳細リンクだけ hover で HTML を先読みする。
+    // タッチ操作の先読みは page-enhancements に任せる。
+    prefetchAll: false,
     defaultStrategy: 'hover',
   },
   experimental: {

@@ -1,0 +1,13 @@
+---
+import ArticleControls from './ArticleControls.vue'
+
+type Heading = { depth: number; slug: string; text: string }
+const { articleId, headings } = Astro.props as {
+  articleId: string
+  headings: Heading[]
+}
+---
+
+<ArticleControls articleId={articleId} headings={headings} client:load>
+  <slot />
+</ArticleControls>

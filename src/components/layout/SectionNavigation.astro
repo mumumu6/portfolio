@@ -1,0 +1,13 @@
+---
+import SectionNavigationIsland from './SectionNavigation.vue'
+
+type Props = { pathname: string }
+const { pathname } = Astro.props
+---
+
+<SectionNavigationIsland
+  pathname={pathname}
+  client:load
+  transition:persist="section-nav"
+  transition:persist-props
+/>

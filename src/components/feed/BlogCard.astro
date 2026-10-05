@@ -43,34 +43,30 @@ const sourceLabel = sourceUrl
       external={external}
       priority={priority}
     >
-      {
-        entry.href && sourceLabel && (
-          <a
-            class="entry-source"
-            aria-label={
-              entry.title ? `${sourceLabel}: ${entry.title}` : sourceLabel
-            }
-            href={entry.href}
-            target={external ? '_blank' : undefined}
-            rel={external ? 'noreferrer' : undefined}
-          >
-            {sourceLabel}
-          </a>
-        )
-      }
+      {entry.href && sourceLabel && (
+        <a
+          class="entry-source"
+          aria-label={
+            entry.title ? `${sourceLabel}: ${entry.title}` : sourceLabel
+          }
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
+          {sourceLabel}
+        </a>
+      )}
 
-      {
-        entry.href && !entry.image && (
-          <a
-            class="entry-link"
-            href={entry.href}
-            target={external ? '_blank' : undefined}
-            rel={external ? 'noreferrer' : undefined}
-          >
-            詳しく見る
-          </a>
-        )
-      }
+      {entry.href && !entry.image && (
+        <a
+          class="entry-link"
+          href={entry.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
+          詳しく見る
+        </a>
+      )}
 
       <div class="entry-card-meta">
         <TagList tags={entry.tags} />

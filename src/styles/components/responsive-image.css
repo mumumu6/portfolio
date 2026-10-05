@@ -7,13 +7,41 @@ picture[data-progressive-image] {
   background-color: var(--surface);
 }
 
-picture[data-progressive-image]::before {
-  content: '';
+picture[data-progressive-image] > img[data-progressive-image] {
+  position: relative;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* SSR の時点からスケルトンを表示し、画像の配置は変えない。 */
+.optimized-image > .responsive-image__skeleton {
   position: absolute;
   z-index: 1;
-  inset: 1px;
+  inset: 0;
+  overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
+  background: var(--surface);
+  animation: none;
+  opacity: 0.82;
+  transition: opacity 260ms ease;
+}
+
+.optimized-image[data-image-state='loaded'] > .responsive-image__skeleton,
+.optimized-image[data-image-state='error'] > .responsive-image__skeleton {
+  opacity: 0;
+  animation: none;
+  transition:
+    opacity 260ms ease,
+    visibility 0s linear 260ms;
+  visibility: hidden;
+}
+
+.responsive-image__skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-image: linear-gradient(
     105deg,
     transparent 22%,
@@ -21,51 +49,16 @@ picture[data-progressive-image]::before {
     color-mix(in srgb, var(--surface) 72%, transparent) 52%,
     transparent 62%
   );
-  background-size: 100% 100%;
-  transform: translate3d(-100%, 0, 0);
-  /* JavaScript の実行前も、控えめなプレースホルダーを表示する。 */
-  opacity: 0.42;
-  transition: opacity 260ms ease;
 }
 
-html.js
-  picture[data-progressive-image][data-image-in-view='true']:not(
-    [data-image-state='loaded']
-  ):not([data-image-state='error'])::before {
-  /* 画面付近でハイドレーションされた画像は、読み込み完了までアニメーションさせる。 */
+.optimized-image[data-image-in-view='true'][data-image-state='loading']
+  .responsive-image__skeleton::after {
   animation: image-skeleton 1.4s linear infinite;
-  will-change: transform;
-  opacity: 0.82;
 }
 
-/* ハイドレーション前でも、デコード済みの画像はすぐに表示する。 */
-picture[data-progressive-image] > img[data-progressive-image] {
-  position: relative;
-  display: block;
-  max-width: 100%;
-  height: auto;
-  z-index: 0;
-  transition: opacity 260ms ease;
-}
-
-picture[data-progressive-image][data-image-state='loaded']::before {
-  opacity: 0;
-  animation: none;
-}
-
-picture[data-progressive-image][data-image-state='loaded']
-  > img[data-progressive-image] {
-  opacity: 1;
-}
-
-picture[data-progressive-image][data-image-state='error']::before {
-  opacity: 0.3;
-  animation: none;
-}
-
-picture[data-progressive-image][data-image-state='error']
-  > img[data-progressive-image] {
-  opacity: 1;
+/* JavaScript が無効でも、ネイティブで読み込まれた画像を見せる。 */
+html:not(.js) .optimized-image > .responsive-image__skeleton {
+  display: none;
 }
 
 @keyframes image-skeleton {
@@ -79,11 +72,24 @@ picture[data-progressive-image][data-image-state='error']
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.js
-    picture[data-progressive-image]:not([data-image-state='loaded']):not(
-      [data-image-state='error']
-    )::before {
+  .optimized-image[data-image-in-view='true'][data-image-state='loading']
+    .responsive-image__skeleton::after {
     animation: none;
-    opacity: 0.82;
   }
+}
+.optimized-image {
+  position: relative;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.optimized-image > picture {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.ogp-preview .optimized-image {
+  height: 100%;
 }

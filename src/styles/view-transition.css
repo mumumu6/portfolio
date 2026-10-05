@@ -5,7 +5,68 @@
   view-transition-name: root;
 }
 
+/* ページ遷移では本文をスナップショット化せず、テーマ切替だけ root を使う。 */
+:root:not([data-theme-transitioning]) {
+  view-transition-name: none;
+}
+
+/* 共有画像・タイトルの移動は、本文のフェードより長く見せる。
+   animation-name はブラウザーが生成する位置・サイズの補間を利用する。 */
+::view-transition-group(*) {
+  animation-duration: 250ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* 詳細ページと対になるカードだけ撮影する。画面外のカードは描画を省略する。 */
+:root[data-entry-transition-scoped]
+  .feed-entry:not([data-entry-transition-active])
+  :is(.entry-title, .ogp-preview) {
+  view-transition-name: none !important;
+}
+
+/* 戻る操作のスクロール復元後も、対になるカードのタイトル・画像を撮影する。 */
+:root:active-view-transition .feed-entry[data-entry-transition-active] {
+  content-visibility: visible;
+}
+
+/* 遷移グループの重なりは、元要素の z-index とは独立する。
+   本文 → ナビ → 共有画像 → タイトルの順で描画する。 */
+.work-thread-cover {
+  view-transition-class: entry-image;
+}
+
+::view-transition-group(.entry-image) {
+  z-index: 2;
+}
+
+/* タイトルを画像のスナップショットより手前に保つ。 */
+.entry-title,
+#work-title {
+  view-transition-class: entry-title;
+}
+
+::view-transition-group(.entry-title) {
+  z-index: 3;
+}
+
+/* 書体・サイズが異なるタイトルを重ねず、移動する文字を一つに保つ。 */
+::view-transition-old(.entry-title) {
+  display: none;
+}
+
+/* 対になる要素がない古いスナップショットを本文に重ねない。 */
+::view-transition-old(.entry-title):only-child,
+::view-transition-old(.entry-image):only-child {
+  display: none;
+}
+
+::view-transition-new(.entry-title) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 ::view-transition-group(root) {
+  z-index: 0;
   animation: none;
 }
 
@@ -37,10 +98,6 @@
 /* モバイルのページ遷移では、追従ナビとインジケーターをそのまま表示する。
    テーマ切り替え時は、ページ全体の遷移を利用する。 */
 @media (max-width: 767px), (pointer: coarse) {
-  :root:not([data-theme-transitioning]) {
-    view-transition-name: none;
-  }
-
   :root:not([data-theme-transitioning]) .section-nav,
   :root:not([data-theme-transitioning]) [data-astro-transition-scope] {
     view-transition-name: none !important;
@@ -48,8 +105,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
     animation: none;
   }
 }

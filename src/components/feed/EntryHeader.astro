@@ -22,23 +22,19 @@ const { author, date, dateLabel, readingMinutes, status, statusLabel } =
     <strong>{authorNames[author]}</strong>
     <span aria-hidden="true">·</span>
     <time datetime={date}>{dateLabel}</time>
-    {
-      readingMinutes && (
-        <>
-          <span aria-hidden="true">·</span>
-          <span>約{readingMinutes}分</span>
-        </>
-      )
-    }
-    {
-      statusLabel && status && (
-        <>
-          <span aria-hidden="true">·</span>
-          <span class:list={['work-status', `work-status--${status}`]}>
-            {statusLabel}
-          </span>
-        </>
-      )
-    }
+    {readingMinutes && (
+      <>
+        <span aria-hidden="true">·</span>
+        <span>約{readingMinutes}分</span>
+      </>
+    )}
+    {statusLabel && status && (
+      <>
+        <span aria-hidden="true">·</span>
+        <span class:list={['work-status', `work-status--${status}`]}>
+          {statusLabel}
+        </span>
+      </>
+    )}
   </div>
 </header>

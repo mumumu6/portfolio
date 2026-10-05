@@ -5,7 +5,8 @@
   line-height: 1.95;
 }
 
-.article-prose > :first-child {
+.article-prose > :first-child,
+.article-prose > astro-slot > :first-child {
   margin-top: 0;
 }
 

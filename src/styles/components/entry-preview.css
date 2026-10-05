@@ -1,4 +1,5 @@
 .ogp-preview {
+  view-transition-class: entry-image;
   position: relative;
   width: min(100%, 630px);
   aspect-ratio: 16 / 9;
