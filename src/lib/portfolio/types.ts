@@ -1,7 +1,7 @@
 import type { WorkStatus } from '@/lib/portfolio/constants'
 import type { ImageMetadata } from 'astro'
 
-export type AuthorId = 'mumumu' | 'chatgpt' | 'codex'
+export type AuthorId = 'mumumu' | 'chatgpt' | 'codex' | 'grok'
 export type EntryKind = 'work' | 'blog' | 'experience' | 'thought'
 
 export type Reply = {

@@ -4,6 +4,7 @@ export const authorNames = {
   mumumu: 'mumumu',
   chatgpt: 'ChatGPT',
   codex: 'Codex',
+  grok: 'Grok Bot',
 } satisfies Record<AuthorId, string>
 
 export const formatReplyDate = (value?: string | Date) => {
