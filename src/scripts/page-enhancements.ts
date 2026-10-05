@@ -5,6 +5,11 @@ import type {
 } from 'astro:transitions/client'
 import { applyTheme } from '@/lib/theme'
 import { entryTransitionName } from '@/lib/entry-transition'
+import '@/scripts/disclosure'
+import '@/scripts/image-loading'
+import '@/scripts/reading-progress'
+import '@/scripts/section-navigation'
+import '@/scripts/theme-toggle'
 
 const nav = () => document.querySelector<HTMLElement>('[data-nav-container]')
 const isEntryDetail = (url: URL) =>

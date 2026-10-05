@@ -1,0 +1,21 @@
+---
+interface Props {
+  class?: string
+  contentClass?: string
+}
+
+const { class: className, contentClass } = Astro.props
+---
+
+<div class:list={[className]} data-disclosure data-state="closed">
+  <button type="button" class="disclosure-trigger" aria-expanded="false">
+    <slot name="summary" />
+  </button>
+  <div
+    class:list={['disclosure-content', contentClass]}
+    data-state="closed"
+    hidden
+  >
+    <slot />
+  </div>
+</div>

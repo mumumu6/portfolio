@@ -1,0 +1,23 @@
+---
+type Heading = { depth: number; slug: string; text: string }
+
+interface Props {
+  headings: Heading[]
+}
+
+const { headings } = Astro.props
+---
+
+<ol>
+  {headings.map((heading) => (
+    <li class={`article-toc--depth-${heading.depth}`}>
+      <a
+        href={`#${encodeURIComponent(heading.slug)}`}
+        data-toc-link
+        data-heading-id={heading.slug}
+      >
+        {heading.text}
+      </a>
+    </li>
+  ))}
+</ol>

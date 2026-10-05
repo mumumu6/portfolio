@@ -1,6 +1,6 @@
 ---
 import '@/styles/components/reply.css'
-import Disclosure from '@/components/common/Disclosure.vue'
+import Disclosure from '@/components/common/Disclosure.astro'
 import Avatar from '@/components/common/Avatar.astro'
 import { mdiChevronDown } from '@mdi/js'
 import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
@@ -21,7 +21,6 @@ const { replies, label = 'AIのコメント' } = Astro.props
       : 'reply-disclosure'
   }
   contentClass="reply-thread-shell"
-  client:visible={{ rootMargin: '160px' }}
 >
   <span slot="summary" style="display: contents">
     <span>{label}</span>

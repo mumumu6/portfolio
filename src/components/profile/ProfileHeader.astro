@@ -1,7 +1,7 @@
 ---
 import '@/styles/components/profile.css'
 import Avatar from '@/components/common/Avatar.astro'
-import ThemeToggle from '@/components/layout/ThemeToggle.vue'
+import ThemeToggle from '@/components/layout/ThemeToggle.astro'
 import { getEntry } from 'astro:content'
 
 const profileEntry = await getEntry('site', 'profile')
@@ -12,7 +12,7 @@ const { data: profile } = profileEntry
 <section class="profile-header" aria-labelledby="profile-name">
   <div class="profile-cover">
     <div class="profile-cover__actions">
-      <ThemeToggle client:load transition:persist="theme-toggle" />
+      <ThemeToggle />
     </div>
   </div>
   <div class="profile-main">

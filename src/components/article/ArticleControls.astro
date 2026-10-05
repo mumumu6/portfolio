@@ -1,13 +1,60 @@
 ---
-import ArticleControls from './ArticleControls.vue'
+import ArticleTocList from '@/components/article/ArticleTocList.astro'
+import Disclosure from '@/components/common/Disclosure.astro'
 
 type Heading = { depth: number; slug: string; text: string }
-const { articleId, headings } = Astro.props as {
+
+interface Props {
   articleId: string
   headings: Heading[]
 }
+
+const { articleId, headings } = Astro.props
+const showToc = headings.length > 2
 ---
 
-<ArticleControls articleId={articleId} headings={headings} client:load>
-  <slot />
-</ArticleControls>
+<div data-article-controls data-article-id={articleId}>
+  <div class="reading-progress" data-reading-progress aria-hidden="true">
+    <svg class="reading-progress__ring" viewBox="0 0 48 48">
+      <circle class="reading-progress__track" cx="24" cy="24" r="21.5"></circle>
+      <circle
+        class="reading-progress__value"
+        cx="24"
+        cy="24"
+        r="21.5"
+        pathLength="100"
+        data-reading-progress-ring
+        style="stroke-dasharray: 100; stroke-dashoffset: 100"
+      ></circle>
+    </svg>
+    <span class="reading-progress__label" data-reading-progress-label>
+      0%
+    </span>
+  </div>
+  {showToc && (
+    <Disclosure
+      class="article-toc-mobile"
+      contentClass="article-toc-mobile__content"
+    >
+      <span slot="summary">目次</span>
+      <small slot="summary">{headings.length}項目</small>
+      <nav aria-label="目次">
+        <ArticleTocList headings={headings} />
+      </nav>
+    </Disclosure>
+  )}
+  <div class="article-layout">
+    {showToc && (
+      <nav class="article-toc" aria-label="目次">
+        <div class="article-toc__head">
+          <strong>目次</strong>
+          <span data-reading-progress-label>0%</span>
+        </div>
+        <ArticleTocList headings={headings} />
+      </nav>
+    )}
+    <div class="article-prose">
+      <slot />
+    </div>
+  </div>
+</div>

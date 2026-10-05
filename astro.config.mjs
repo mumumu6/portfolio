@@ -1,9 +1,7 @@
 import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
-import vue from '@astrojs/vue'
 import AstroPWA from '@vite-pwa/astro'
-import nuxtUI from '@nuxt/ui/vite'
 
 const defaultThemeColor = '#090d12'
 
@@ -44,17 +42,6 @@ const runtimeCaching = [
 export default defineConfig({
   site: 'https://mumumu6.net',
   output: 'static',
-  vite: {
-    define: { __VUE_OPTIONS_API__: false },
-    plugins: [
-      nuxtUI({
-        router: false,
-        colorMode: false,
-        fonts: false,
-        experimental: { componentDetection: true },
-      }),
-    ],
-  },
   image: {
     domains: [
       'files.speakerdeck.com',
@@ -70,8 +57,6 @@ export default defineConfig({
   },
   integrations: [
     mdx(),
-    // 使用中のNuxt UI部品は自己完結しているため、全island向けの共通プラグインは載せない。
-    vue(),
     sitemap(),
     AstroPWA({
       filename: 'sw.js',

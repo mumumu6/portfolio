@@ -14,44 +14,6 @@
   overflow: hidden;
 }
 
-/* Reka measures the height and keeps content present until the CSS exit ends. */
-.disclosure-content[data-state] {
-  animation-duration: var(--disclosure-duration);
-  animation-timing-function: ease-out;
-}
-
-.disclosure-content[data-state='open'] {
-  animation-name: disclosure-open;
-}
-
-.disclosure-content[data-state='closed'] {
-  animation-name: disclosure-close;
-}
-
-/* Keep SSR slots in the HTML without showing closed content before hydration. */
 .disclosure-content[hidden] {
   display: none;
-  animation: none;
-}
-
-@keyframes disclosure-open {
-  from {
-    height: 0;
-    opacity: 0;
-  }
-  to {
-    height: var(--reka-collapsible-content-height);
-    opacity: 1;
-  }
-}
-
-@keyframes disclosure-close {
-  from {
-    height: var(--reka-collapsible-content-height);
-    opacity: 1;
-  }
-  to {
-    height: 0;
-    opacity: 0;
-  }
 }
