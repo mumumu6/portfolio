@@ -1,4 +1,5 @@
 ---
+import { entryTransitionName } from '@/lib/entry-transition'
 import EntryPreview from '@/components/feed/EntryPreview.astro'
 import type { FeedImage } from '@/lib/portfolio/types'
 
@@ -12,6 +13,7 @@ type Props = {
   bodyLines?: 2 | 3
   external?: boolean | undefined
   priority?: boolean
+  imageSizes?: string
 }
 
 const {
@@ -24,7 +26,10 @@ const {
   bodyLines = 3,
   external = false,
   priority = false,
+  // 幅が決まる前は 100vw になる。一覧カードは実寸を渡して、大きい画像の取り直しを避ける。
+  imageSizes = 'auto, 100vw',
 } = Astro.props
+const transitionHref = !external && href?.startsWith('/') ? href : undefined
 const Heading = headingLevel === 3 ? 'h3' : 'h2'
 ---
 
@@ -34,38 +39,53 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
     { 'entry-card-layout--has-image': Boolean(image) },
   ]}
 >
-  {
-    title &&
-      (href ? (
-        <Heading class="entry-title" aria-label={title}>
-          <a
-            href={href}
-            aria-label={title}
-            target={external ? '_blank' : undefined}
-            rel={external ? 'noreferrer' : undefined}
-          >
-            {title}
-          </a>
-        </Heading>
-      ) : (
-        <Heading class="entry-title" aria-label={title}>
+  {title &&
+    (href ? (
+      <Heading
+        class="entry-title"
+        aria-label={title}
+        style={
+          transitionHref
+            ? `view-transition-name: ${entryTransitionName(transitionHref, 'title')}`
+            : undefined
+        }
+      >
+        <a
+          href={href}
+          data-astro-prefetch={
+            transitionHref &&
+            /^\/(?:blog|works)\/[^/]+\/?$/.test(transitionHref)
+              ? 'hover'
+              : undefined
+          }
+          aria-label={title}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+        >
           {title}
-        </Heading>
-      ))
-  }
+        </a>
+      </Heading>
+    ) : (
+      <Heading class="entry-title" aria-label={title}>
+        {title}
+      </Heading>
+    ))}
 
-  {
-    image && (
-      <EntryPreview
-        image={image}
-        href={href}
-        label={imageLabel ?? `${title ?? '記事'}を開く`}
-        sizes="auto, 100vw"
-        external={external}
-        priority={priority}
-      />
-    )
-  }
+  {image && (
+    <EntryPreview
+      image={image}
+      transitionName={
+        transitionHref
+          ? entryTransitionName(transitionHref, 'image')
+          : undefined
+      }
+      href={href}
+      label={imageLabel ?? `${title ?? '記事'}を開く`}
+      sizes={imageSizes}
+      external={external}
+      priority={priority}
+    />
+  )}
 
   <div class="entry-card-copy">
     <div class="entry-copy-content">

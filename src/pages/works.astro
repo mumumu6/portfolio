@@ -10,10 +10,8 @@ import { works } from '@/lib/portfolio/works'
   schemaType="CollectionPage"
 >
   <div class="feed-list feed-list--compact">
-    {
-      works.map((entry, index) => (
-        <WorkCard entry={entry} priority={index === 0} />
-      ))
-    }
+    {works.map((entry, index) => (
+      <WorkCard entry={entry} priority={index === 0} />
+    ))}
   </div>
 </BaseLayout>

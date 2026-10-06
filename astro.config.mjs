@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
-import vue from '@astrojs/vue'
 import AstroPWA from '@vite-pwa/astro'
 
 const defaultThemeColor = '#090d12'
@@ -13,8 +12,10 @@ const runtimeCaching = [
     urlPattern: ({ request, url }) =>
       url.origin === self.location.origin &&
       (request.mode === 'navigate' ||
-        request.headers.get('sec-purpose')?.includes('prefetch') ||
-        request.headers.get('accept')?.includes('text/html')),
+        (request.destination === '' &&
+          (url.pathname === '/' ||
+            /^\/(?:blog|works)(?:\/[^/]+)?\/?$/.test(url.pathname) ||
+            /^\/(?:experience|thoughts)\/?$/.test(url.pathname)))),
     handler: 'CacheFirst',
     options: {
       cacheName: 'mumumu-portfolio-pages-v2',
@@ -34,7 +35,8 @@ const runtimeCaching = [
     handler: 'CacheFirst',
     options: {
       cacheName: 'mumumu-portfolio-assets-v5',
-      expiration: { maxEntries: 160 },
+      // 全ページで使う画像候補も保持できるよう、現在の生成物数より余裕を持たせる。
+      expiration: { maxEntries: 500 },
       cacheableResponse: { statuses: [200] },
     },
   },
@@ -43,10 +45,6 @@ const runtimeCaching = [
 export default defineConfig({
   site: 'https://mumumu6.net',
   output: 'static',
-  vite: {
-    // すべてのislandが Composition API を使うため、未使用の Options API を除外する。
-    define: { __VUE_OPTIONS_API__: false },
-  },
   image: {
     domains: [
       'files.speakerdeck.com',
@@ -62,7 +60,6 @@ export default defineConfig({
   },
   integrations: [
     mdx(),
-    vue(),
     sitemap(),
     AstroPWA({
       filename: 'sw.js',
@@ -94,7 +91,9 @@ export default defineConfig({
       workbox: {
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        globPatterns: ['**/*.{js,css}'],
+        // 全ページの JS/CSS をインストール時に先読みしない。
+        // 実際に使ったページ資産は runtimeCaching の CacheFirst で保存する。
+        globPatterns: [],
         navigateFallback: undefined,
         runtimeCaching,
         skipWaiting: false,
@@ -103,7 +102,9 @@ export default defineConfig({
     }),
   ],
   prefetch: {
-    prefetchAll: true,
+    // 内部の詳細リンクだけ hover で HTML を先読みする。
+    // タッチ操作の先読みは page-enhancements に任せる。
+    prefetchAll: false,
     defaultStrategy: 'hover',
   },
   experimental: {

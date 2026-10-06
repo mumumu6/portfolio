@@ -2,6 +2,8 @@ node_modules/
 .pnpm-store/
 dist/
 .astro/
+auto-imports.d.ts
+components.d.ts
 .wrangler/
 .DS_Store
 dev-dist

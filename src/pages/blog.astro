@@ -10,10 +10,8 @@ import { blogPosts } from '@/lib/portfolio/blogs'
   schemaType="CollectionPage"
 >
   <div class="feed-list feed-list--compact">
-    {
-      blogPosts.map((entry, index) => (
-        <BlogCard entry={entry} priority={index === 0} />
-      ))
-    }
+    {blogPosts.map((entry, index) => (
+      <BlogCard entry={entry} priority={index === 0} />
+    ))}
   </div>
 </BaseLayout>

@@ -9,7 +9,12 @@
   }
 }
 
-[data-disclosure-content] {
+.disclosure-content {
   --disclosure-duration: 420ms;
+  --disclosure-opacity-duration: 220ms;
   overflow: hidden;
+}
+
+.disclosure-content[hidden] {
+  display: none;
 }

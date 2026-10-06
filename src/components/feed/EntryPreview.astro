@@ -4,6 +4,7 @@ import type { FeedImage } from '@/lib/portfolio/types'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 
 type Props = {
+  transitionName?: string | undefined
   image: FeedImage
   href?: string | undefined
   label: string
@@ -14,6 +15,7 @@ type Props = {
 
 const {
   image,
+  transitionName,
   href,
   label,
   sizes,
@@ -24,13 +26,21 @@ const Wrapper = href ? 'a' : 'div'
 const wrapperAttributes = href
   ? {
       href,
+      'data-astro-prefetch':
+        !external && /^\/(?:blog|works)\/[^/]+\/?$/.test(href)
+          ? 'hover'
+          : undefined,
       'aria-label': label,
       ...(external ? { target: '_blank', rel: 'noreferrer' } : {}),
     }
   : {}
 ---
 
-<Wrapper class="ogp-preview" {...wrapperAttributes}>
+<Wrapper
+  class="ogp-preview"
+  style={transitionName ? `view-transition-name: ${transitionName}` : undefined}
+  {...wrapperAttributes}
+>
   <ResponsiveImage
     src={image.src}
     alt={image.alt}

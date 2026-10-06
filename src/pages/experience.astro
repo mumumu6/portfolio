@@ -33,20 +33,18 @@ const timelineGroups = experienceGroups.map(([year, entries]) => ({
     />
 
     <div class="experience-stream">
-      {
-        experienceGroups.map(([year, entries]) => (
-          <TimelineSection
-            id={`experience-${year}`}
-            headingId={`experience-${year}-heading`}
-            label={year}
-            count={entries.length}
-          >
-            {entries.map((entry) => (
-              <TimelineEntry entry={entry} headingLevel={3} />
-            ))}
-          </TimelineSection>
-        ))
-      }
+      {experienceGroups.map(([year, entries]) => (
+        <TimelineSection
+          id={`experience-${year}`}
+          headingId={`experience-${year}-heading`}
+          label={year}
+          count={entries.length}
+        >
+          {entries.map((entry) => (
+            <TimelineEntry entry={entry} headingLevel={3} />
+          ))}
+        </TimelineSection>
+      ))}
     </div>
   </div>
 </BaseLayout>

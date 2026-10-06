@@ -1,0 +1,38 @@
+---
+import '@/styles/components/site-header-nav.css'
+import { matchesNavigationPath, navigationItems } from '@/lib/navigation'
+
+interface Props {
+  pathname: string
+}
+
+const { pathname } = Astro.props
+---
+
+<nav
+  class="section-nav"
+  data-nav-container
+  aria-label="メインナビゲーション"
+  transition:persist="section-nav"
+>
+  {navigationItems.map((item) => {
+    const active = matchesNavigationPath(pathname, item.href)
+    return (
+      <a
+        href={item.href}
+        class:list={['section-nav__link', { active }]}
+        aria-current={active ? 'page' : undefined}
+        data-nav-link
+        data-astro-prefetch
+      >
+        <span>{item.label}</span>
+      </a>
+    )
+  })}
+  <span
+    class="section-nav__indicator"
+    data-nav-indicator
+    hidden
+    aria-hidden="true"
+  ></span>
+</nav>

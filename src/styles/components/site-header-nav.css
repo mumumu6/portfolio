@@ -1,5 +1,5 @@
 .section-nav {
-  /* display: contents の島ラッパーではなく、描画されるナビに遷移名を付ける。 */
+  /* 描画されるナビ自身に遷移名を付ける。 */
   view-transition-name: section-navigation;
   position: sticky;
   top: 0;
@@ -9,7 +9,6 @@
   min-height: 49px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: stretch;
   margin-inline: auto;
   overflow: hidden;
   border-block: 0;
@@ -17,7 +16,6 @@
   isolation: isolate;
   transform: translate3d(0, 0, 0);
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
 }
 
 .section-nav--hidden:not(:focus-within) {
@@ -25,16 +23,20 @@
 }
 
 /* テーマ切り替え時は、ナビをページ全体のクロスフェードに含める。 */
-:root[data-theme-transitioning] .section-nav {
+:root[data-theme-transitioning] .section-nav,
+:root[data-theme-transitioning] .section-nav__indicator {
   view-transition-name: none !important;
   transition: none;
 }
 
-.section-nav a {
+.section-nav__link {
   position: relative;
   min-width: 0;
   display: grid;
+  grid-template-columns: minmax(36px, max-content);
+  justify-content: center;
   place-items: center;
+  height: 100%;
   padding-inline: clamp(4px, calc(-2.86px + 1.43vw), 8px);
   color: var(--muted);
   font-family: var(--font-display);
@@ -45,16 +47,17 @@
   transition: color 140ms ease;
 }
 
-.section-nav a:hover,
-.section-nav a.active {
+.section-nav__link:hover,
+.section-nav__link.active {
   color: var(--text);
 }
 
-.section-nav a:focus-visible {
+.section-nav__link:focus-visible {
   outline-offset: -4px;
 }
 
-.section-nav a > span {
+.section-nav__link > span {
+  grid-area: 1 / 1;
   display: inline-block;
   padding: 6px;
   border-radius: 3px;
@@ -62,7 +65,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .section-nav a:not(.active):hover > span {
+  .section-nav__link:not(.active):hover > span {
     background: color-mix(in srgb, var(--text) 4%, transparent);
   }
 }
@@ -72,6 +75,7 @@
 }
 
 .section-nav__indicator {
+  view-transition-name: section-navigation-indicator;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -86,11 +90,24 @@
   transition:
     transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
     width 200ms ease;
-  will-change: transform;
+}
+
+/* デスクトップではスナップショット間で、モバイルでは実要素で移動する。 */
+@media (min-width: 768px) and (pointer: fine) {
+  :root:active-view-transition .section-nav__indicator {
+    transition: none;
+  }
+}
+
+@media (max-width: 767px), (pointer: coarse) {
+  :root:not([data-theme-transitioning]) .section-nav__indicator {
+    view-transition-name: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section-nav {
+  .section-nav,
+  .section-nav__indicator {
     transition: none;
   }
 }
@@ -104,4 +121,24 @@
 ::view-transition-new(section-navigation),
 ::view-transition-group(section-navigation) {
   animation: none;
+}
+
+::view-transition-group(section-navigation) {
+  z-index: 1;
+}
+
+::view-transition-group(section-navigation-indicator) {
+  z-index: 1;
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(section-navigation-indicator) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(section-navigation-indicator) {
+  animation: none;
+  mix-blend-mode: normal;
 }

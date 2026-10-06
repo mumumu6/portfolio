@@ -22,18 +22,17 @@ const { eyebrow, latestLabel, groups, total, navLabel } = Astro.props
 <aside class="experience-index">
   <p class="eyebrow">{eyebrow}</p>
   <p class="experience-index__latest">
-    <span>LATEST</span><strong>{latestLabel}</strong>
+    <span>LATEST</span>
+    <strong>{latestLabel}</strong>
   </p>
   <nav aria-label={navLabel}>
-    {
-      groups.map((group) => (
-        <a href={`#${group.id}`}>
-          <span>{group.label}</span>
-          <i aria-hidden="true" />
-          <strong>{String(group.count).padStart(2, '0')}</strong>
-        </a>
-      ))
-    }
+    {groups.map((group) => (
+      <a href={`#${group.id}`}>
+        <span>{group.label}</span>
+        <i aria-hidden="true" />
+        <strong>{String(group.count).padStart(2, '0')}</strong>
+      </a>
+    ))}
   </nav>
   <p class="experience-index__total">全{total}件</p>
 </aside>

@@ -1,10 +1,10 @@
 ---
-import { getImage } from 'astro:assets'
-import ResponsivePicture from '@/components/common/ResponsivePicture.vue'
+import { getImage, Picture } from 'astro:assets'
 import type { ImageMetadata } from 'astro'
 import '@/styles/components/responsive-image.css'
 
 type Props = {
+  transitionName?: string | undefined
   src: ImageMetadata | string
   alt: string
   width?: number | undefined
@@ -15,10 +15,12 @@ type Props = {
   loading?: 'lazy' | 'eager' | undefined
   fetchPriority?: 'high' | 'low' | 'auto' | undefined
   className?: string | undefined
+  showSkeleton?: boolean | undefined
 }
 
 const {
   src,
+  transitionName,
   alt,
   width,
   height,
@@ -28,6 +30,7 @@ const {
   loading = 'lazy',
   fetchPriority = 'low',
   className,
+  showSkeleton = false,
 } = Astro.props
 
 const isRemoteImage = typeof src === 'string'
@@ -56,50 +59,137 @@ const defaultWidths = [
   ),
 ]
 const widths = customWidths ?? defaultWidths
-const qualityAttribute = quality === undefined ? {} : { quality }
-const optimize = (format: 'avif' | 'webp', candidate: number) =>
-  getImage({
-    src,
-    width: candidate,
-    ...(isRemoteImage
-      ? { height: Math.round((candidate * resolvedHeight) / resolvedWidth) }
-      : {}),
-    format,
-    ...qualityAttribute,
-  })
-const [avif, webp, fallback] = await Promise.all([
-  Promise.all(widths.map((candidate) => optimize('avif', candidate))),
-  Promise.all(widths.map((candidate) => optimize('webp', candidate))),
-  optimize('webp', Math.min(resolvedWidth, maximumGeneratedWidth)),
-])
-const pictureProps = {
-  src: fallback.src,
-  avifSrcset: avif
-    .map((image, index) => `${image.src} ${widths[index]}w`)
-    .join(', '),
-  webpSrcset: webp
-    .map((image, index) => `${image.src} ${widths[index]}w`)
-    .join(', '),
-  alt,
-  width: resolvedWidth,
-  height: resolvedHeight,
-  sizes,
-  loading,
-  fetchPriority,
-  className,
+const fallbackWidth = Math.min(resolvedWidth, maximumGeneratedWidth)
+const fallbackHeight = Math.round(
+  (fallbackWidth * resolvedHeight) / resolvedWidth,
+)
+const imageProps =
+  typeof src === 'string'
+    ? {
+        src,
+        width: fallbackWidth,
+        height: fallbackHeight,
+        inferSize: false as const,
+      }
+    : { src, width: fallbackWidth, height: fallbackHeight }
+const imageOptions = {
+  ...imageProps,
+  widths,
+  layout: 'none' as const,
+  ...(quality === undefined ? {} : { quality }),
 }
+const optimized =
+  alt === ''
+    ? undefined
+    : await Promise.all([
+        getImage({ ...imageOptions, format: 'avif' }),
+        getImage({ ...imageOptions, format: 'webp' }),
+      ])
+const pictureProps = optimized
+  ? {
+      image: {
+        src: optimized[1].src,
+        avifSrcset: optimized[0].srcSet.attribute || optimized[0].src,
+        webpSrcset: optimized[1].srcSet.attribute,
+        alt,
+        width: fallbackWidth,
+        height: fallbackHeight,
+        sizes,
+        loading,
+        fetchPriority,
+      },
+      class: className,
+      style: transitionName
+        ? `view-transition-name: ${transitionName}`
+        : undefined,
+    }
+  : undefined
 ---
 
-{
-  alt === '' ? (
-    <ResponsivePicture {...pictureProps} progressive={false} />
-  ) : loading === 'eager' ? (
-    <ResponsivePicture {...pictureProps} progressive={true} client:load />
-  ) : (
-    <ResponsivePicture
-      {...pictureProps}
-      progressive={true}
-      client:visible={{ rootMargin: '160px' }}
-    />
-  )
-}
+{pictureProps ? (
+  <div
+    class:list={['optimized-image', className]}
+    data-optimized-image
+    data-image-state="loading"
+    data-image-in-view={loading === 'eager' ? 'true' : undefined}
+    style={pictureProps.style}
+  >
+    <picture data-progressive-image>
+      <source
+        type="image/avif"
+        srcset={pictureProps.image.avifSrcset}
+        sizes={pictureProps.image.sizes}
+      />
+      <img
+        src={pictureProps.image.src}
+        srcset={pictureProps.image.webpSrcset || undefined}
+        alt={pictureProps.image.alt}
+        width={pictureProps.image.width}
+        height={pictureProps.image.height}
+        sizes={pictureProps.image.sizes}
+        loading={pictureProps.image.loading}
+        fetchpriority={pictureProps.image.fetchPriority}
+        decoding="async"
+        data-progressive-image
+      />
+    </picture>
+    <div class="responsive-image__skeleton" aria-hidden="true"></div>
+  </div>
+) : (
+  <Fragment>
+    {showSkeleton && (
+      <div
+        class="optimized-image"
+        data-optimized-image
+        data-image-state="loading"
+        data-image-in-view={loading === 'eager' ? 'true' : undefined}
+      >
+        <Picture
+          {...imageProps}
+          alt={alt}
+          widths={widths}
+          sizes={sizes}
+          {...(quality === undefined ? {} : { quality })}
+          formats={['avif']}
+          fallbackFormat="webp"
+          layout="none"
+          loading={loading}
+          decoding="async"
+          fetchpriority={fetchPriority}
+          data-progressive-image
+          pictureAttributes={{
+            class: className,
+            style: transitionName
+              ? `view-transition-name: ${transitionName}`
+              : undefined,
+            'data-progressive-image': true,
+          }}
+        />
+        <div class="responsive-image__skeleton" aria-hidden="true"></div>
+      </div>
+    )}
+    {!showSkeleton && (
+      <Picture
+        {...imageProps}
+        alt={alt}
+        widths={widths}
+        sizes={sizes}
+        {...(quality === undefined ? {} : { quality })}
+        formats={['avif']}
+        fallbackFormat="webp"
+        layout="none"
+        loading={loading}
+        decoding="async"
+        fetchpriority={fetchPriority}
+        data-progressive-image
+        pictureAttributes={{
+          class: className,
+          style: transitionName
+            ? `view-transition-name: ${transitionName}`
+            : undefined,
+          'data-progressive-image': true,
+        }}
+      />
+    )}
+  </Fragment>
+)}

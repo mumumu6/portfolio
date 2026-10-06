@@ -34,14 +34,12 @@ const external = entry.href?.startsWith('http')
   >
     <div class="entry-card-meta">
       <TagList tags={entry.tags} />
-      {
-        entry.replies && entry.replies.length > 0 && (
-          <ReplyDisclosure
-            replies={entry.replies}
-            label={entry.kind === 'thought' ? '返信' : 'AIのコメント'}
-          />
-        )
-      }
+      {entry.replies && entry.replies.length > 0 && (
+        <ReplyDisclosure
+          replies={entry.replies}
+          label={entry.kind === 'thought' ? '返信' : 'AIのコメント'}
+        />
+      )}
     </div>
   </EntryBody>
 </EntryFrame>

@@ -21,13 +21,9 @@ import { works } from '@/lib/portfolio/works'
     />
 
     <div class="feed-list feed-list--compact">
-      {
-        works
-          .slice(0, 2)
-          .map((entry, index) => (
-            <WorkCard entry={entry} headingLevel={3} priority={index === 0} />
-          ))
-      }
+      {works.slice(0, 2).map((entry, index) => (
+        <WorkCard entry={entry} headingLevel={3} priority={index === 0} />
+      ))}
     </div>
   </section>
 
@@ -40,11 +36,9 @@ import { works } from '@/lib/portfolio/works'
     />
 
     <div class="feed-list feed-list--compact">
-      {
-        blogPosts
-          .slice(0, 3)
-          .map((entry) => <BlogCard entry={entry} headingLevel={3} />)
-      }
+      {blogPosts.slice(0, 3).map((entry) => (
+        <BlogCard entry={entry} headingLevel={3} />
+      ))}
     </div>
   </section>
 </BaseLayout>
