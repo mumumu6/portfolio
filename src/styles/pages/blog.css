@@ -272,14 +272,20 @@
 
   .article-toc-mobile .disclosure-trigger::after {
     color: var(--muted);
-    content: '＋';
-    font-family: var(--font-body);
-    font-size: 1rem;
-    line-height: 1;
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    content: '';
+    background-image:
+      linear-gradient(currentColor, currentColor),
+      linear-gradient(currentColor, currentColor);
+    background-position: center;
+    background-size: 12px 1.5px, 1.5px 12px;
+    background-repeat: no-repeat;
   }
 
   .article-toc-mobile[data-state='open'] .disclosure-trigger::after {
-    content: '−';
+    background-image: linear-gradient(currentColor, currentColor);
   }
 
   .article-toc-mobile .disclosure-trigger small {
