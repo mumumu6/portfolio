@@ -11,6 +11,7 @@
 
 .disclosure-content {
   --disclosure-duration: 420ms;
+  --disclosure-opacity-duration: 220ms;
   overflow: hidden;
 }
 

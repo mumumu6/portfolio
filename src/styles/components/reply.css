@@ -60,6 +60,7 @@
 
 .reply-disclosure--ai .disclosure-content {
   --disclosure-duration: 180ms;
+  --disclosure-opacity-duration: 120ms;
 }
 
 .reply-thread {

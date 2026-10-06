@@ -22,7 +22,15 @@ const syncLinks = (container: HTMLElement, pathname: string) => {
   }
 }
 
-const measure = (container: HTMLElement) => {
+const reducedMotion = () =>
+  matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const indicatorEasing = 'cubic-bezier(0.22, 1, 0.36, 1)'
+
+const isEntryDetail = (pathname: string) =>
+  /^\/(?:blog|works)\/[^/]+\/?$/.test(pathname)
+
+const measure = (container: HTMLElement, animate = false) => {
   const indicator = container.querySelector<HTMLElement>('[data-nav-indicator]')
   const link = container.querySelector<HTMLElement>('a.active')
   const label = link?.querySelector<HTMLElement>('span')
@@ -34,10 +42,49 @@ const measure = (container: HTMLElement) => {
   }
   const available = Math.max(36, link.offsetWidth - 16)
   const width = Math.min(available, Math.max(36, label.offsetWidth))
+  const nextX = link.offsetLeft + (link.offsetWidth - width) / 2
+  const targetKey = `${nextX}:${width}`
+  if (
+    !animate &&
+    indicator.dataset.navTarget === targetKey &&
+    indicator
+      .getAnimations()
+      .some((animation) => animation.playState === 'running')
+  ) {
+    return
+  }
+  indicator.dataset.navTarget = targetKey
+  const ready = indicator.dataset.navReady === 'true' && !indicator.hidden
+  let originX = -width
+  let originWidth = width
+  if (ready) {
+    const navRect = container.getBoundingClientRect()
+    const rect = indicator.getBoundingClientRect()
+    originX = rect.left - navRect.left - container.clientLeft
+    originWidth = rect.width
+  }
+  for (const animation of indicator.getAnimations()) animation.cancel()
   indicator.hidden = false
   indicator.dataset.navReady = 'true'
   indicator.style.width = `${width}px`
-  indicator.style.transform = `translate3d(${link.offsetLeft + (link.offsetWidth - width) / 2}px, 0, 0)`
+  indicator.style.transform = `translate3d(${nextX}px, 0, 0)`
+  const moved =
+    Math.abs(originX - nextX) >= 0.5 || Math.abs(originWidth - width) >= 0.5
+  if (!animate || !moved || reducedMotion() || width <= 0) return
+  indicator.style.transition = 'none'
+  const animation = indicator.animate(
+    [
+      {
+        transform: `translate3d(${originX}px, 0, 0) scaleX(${originWidth / width})`,
+      },
+      { transform: `translate3d(${nextX}px, 0, 0) scaleX(1)` },
+    ],
+    { duration: 200, easing: indicatorEasing },
+  )
+  const restore = () => {
+    indicator.style.transition = ''
+  }
+  void animation.finished.then(restore, restore)
 }
 
 const measureCurrent = () => {
@@ -116,7 +163,10 @@ document.addEventListener('astro:before-swap', (event) => {
   if (!container) return
   container.classList.remove('section-nav--hidden')
   syncLinks(container, transition.to.pathname)
-  measure(container)
+  const detail =
+    isEntryDetail(transition.from.pathname) ||
+    isEntryDetail(transition.to.pathname)
+  measure(container, !detail)
 })
 
 document.addEventListener('astro:after-swap', () => {

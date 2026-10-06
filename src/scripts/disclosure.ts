@@ -13,13 +13,11 @@ const nextToken = (root: HTMLElement) => {
   return token
 }
 
-const durationOf = (content: HTMLElement) => {
-  const value = getComputedStyle(content)
-    .getPropertyValue('--disclosure-duration')
-    .trim()
+const durationOf = (content: HTMLElement, name: string, fallback: number) => {
+  const value = getComputedStyle(content).getPropertyValue(name).trim()
   if (value.endsWith('ms')) return Number.parseFloat(value)
   if (value.endsWith('s')) return Number.parseFloat(value) * 1000
-  return 420
+  return fallback
 }
 
 const cancelMotion = (content: HTMLElement) => {
@@ -30,13 +28,18 @@ const resetMotion = (content: HTMLElement) => {
   cancelMotion(content)
   content.style.height = ''
   content.style.opacity = ''
+  content.style.transform = ''
 }
+
+const closedTransform = 'translateY(-5px) scaleY(0.99)'
+const openTransform = 'translateY(0px) scaleY(1)'
 
 const play = (
   root: HTMLElement,
   content: HTMLElement,
   token: string,
-  frames: Keyframe[],
+  from: { height: string; opacity: number; transform: string },
+  to: { height: string; opacity: number; transform: string },
   done?: () => void,
 ) => {
   cancelMotion(content)
@@ -45,8 +48,24 @@ const play = (
     done?.()
     return
   }
-  const animation = content.animate(frames, {
-    duration: durationOf(content),
+  const height = content.animate(
+    [{ height: from.height }, { height: to.height }],
+    {
+      duration: durationOf(content, '--disclosure-duration', 420),
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fill: 'forwards',
+    },
+  )
+  content.animate(
+    [{ transform: from.transform }, { transform: to.transform }],
+    {
+      duration: durationOf(content, '--disclosure-duration', 420),
+      easing: 'cubic-bezier(0.16, 1.06, 0.3, 1)',
+      fill: 'forwards',
+    },
+  )
+  content.animate([{ opacity: from.opacity }, { opacity: to.opacity }], {
+    duration: durationOf(content, '--disclosure-opacity-duration', 220),
     easing: 'ease-out',
     fill: 'forwards',
   })
@@ -55,7 +74,7 @@ const play = (
     resetMotion(content)
     done?.()
   }
-  void animation.finished.then(finish, finish)
+  void height.finished.then(finish, finish)
 }
 
 const setOpen = (root: HTMLElement, open: boolean) => {
@@ -70,12 +89,16 @@ const setOpen = (root: HTMLElement, open: boolean) => {
   if (open) {
     content.hidden = false
     content.style.height = '0px'
-    const height = content.scrollHeight
     content.style.opacity = '0'
-    play(root, content, token, [
-      { height: '0px', opacity: 0 },
-      { height: `${height}px`, opacity: 1 },
-    ])
+    content.style.transform = closedTransform
+    const height = content.scrollHeight
+    play(
+      root,
+      content,
+      token,
+      { height: '0px', opacity: 0, transform: closedTransform },
+      { height: `${height}px`, opacity: 1, transform: openTransform },
+    )
     return
   }
 
@@ -84,10 +107,8 @@ const setOpen = (root: HTMLElement, open: boolean) => {
     root,
     content,
     token,
-    [
-      { height: `${height}px`, opacity: 1 },
-      { height: '0px', opacity: 0 },
-    ],
+    { height: `${height}px`, opacity: 1, transform: openTransform },
+    { height: '0px', opacity: 0, transform: closedTransform },
     () => {
       content.hidden = true
     },
@@ -100,21 +121,4 @@ document.addEventListener('click', (event) => {
   const root = trigger?.closest<HTMLElement>('[data-disclosure]')
   if (!trigger || !root || trigger !== triggerOf(root)) return
   setOpen(root, root.dataset.state !== 'open')
-})
-
-document.addEventListener('click', (event) => {
-  if (
-    event.defaultPrevented ||
-    event.button !== 0 ||
-    event.metaKey ||
-    event.ctrlKey ||
-    event.shiftKey ||
-    event.altKey ||
-    !(event.target instanceof Element)
-  )
-    return
-  const link = event.target.closest('a[data-toc-link]')
-  const root = link?.closest<HTMLElement>('[data-disclosure]')
-  if (!link || !root) return
-  setOpen(root, false)
 })

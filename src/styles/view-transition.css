@@ -95,6 +95,12 @@
   }
 }
 
+/* 一覧間は画面全体を撮影せず、ページ本文だけを短くフェードする。 */
+html[data-page-enter] .site-shell > :not(.section-nav):not(.profile-header) {
+  animation: page-fade-in var(--page-transition-duration)
+    var(--page-transition-ease) both;
+}
+
 /* モバイルのページ遷移では、追従ナビとインジケーターをそのまま表示する。
    テーマ切り替え時は、ページ全体の遷移を利用する。 */
 @media (max-width: 767px), (pointer: coarse) {

@@ -5,7 +5,6 @@ import type { ComponentProps } from 'astro/types'
 import SeoHead from '@/components/layout/SeoHead.astro'
 import SectionNavigation from '@/components/layout/SectionNavigation.astro'
 import ProfileHeader from '@/components/profile/ProfileHeader.astro'
-import ibmPlexSansJp400 from '@fontsource/ibm-plex-sans-jp/files/ibm-plex-sans-jp-latin-400-normal.woff2?url'
 import spaceGrotesk600 from '@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2?url'
 import spaceGrotesk700 from '@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2?url'
 
@@ -21,13 +20,6 @@ const { showProfileHeader = true, ...seoProps } = Astro.props
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="preload"
-      href={ibmPlexSansJp400}
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     <link
       rel="preload"
       href={spaceGrotesk600}
@@ -75,13 +67,22 @@ const { showProfileHeader = true, ...seoProps } = Astro.props
     <script>
       import '@/scripts/page-enhancements'
 
-      const register = async () => {
-        const { registerSW } = await import('virtual:pwa-register')
-        registerSW()
+      const registerServiceWorker = async () => {
+        if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.addEventListener(
+            'controllerchange',
+            () => window.location.reload(),
+            { once: true },
+          )
+        }
+        await navigator.serviceWorker.register('/sw.js', { scope: '/' })
       }
       if ('requestIdleCallback' in window)
-        window.requestIdleCallback(register, { timeout: 1200 })
-      else setTimeout(register, 1200)
+        window.requestIdleCallback(() => void registerServiceWorker(), {
+          timeout: 1200,
+        })
+      else setTimeout(() => void registerServiceWorker(), 1200)
     </script>
   </body>
 </html>

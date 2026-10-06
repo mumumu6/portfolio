@@ -118,3 +118,5 @@ document.fonts.addEventListener('loadingdone', () => {
   render()
 })
 bind()
+
+export {}

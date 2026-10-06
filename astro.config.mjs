@@ -12,8 +12,10 @@ const runtimeCaching = [
     urlPattern: ({ request, url }) =>
       url.origin === self.location.origin &&
       (request.mode === 'navigate' ||
-        request.headers.get('sec-purpose')?.includes('prefetch') ||
-        request.headers.get('accept')?.includes('text/html')),
+        (request.destination === '' &&
+          (url.pathname === '/' ||
+            /^\/(?:blog|works)(?:\/[^/]+)?\/?$/.test(url.pathname) ||
+            /^\/(?:experience|thoughts)\/?$/.test(url.pathname)))),
     handler: 'CacheFirst',
     options: {
       cacheName: 'mumumu-portfolio-pages-v2',
@@ -33,7 +35,8 @@ const runtimeCaching = [
     handler: 'CacheFirst',
     options: {
       cacheName: 'mumumu-portfolio-assets-v5',
-      expiration: { maxEntries: 160 },
+      // 全ページで使う画像候補も保持できるよう、現在の生成物数より余裕を持たせる。
+      expiration: { maxEntries: 500 },
       cacheableResponse: { statuses: [200] },
     },
   },
@@ -88,7 +91,9 @@ export default defineConfig({
       workbox: {
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        globPatterns: ['**/*.{js,css}'],
+        // 全ページの JS/CSS をインストール時に先読みしない。
+        // 実際に使ったページ資産は runtimeCaching の CacheFirst で保存する。
+        globPatterns: [],
         navigateFallback: undefined,
         runtimeCaching,
         skipWaiting: false,

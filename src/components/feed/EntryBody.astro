@@ -13,6 +13,7 @@ type Props = {
   bodyLines?: 2 | 3
   external?: boolean | undefined
   priority?: boolean
+  imageSizes?: string
 }
 
 const {
@@ -25,6 +26,8 @@ const {
   bodyLines = 3,
   external = false,
   priority = false,
+  // 幅が決まる前は 100vw になる。一覧カードは実寸を渡して、大きい画像の取り直しを避ける。
+  imageSizes = 'auto, 100vw',
 } = Astro.props
 const transitionHref = !external && href?.startsWith('/') ? href : undefined
 const Heading = headingLevel === 3 ? 'h3' : 'h2'
@@ -78,7 +81,7 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
       }
       href={href}
       label={imageLabel ?? `${title ?? '記事'}を開く`}
-      sizes="auto, 100vw"
+      sizes={imageSizes}
       external={external}
       priority={priority}
     />

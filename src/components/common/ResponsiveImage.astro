@@ -15,6 +15,7 @@ type Props = {
   loading?: 'lazy' | 'eager' | undefined
   fetchPriority?: 'high' | 'low' | 'auto' | undefined
   className?: string | undefined
+  showSkeleton?: boolean | undefined
 }
 
 const {
@@ -29,6 +30,7 @@ const {
   loading = 'lazy',
   fetchPriority = 'low',
   className,
+  showSkeleton = false,
 } = Astro.props
 
 const isRemoteImage = typeof src === 'string'
@@ -134,25 +136,60 @@ const pictureProps = optimized
     <div class="responsive-image__skeleton" aria-hidden="true"></div>
   </div>
 ) : (
-  <Picture
-    {...imageProps}
-    alt={alt}
-    widths={widths}
-    sizes={sizes}
-    {...(quality === undefined ? {} : { quality })}
-    formats={['avif']}
-    fallbackFormat="webp"
-    layout="none"
-    loading={loading}
-    decoding="async"
-    fetchpriority={fetchPriority}
-    data-progressive-image
-    pictureAttributes={{
-      class: className,
-      style: transitionName
-        ? `view-transition-name: ${transitionName}`
-        : undefined,
-      'data-progressive-image': true,
-    }}
-  />
+  <Fragment>
+    {showSkeleton && (
+      <div
+        class="optimized-image"
+        data-optimized-image
+        data-image-state="loading"
+        data-image-in-view={loading === 'eager' ? 'true' : undefined}
+      >
+        <Picture
+          {...imageProps}
+          alt={alt}
+          widths={widths}
+          sizes={sizes}
+          {...(quality === undefined ? {} : { quality })}
+          formats={['avif']}
+          fallbackFormat="webp"
+          layout="none"
+          loading={loading}
+          decoding="async"
+          fetchpriority={fetchPriority}
+          data-progressive-image
+          pictureAttributes={{
+            class: className,
+            style: transitionName
+              ? `view-transition-name: ${transitionName}`
+              : undefined,
+            'data-progressive-image': true,
+          }}
+        />
+        <div class="responsive-image__skeleton" aria-hidden="true"></div>
+      </div>
+    )}
+    {!showSkeleton && (
+      <Picture
+        {...imageProps}
+        alt={alt}
+        widths={widths}
+        sizes={sizes}
+        {...(quality === undefined ? {} : { quality })}
+        formats={['avif']}
+        fallbackFormat="webp"
+        layout="none"
+        loading={loading}
+        decoding="async"
+        fetchpriority={fetchPriority}
+        data-progressive-image
+        pictureAttributes={{
+          class: className,
+          style: transitionName
+            ? `view-transition-name: ${transitionName}`
+            : undefined,
+          'data-progressive-image': true,
+        }}
+      />
+    )}
+  </Fragment>
 )}

@@ -1,14 +1,13 @@
-/* 欧文フォントは配信し、日本語の文字は環境標準のフォントで表示する。 */
-@import '@fontsource/ibm-plex-sans-jp/latin-400.css';
-@import '@fontsource/space-grotesk/latin-500.css';
+/* 見出しの欧文だけ配信する。本文は環境のフォントを使い、日本語のフォントファイルは送らない。 */
 @import '@fontsource/space-grotesk/latin-600.css';
 @import '@fontsource/space-grotesk/latin-700.css';
 
 :root {
   --font-body:
-    'IBM Plex Sans JP', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    ui-sans-serif, system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP',
+    sans-serif;
   --font-display:
-    'Space Grotesk', 'IBM Plex Sans JP', ui-sans-serif, sans-serif;
+    'Space Grotesk', ui-sans-serif, system-ui, 'Hiragino Sans', sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
   --bg: #090d12;
   --surface: #0d1218;

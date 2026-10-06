@@ -7,9 +7,16 @@ import { applyTheme } from '@/lib/theme'
 import { entryTransitionName } from '@/lib/entry-transition'
 import '@/scripts/disclosure'
 import '@/scripts/image-loading'
-import '@/scripts/reading-progress'
 import '@/scripts/section-navigation'
 import '@/scripts/theme-toggle'
+
+const loadReadingProgress = () => {
+  if (document.querySelector('[data-article-controls]'))
+    void import('@/scripts/reading-progress')
+}
+
+document.addEventListener('astro:page-load', loadReadingProgress)
+loadReadingProgress()
 
 const nav = () => document.querySelector<HTMLElement>('[data-nav-container]')
 const isEntryDetail = (url: URL) =>
@@ -70,6 +77,8 @@ document.addEventListener('astro:before-swap', (event) => {
 
 let pendingViewportTop: number | null = null
 let previousScrollBehavior: string | null = null
+let fadePageContent = false
+let pageEnterTimer = 0
 
 const getStickyStart = () => {
   const profile = document.querySelector('.profile-header')
@@ -78,9 +87,10 @@ const getStickyStart = () => {
 
 document.addEventListener('astro:before-swap', (event) => {
   const transition = event as TransitionBeforeSwapEvent
-  // Keep native detail transitions; simpler index-to-index swaps include / -> /works/.
-  if (!isEntryDetail(transition.from) && !isEntryDetail(transition.to))
-    transition.viewTransition.skipTransition()
+  // 一覧同士は画面全体を撮影しない。本文のフェードは入れ替え後に付ける。
+  fadePageContent =
+    !isEntryDetail(transition.from) && !isEntryDetail(transition.to)
+  if (fadePageContent) transition.viewTransition.skipTransition()
 
   const traversal = transition.navigationType === 'traverse'
   const currentNav = nav()
@@ -98,6 +108,18 @@ document.addEventListener('astro:before-swap', (event) => {
 })
 
 document.addEventListener('astro:after-swap', () => {
+  if (
+    fadePageContent &&
+    !matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    const root = document.documentElement
+    root.setAttribute('data-page-enter', '')
+    window.clearTimeout(pageEnterTimer)
+    pageEnterTimer = window.setTimeout(() => {
+      root.removeAttribute('data-page-enter')
+    }, 180)
+  }
+  fadePageContent = false
   if (pendingViewportTop !== null) {
     window.scrollTo({
       top: Math.max(0, getStickyStart() - pendingViewportTop),
