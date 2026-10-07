@@ -27,9 +27,6 @@ const reducedMotion = () =>
 
 const indicatorEasing = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
-const isEntryDetail = (pathname: string) =>
-  /^\/(?:blog|works)\/[^/]+\/?$/.test(pathname)
-
 const measure = (container: HTMLElement, animate = false) => {
   const indicator = container.querySelector<HTMLElement>('[data-nav-indicator]')
   const link = container.querySelector<HTMLElement>('a.active')
@@ -163,10 +160,7 @@ document.addEventListener('astro:before-swap', (event) => {
   if (!container) return
   container.classList.remove('section-nav--hidden')
   syncLinks(container, transition.to.pathname)
-  const detail =
-    isEntryDetail(transition.from.pathname) ||
-    isEntryDetail(transition.to.pathname)
-  measure(container, !detail)
+  measure(container, true)
 })
 
 document.addEventListener('astro:after-swap', () => {

@@ -21,6 +21,36 @@ loadReadingProgress()
 const nav = () => document.querySelector<HTMLElement>('[data-nav-container]')
 const isEntryDetail = (url: URL) =>
   /^\/(?:blog|works)\/[^/]+\/?$/.test(url.pathname)
+const involvesEntry = (from: URL, to: URL) =>
+  isEntryDetail(from) || isEntryDetail(to)
+
+const transitionTargets = (root: ParentNode) => {
+  const names = new Map<string, HTMLElement[]>()
+  for (const element of root.querySelectorAll<HTMLElement>(
+    '[style*="view-transition-name"]',
+  )) {
+    const name = element.style.viewTransitionName
+    if (!name || name === 'none') continue
+    const elements = names.get(name)
+    if (elements) elements.push(element)
+    else names.set(name, [element])
+  }
+  return names
+}
+
+/* 両ページに無い名前は本文フェードに含め、単独で移動させない。 */
+const keepPairedTransitionNames = (current: Document, next: Document) => {
+  const currentNames = transitionTargets(current)
+  const nextNames = transitionTargets(next)
+  for (const [name, elements] of currentNames) {
+    if (nextNames.has(name)) continue
+    for (const element of elements) element.style.viewTransitionName = ''
+  }
+  for (const [name, elements] of nextNames) {
+    if (currentNames.has(name)) continue
+    for (const element of elements) element.style.viewTransitionName = ''
+  }
+}
 
 let entryNavigation = 0
 const clearEntryParticipants = (target: Document) => {
@@ -51,11 +81,25 @@ const selectEntryParticipants = (target: Document, from: URL, to: URL) => {
 document.addEventListener('astro:before-preparation', (event) => {
   const transition = event as TransitionBeforePreparationEvent
   const current = ++entryNavigation
+  const fadeSharedPage = involvesEntry(transition.from, transition.to)
   selectEntryParticipants(document, transition.from, transition.to)
+  if (fadeSharedPage)
+    document.documentElement.setAttribute('data-page-fade', '')
+  const loader = transition.loader
+  transition.loader = async () => {
+    await loader()
+    if (transition.signal.aborted || current !== entryNavigation) return
+    const next = transition.newDocument
+    if (!fadeSharedPage || !next) return
+    keepPairedTransitionNames(document, next)
+    next.documentElement.setAttribute('data-page-fade', '')
+  }
   transition.signal.addEventListener(
     'abort',
     () => {
-      if (current === entryNavigation) clearEntryParticipants(document)
+      if (current !== entryNavigation) return
+      clearEntryParticipants(document)
+      document.documentElement.removeAttribute('data-page-fade')
     },
     { once: true },
   )
@@ -70,7 +114,9 @@ document.addEventListener('astro:before-swap', (event) => {
     transition.to,
   )
   const cleanup = () => {
-    if (current === entryNavigation) clearEntryParticipants(document)
+    if (current !== entryNavigation) return
+    clearEntryParticipants(document)
+    document.documentElement.removeAttribute('data-page-fade')
   }
   void transition.viewTransition.finished.then(cleanup, cleanup)
 })

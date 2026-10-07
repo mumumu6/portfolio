@@ -5,7 +5,7 @@
   view-transition-name: root;
 }
 
-/* ページ遷移では本文をスナップショット化せず、テーマ切替だけ root を使う。 */
+/* ページ遷移では画面全体を撮影せず、テーマ切替だけ root を使う。 */
 :root:not([data-theme-transitioning]) {
   view-transition-name: none;
 }
@@ -30,7 +30,7 @@
 }
 
 /* 遷移グループの重なりは、元要素の z-index とは独立する。
-   本文 → ナビ → 共有画像 → タイトルの順で描画する。 */
+   本文 → 共有画像 → タイトルの順で描画する。ナビはスナップショットに含めない。 */
 .work-thread-cover {
   view-transition-class: entry-image;
 }
@@ -95,16 +95,59 @@
   }
 }
 
+/* プロフィールとナビの外側にある本文。余白が外に抜けないようにする。 */
+.page-content {
+  display: flow-root;
+}
+
 /* 一覧間は画面全体を撮影せず、ページ本文だけを短くフェードする。 */
-html[data-page-enter] .site-shell > :not(.section-nav):not(.profile-header) {
+html[data-page-enter] .page-content {
   animation: page-fade-in var(--page-transition-duration)
     var(--page-transition-ease) both;
 }
 
-/* モバイルのページ遷移では、追従ナビとインジケーターをそのまま表示する。
-   テーマ切り替え時は、ページ全体の遷移を利用する。 */
+/* 個別記事の遷移では、対になるタイトル・画像以外の本文をフェードする。
+   位置の補間は行わず、新しい本文の位置で重ねる。 */
+:root[data-page-fade] .page-content {
+  view-transition-name: page-content;
+}
+
+::view-transition-group(page-content) {
+  z-index: 0;
+  animation-duration: 0s;
+  overflow: clip;
+}
+
+::view-transition-image-pair(page-content) {
+  overflow: clip;
+}
+
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  height: 100%;
+  mix-blend-mode: normal;
+  object-fit: none;
+  object-position: top center;
+}
+
+::view-transition-old(page-content) {
+  animation: page-fade-out var(--page-transition-duration)
+    var(--page-transition-ease) both;
+}
+
+::view-transition-new(page-content) {
+  animation: page-fade-in var(--page-transition-duration)
+    var(--page-transition-ease) both;
+}
+
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* モバイルでは Astro が付けた遷移名も使わない。テーマ切替はページ全体を使う。 */
 @media (max-width: 767px), (pointer: coarse) {
-  :root:not([data-theme-transitioning]) .section-nav,
   :root:not([data-theme-transitioning]) [data-astro-transition-scope] {
     view-transition-name: none !important;
   }
