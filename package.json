@@ -14,7 +14,8 @@
     "fmt": "prettier --write .",
     "fmt:check": "prettier --check .",
     "validate:ai": "node scripts/validate-ai-content.mjs",
-    "sync:blog": "node scripts/sync-blog.mjs"
+    "sync:blog": "node scripts/sync-blog.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",
@@ -27,6 +28,8 @@
     "@astrojs/check": "0.9.10",
     "@vite-pwa/astro": "1.2.0",
     "fast-xml-parser": "5.11.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "oxlint": "^1.86.0",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
@@ -37,5 +40,13 @@
     "workbox-window": "^7.4.1",
     "wrangler": "4.147.0"
   },
-  "packageManager": "pnpm@12.9.1"
+  "packageManager": "pnpm@12.9.1",
+  "lint-staged": {
+    "*.{js,mjs,ts,astro,css,md,json,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{js,mjs,ts}": [
+      "oxlint --fix"
+    ]
+  }
 }
