@@ -252,13 +252,42 @@ const loadPageHtml = (href: string, priority: 'high' | 'low' = 'low') => {
         pageHtml.delete(key)
         return null
       }
-      return await response.text()
+      const html = await response.text()
+      warmStyles(html)
+      return html
     })
     .catch(() => {
       pageHtml.delete(key)
       return null
     })
   pageHtml.set(key, pending)
+}
+
+// 新しい CSS が head に無いと、ルーターは遷移の前にその読み込みを待つ。
+const warmStyles = (html: string) => {
+  const existing = new Set(
+    [...document.querySelectorAll('link[rel="stylesheet"]')].map((el) =>
+      el.getAttribute('href'),
+    ),
+  )
+  for (const tag of html.matchAll(/<link\b[^>]*>/gi)) {
+    const markup = tag[0]
+    if (!/\brel=["']stylesheet["']/i.test(markup)) continue
+    const href = markup.match(/\bhref=["']([^"']+)["']/i)?.[1]
+    if (!href || existing.has(href) || href.startsWith('//')) continue
+    if (/^https?:/i.test(href)) {
+      try {
+        if (new URL(href).origin !== location.origin) continue
+      } catch {
+        continue
+      }
+    }
+    existing.add(href)
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.setAttribute('href', href)
+    document.head.append(link)
+  }
 }
 
 window.fetch = async (input, init) => {
