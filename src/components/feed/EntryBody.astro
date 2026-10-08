@@ -52,12 +52,6 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
       >
         <a
           href={href}
-          data-astro-prefetch={
-            transitionHref &&
-            /^\/(?:blog|works)\/[^/]+\/?$/.test(transitionHref)
-              ? 'hover'
-              : undefined
-          }
           aria-label={title}
           target={external ? '_blank' : undefined}
           rel={external ? 'noreferrer' : undefined}

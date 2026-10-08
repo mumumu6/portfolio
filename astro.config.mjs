@@ -107,12 +107,9 @@ export default defineConfig({
       allowedHosts: ['.trycloudflare.com'],
     },
   },
-  prefetch: {
-    // 内部の詳細リンクだけ hover で HTML を先読みする。
-    // タッチ操作の先読みは page-enhancements に任せる。
-    prefetchAll: false,
-    defaultStrategy: 'hover',
-  },
+  // <link rel="prefetch"> は、キャッシュヘッダーの無い HTML を
+  // ルーターの fetch が再利用できない。先読みは page-enhancements で持つ。
+  prefetch: false,
   experimental: {
     // 先読みでページ全体を裏描画すると、遷移の取得と帯域を奪って遅くなる。
     clientPrerender: false,

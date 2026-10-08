@@ -1,4 +1,3 @@
-import { prefetch } from 'astro:prefetch'
 import type {
   TransitionBeforePreparationEvent,
   TransitionBeforeSwapEvent,
@@ -218,33 +217,111 @@ document.addEventListener('astro:after-swap', () => {
   void document.fonts.ready.then(pinNavViewport)
 })
 
-// タッチ操作時だけ、押されたリンクを Astro の先読み機能に渡す。
-const coarsePointer = matchMedia('(pointer: coarse)')
-const prefetchTouchedLink = (event: Event) => {
-  if (!coarsePointer.matches || !(event.target instanceof Element)) return
-  const link = event.target.closest<HTMLAnchorElement>('a[href]')
-  if (
-    link?.origin === location.origin &&
-    link.dataset.astroPrefetch !== 'false'
-  )
-    prefetch(link.href, { ignoreSlowConnection: true })
-}
-for (const type of ['touchstart', 'mousedown'])
-  document.addEventListener(type, prefetchTouchedLink, { passive: true })
+// ルーターの fetch は HTTP キャッシュを再利用しない。HTML はメモリに置く。
+const nativeFetchKey = '__mumumuNativeFetch'
+const browser = window as Window & { [nativeFetchKey]?: typeof fetch }
+const nativeFetch = browser[nativeFetchKey] ?? window.fetch.bind(window)
+browser[nativeFetchKey] = nativeFetch
+const pageHtml = new Map<string, Promise<string | null>>()
 
-const prefetchNavigation = () => {
-  for (const link of document.querySelectorAll<HTMLAnchorElement>(
-    '[data-nav-link]',
-  )) {
-    if (link.pathname === location.pathname) continue
-    prefetch(link.href)
+const pageKey = (href: string) => {
+  try {
+    const url = new URL(href, location.href)
+    if (url.origin !== location.origin) return null
+    return `${url.pathname}${url.search}`
+  } catch {
+    return null
   }
 }
-document.addEventListener('astro:page-load', () => {
-  if ('requestIdleCallback' in window)
-    window.requestIdleCallback(prefetchNavigation, { timeout: 800 })
-  else window.setTimeout(prefetchNavigation, 300)
+
+const loadPageHtml = (href: string, priority: 'high' | 'low' = 'low') => {
+  const key = pageKey(href)
+  if (
+    !key ||
+    key === `${location.pathname}${location.search}` ||
+    pageHtml.has(key)
+  )
+    return
+  const pending = nativeFetch(new URL(key, location.origin).href, {
+    credentials: 'same-origin',
+    priority,
+  })
+    .then(async (response) => {
+      const type = response.headers.get('content-type') ?? ''
+      if (!response.ok || !type.includes('text/html')) {
+        pageHtml.delete(key)
+        return null
+      }
+      return await response.text()
+    })
+    .catch(() => {
+      pageHtml.delete(key)
+      return null
+    })
+  pageHtml.set(key, pending)
+}
+
+window.fetch = async (input, init) => {
+  const method = (
+    init?.method ?? (input instanceof Request ? input.method : 'GET')
+  ).toUpperCase()
+  const raw =
+    typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.href
+        : input.url
+  const key = method === 'GET' && !init?.body ? pageKey(raw) : null
+  const cached = key ? pageHtml.get(key) : undefined
+  if (cached) {
+    const html = await cached
+    if (html)
+      return new Response(html, {
+        status: 200,
+        headers: { 'content-type': 'text/html; charset=utf-8' },
+      })
+  }
+  return nativeFetch(input, init)
+}
+
+const warmLink = (event: Event) => {
+  if (!(event.target instanceof Element)) return
+  const link = event.target.closest<HTMLAnchorElement>('a[href]')
+  if (!link || link.origin !== location.origin || link.target === '_blank')
+    return
+  loadPageHtml(link.href, 'high')
+}
+document.addEventListener('mouseover', warmLink, {
+  capture: true,
+  passive: true,
 })
+document.addEventListener('focusin', warmLink, { passive: true })
+document.addEventListener('touchstart', warmLink, { passive: true })
+
+let entryObserver: IntersectionObserver | undefined
+const warmLinkedPages = () => {
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    '[data-nav-link]',
+  ))
+    loadPageHtml(link.href)
+  entryObserver?.disconnect()
+  if (!('IntersectionObserver' in window)) return
+  entryObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting || !(entry.target instanceof HTMLAnchorElement))
+        continue
+      loadPageHtml(entry.target.href)
+      entryObserver?.unobserve(entry.target)
+    }
+  })
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href]')) {
+    if (link.origin !== location.origin) continue
+    if (!/^\/(?:blog|works)\/[^/]+\/?$/.test(link.pathname)) continue
+    entryObserver.observe(link)
+  }
+}
+document.addEventListener('astro:page-load', warmLinkedPages)
+warmLinkedPages()
 
 document.addEventListener('astro:before-swap', (event) => {
   const { newDocument } = event as TransitionBeforeSwapEvent

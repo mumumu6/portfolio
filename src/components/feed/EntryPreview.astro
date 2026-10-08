@@ -26,10 +26,6 @@ const Wrapper = href ? 'a' : 'div'
 const wrapperAttributes = href
   ? {
       href,
-      'data-astro-prefetch':
-        !external && /^\/(?:blog|works)\/[^/]+\/?$/.test(href)
-          ? 'hover'
-          : undefined,
       'aria-label': label,
       ...(external ? { target: '_blank', rel: 'noreferrer' } : {}),
     }
