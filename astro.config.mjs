@@ -101,6 +101,12 @@ export default defineConfig({
       },
     }),
   ],
+  vite: {
+    server: {
+      // Cloudflare Quick Tunnel のホスト名で開発サーバを開けるようにする。
+      allowedHosts: ['.trycloudflare.com'],
+    },
+  },
   prefetch: {
     // 内部の詳細リンクだけ hover で HTML を先読みする。
     // タッチ操作の先読みは page-enhancements に任せる。

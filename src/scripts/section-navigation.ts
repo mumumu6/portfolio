@@ -120,6 +120,8 @@ let lastY = 0
 let scrollFrame = 0
 let resizeFrame = 0
 let activePreparation: AbortSignal | undefined
+let suspendHide = false
+let hideGeneration = 0
 
 const refreshSticky = () => {
   const profile = document.querySelector('.profile-header')
@@ -134,6 +136,11 @@ const updateVisibility = () => {
   if (!container) return
   const scrollY = window.scrollY
   const delta = scrollY - lastY
+  if (suspendHide) {
+    container.classList.remove('section-nav--hidden')
+    lastY = scrollY
+    return
+  }
   if (scrollY <= 4 || scrollY < stickyStart) {
     container.classList.remove('section-nav--hidden')
     lastY = scrollY
@@ -184,7 +191,19 @@ document.addEventListener('astro:before-swap', (event) => {
   const transition = event as TransitionBeforeSwapEvent
   const container = nav()
   if (!container) return
+  const hideToken = ++hideGeneration
+  suspendHide = true
+  const releaseHide = () => {
+    if (hideToken !== hideGeneration) return
+    suspendHide = false
+    lastY = window.scrollY
+  }
+  void transition.viewTransition.finished.then(releaseHide, releaseHide)
+  // 隠れているバーを戻すとき、縦のスライドは再生しない。
+  container.style.transition = 'none'
   container.classList.remove('section-nav--hidden')
+  container.getBoundingClientRect()
+  container.style.transition = ''
   syncLinks(container, transition.to.pathname)
   // 更新コールバックの中で始めると、記事遷移中は時計が止まって下線が飛ぶ。
   const generation = ++slideGeneration

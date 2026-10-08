@@ -121,14 +121,31 @@ document.addEventListener('astro:before-swap', (event) => {
   void transition.viewTransition.finished.then(cleanup, cleanup)
 })
 
-let pendingViewportTop: number | null = null
+let pendingNavViewportTop: number | null = null
+let navPinGeneration = 0
 let previousScrollBehavior: string | null = null
 let fadePageContent = false
 let pageEnterTimer = 0
 
-const getStickyStart = () => {
-  const profile = document.querySelector('.profile-header')
-  return profile ? profile.getBoundingClientRect().bottom + window.scrollY : 0
+// transform で隠れている間も、レイアウト上の位置を返す。
+const navLayoutTop = (container: HTMLElement) => {
+  const rect = container.getBoundingClientRect()
+  const shift = new DOMMatrixReadOnly(getComputedStyle(container).transform).m42
+  return rect.top - shift
+}
+
+const pinNavViewport = () => {
+  if (pendingNavViewportTop === null) return
+  const container = nav()
+  if (!container) return
+  const documentTop = navLayoutTop(container) + window.scrollY
+  const nextScroll = Math.max(0, documentTop - pendingNavViewportTop)
+  if (Math.abs(window.scrollY - nextScroll) <= 0.5) return
+  const root = document.documentElement
+  const previous = root.style.scrollBehavior
+  root.style.scrollBehavior = 'auto'
+  window.scrollTo({ top: nextScroll, behavior: 'instant' })
+  root.style.scrollBehavior = previous
 }
 
 document.addEventListener('astro:before-swap', (event) => {
@@ -140,10 +157,14 @@ document.addEventListener('astro:before-swap', (event) => {
 
   const traversal = transition.navigationType === 'traverse'
   const currentNav = nav()
-  pendingViewportTop =
-    !traversal && transition.newDocument.querySelector('.profile-header')
-      ? Math.max(0, currentNav?.getBoundingClientRect().top ?? 0)
-      : null
+  const generation = ++navPinGeneration
+  pendingNavViewportTop =
+    !traversal && currentNav ? navLayoutTop(currentNav) : null
+  const release = () => {
+    if (generation !== navPinGeneration) return
+    pendingNavViewportTop = null
+  }
+  void transition.viewTransition.finished.then(release, release)
   if (traversal) {
     if (previousScrollBehavior === null) {
       previousScrollBehavior = document.documentElement.style.scrollBehavior
@@ -166,13 +187,8 @@ document.addEventListener('astro:after-swap', () => {
     }, 180)
   }
   fadePageContent = false
-  if (pendingViewportTop !== null) {
-    window.scrollTo({
-      top: Math.max(0, getStickyStart() - pendingViewportTop),
-      behavior: 'instant',
-    })
-    pendingViewportTop = null
-  }
+  pinNavViewport()
+  void document.fonts.ready.then(pinNavViewport)
   if (previousScrollBehavior !== null) {
     document.documentElement.style.scrollBehavior = previousScrollBehavior
     previousScrollBehavior = null
