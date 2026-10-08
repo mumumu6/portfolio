@@ -27,7 +27,35 @@ const reducedMotion = () =>
 
 const indicatorEasing = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
-const measure = (container: HTMLElement, animate = false) => {
+type IndicatorBox = { x: number; width: number }
+
+let slideGeneration = 0
+let deferIndicator = false
+
+const indicatorBox = (container: HTMLElement, indicator: HTMLElement) => {
+  const navRect = container.getBoundingClientRect()
+  const rect = indicator.getBoundingClientRect()
+  return {
+    x: rect.left - navRect.left - container.clientLeft,
+    width: rect.width,
+  }
+}
+
+const indicatorIsMoving = (indicator: HTMLElement) =>
+  indicator
+    .getAnimations()
+    .some(
+      (animation) =>
+        animation.id === 'nav-indicator' &&
+        (animation.playState === 'running' ||
+          animation.playState === 'pending'),
+    )
+
+const measure = (
+  container: HTMLElement,
+  animate = false,
+  origin?: IndicatorBox,
+) => {
   const indicator = container.querySelector<HTMLElement>('[data-nav-indicator]')
   const link = container.querySelector<HTMLElement>('a.active')
   const label = link?.querySelector<HTMLElement>('span')
@@ -37,30 +65,27 @@ const measure = (container: HTMLElement, animate = false) => {
     indicator.removeAttribute('data-nav-ready')
     return
   }
+  // 記事遷移の準備が終わるまで測り直さない。先に終点へ置くと下線が飛ぶ。
+  if (!animate && (deferIndicator || indicatorIsMoving(indicator))) return
   const available = Math.max(36, link.offsetWidth - 16)
   const width = Math.min(available, Math.max(36, label.offsetWidth))
   const nextX = link.offsetLeft + (link.offsetWidth - width) / 2
   const targetKey = `${nextX}:${width}`
-  if (
-    !animate &&
-    indicator.dataset.navTarget === targetKey &&
-    indicator
-      .getAnimations()
-      .some((animation) => animation.playState === 'running')
-  ) {
-    return
-  }
   indicator.dataset.navTarget = targetKey
   const ready = indicator.dataset.navReady === 'true' && !indicator.hidden
   let originX = -width
   let originWidth = width
-  if (ready) {
-    const navRect = container.getBoundingClientRect()
-    const rect = indicator.getBoundingClientRect()
-    originX = rect.left - navRect.left - container.clientLeft
-    originWidth = rect.width
+  if (origin) {
+    originX = origin.x
+    originWidth = origin.width
+  } else if (ready) {
+    const box = indicatorBox(container, indicator)
+    originX = box.x
+    originWidth = box.width
   }
-  for (const animation of indicator.getAnimations()) animation.cancel()
+  for (const animation of indicator.getAnimations()) {
+    if (animation.id === 'nav-indicator') animation.cancel()
+  }
   indicator.hidden = false
   indicator.dataset.navReady = 'true'
   indicator.style.width = `${width}px`
@@ -76,10 +101,11 @@ const measure = (container: HTMLElement, animate = false) => {
       },
       { transform: `translate3d(${nextX}px, 0, 0) scaleX(1)` },
     ],
-    { duration: 200, easing: indicatorEasing },
+    { duration: 200, easing: indicatorEasing, id: 'nav-indicator' },
   )
   const restore = () => {
     indicator.style.transition = ''
+    if (indicator.isConnected) measure(container)
   }
   void animation.finished.then(restore, restore)
 }
@@ -160,7 +186,23 @@ document.addEventListener('astro:before-swap', (event) => {
   if (!container) return
   container.classList.remove('section-nav--hidden')
   syncLinks(container, transition.to.pathname)
-  measure(container, true)
+  // 更新コールバックの中で始めると、記事遷移中は時計が止まって下線が飛ぶ。
+  const generation = ++slideGeneration
+  deferIndicator = true
+  const slide = () => {
+    if (generation !== slideGeneration) return
+    deferIndicator = false
+    if (!container.isConnected) return
+    const indicator = container.querySelector<HTMLElement>(
+      '[data-nav-indicator]',
+    )
+    const origin =
+      indicator && indicator.dataset.navReady === 'true' && !indicator.hidden
+        ? indicatorBox(container, indicator)
+        : undefined
+    measure(container, true, origin)
+  }
+  void transition.viewTransition.ready.then(slide, slide)
 })
 
 document.addEventListener('astro:after-swap', () => {
