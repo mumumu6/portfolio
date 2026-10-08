@@ -83,8 +83,6 @@ document.addEventListener('astro:before-preparation', (event) => {
   const current = ++entryNavigation
   const fadeSharedPage = involvesEntry(transition.from, transition.to)
   selectEntryParticipants(document, transition.from, transition.to)
-  if (fadeSharedPage)
-    document.documentElement.setAttribute('data-page-fade', '')
   const loader = transition.loader
   transition.loader = async () => {
     await loader()
@@ -92,14 +90,12 @@ document.addEventListener('astro:before-preparation', (event) => {
     const next = transition.newDocument
     if (!fadeSharedPage || !next) return
     keepPairedTransitionNames(document, next)
-    next.documentElement.setAttribute('data-page-fade', '')
   }
   transition.signal.addEventListener(
     'abort',
     () => {
       if (current !== entryNavigation) return
       clearEntryParticipants(document)
-      document.documentElement.removeAttribute('data-page-fade')
     },
     { once: true },
   )
@@ -116,7 +112,6 @@ document.addEventListener('astro:before-swap', (event) => {
   const cleanup = () => {
     if (current !== entryNavigation) return
     clearEntryParticipants(document)
-    document.documentElement.removeAttribute('data-page-fade')
   }
   void transition.viewTransition.finished.then(cleanup, cleanup)
 })
@@ -124,7 +119,8 @@ document.addEventListener('astro:before-swap', (event) => {
 let pendingNavViewportTop: number | null = null
 let navPinGeneration = 0
 let previousScrollBehavior: string | null = null
-let fadePageContent = false
+let skipPageSnapshot = false
+let pageTransition: { ready: Promise<void> } | null = null
 let pageEnterTimer = 0
 
 // transform で隠れている間も、レイアウト上の位置を返す。
@@ -132,6 +128,14 @@ const navLayoutTop = (container: HTMLElement) => {
   const rect = container.getBoundingClientRect()
   const shift = new DOMMatrixReadOnly(getComputedStyle(container).transform).m42
   return rect.top - shift
+}
+
+const hasSharedPair = (current: Document, next: Document) => {
+  const nextNames = transitionTargets(next)
+  for (const name of transitionTargets(current).keys()) {
+    if (nextNames.has(name)) return true
+  }
+  return false
 }
 
 const pinNavViewport = () => {
@@ -150,10 +154,10 @@ const pinNavViewport = () => {
 
 document.addEventListener('astro:before-swap', (event) => {
   const transition = event as TransitionBeforeSwapEvent
-  // 一覧同士は画面全体を撮影しない。本文のフェードは入れ替え後に付ける。
-  fadePageContent =
-    !isEntryDetail(transition.from) && !isEntryDetail(transition.to)
-  if (fadePageContent) transition.viewTransition.skipTransition()
+  // 対になるタイトルと画像があるときだけ撮影する。本文全体は撮らない。
+  skipPageSnapshot = !hasSharedPair(document, transition.newDocument)
+  pageTransition = transition.viewTransition
+  if (skipPageSnapshot) transition.viewTransition.skipTransition()
 
   const traversal = transition.navigationType === 'traverse'
   const currentNav = nav()
@@ -174,19 +178,22 @@ document.addEventListener('astro:before-swap', (event) => {
   }
 })
 
+const fadeInPage = () => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const root = document.documentElement
+  root.setAttribute('data-page-enter', '')
+  window.clearTimeout(pageEnterTimer)
+  pageEnterTimer = window.setTimeout(() => {
+    root.removeAttribute('data-page-enter')
+  }, 160)
+}
+
 document.addEventListener('astro:after-swap', () => {
-  if (
-    fadePageContent &&
-    !matchMedia('(prefers-reduced-motion: reduce)').matches
-  ) {
-    const root = document.documentElement
-    root.setAttribute('data-page-enter', '')
-    window.clearTimeout(pageEnterTimer)
-    pageEnterTimer = window.setTimeout(() => {
-      root.removeAttribute('data-page-enter')
-    }, 180)
-  }
-  fadePageContent = false
+  const transition = pageTransition
+  pageTransition = null
+  if (skipPageSnapshot || !transition) fadeInPage()
+  else void transition.ready.then(fadeInPage, fadeInPage)
+  skipPageSnapshot = false
   pinNavViewport()
   void document.fonts.ready.then(pinNavViewport)
   if (previousScrollBehavior !== null) {
@@ -208,6 +215,20 @@ const prefetchTouchedLink = (event: Event) => {
 }
 for (const type of ['touchstart', 'mousedown'])
   document.addEventListener(type, prefetchTouchedLink, { passive: true })
+
+const prefetchNavigation = () => {
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    '[data-nav-link]',
+  )) {
+    if (link.pathname === location.pathname) continue
+    prefetch(link.href)
+  }
+}
+document.addEventListener('astro:page-load', () => {
+  if ('requestIdleCallback' in window)
+    window.requestIdleCallback(prefetchNavigation, { timeout: 800 })
+  else window.setTimeout(prefetchNavigation, 300)
+})
 
 document.addEventListener('astro:before-swap', (event) => {
   const { newDocument } = event as TransitionBeforeSwapEvent

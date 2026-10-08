@@ -1,6 +1,6 @@
 /* ナビの位置を保ちながら、ページ本文は控えめに切り替える。 */
 :root {
-  --page-transition-duration: 150ms;
+  --page-transition-duration: 120ms;
   --page-transition-ease: ease-out;
   view-transition-name: root;
 }
@@ -13,7 +13,7 @@
 /* 共有画像・タイトルは、始まりで止まって見えない曲線で短く移動する。
    animation-name はブラウザーが生成する位置・サイズの補間を利用する。 */
 ::view-transition-group(*) {
-  animation-duration: 180ms;
+  animation-duration: 120ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -30,7 +30,7 @@
 }
 
 /* 遷移グループの重なりは、元要素の z-index とは独立する。
-   本文 → 共有画像 → タイトルの順で描画する。ナビはスナップショットに含めない。 */
+   共有画像 → タイトルの順で描画する。本文とナビは撮影しない。 */
 .work-thread-cover {
   view-transition-class: entry-image;
 }
@@ -104,46 +104,6 @@
 html[data-page-enter] .page-content {
   animation: page-fade-in var(--page-transition-duration)
     var(--page-transition-ease) both;
-}
-
-/* 個別記事の遷移では、対になるタイトル・画像以外の本文をフェードする。
-   位置の補間は行わず、新しい本文の位置で重ねる。 */
-:root[data-page-fade] .page-content {
-  view-transition-name: page-content;
-}
-
-::view-transition-group(page-content) {
-  z-index: 0;
-  animation-duration: 0s;
-  overflow: clip;
-}
-
-::view-transition-image-pair(page-content) {
-  overflow: clip;
-}
-
-::view-transition-old(page-content),
-::view-transition-new(page-content) {
-  height: 100%;
-  mix-blend-mode: normal;
-  object-fit: none;
-  object-position: top center;
-}
-
-::view-transition-old(page-content) {
-  animation: page-fade-out var(--page-transition-duration)
-    var(--page-transition-ease) both;
-}
-
-::view-transition-new(page-content) {
-  animation: page-fade-in var(--page-transition-duration)
-    var(--page-transition-ease) both;
-}
-
-@keyframes page-fade-out {
-  to {
-    opacity: 0;
-  }
 }
 
 /* モバイルでは Astro が付けた遷移名も使わない。テーマ切替はページ全体を使う。 */
