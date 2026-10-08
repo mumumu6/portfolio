@@ -83,6 +83,7 @@ document.addEventListener('astro:before-preparation', (event) => {
   const current = ++entryNavigation
   const fadeSharedPage = involvesEntry(transition.from, transition.to)
   selectEntryParticipants(document, transition.from, transition.to)
+  holdScroll()
   const loader = transition.loader
   transition.loader = async () => {
     await loader()
@@ -96,6 +97,7 @@ document.addEventListener('astro:before-preparation', (event) => {
     () => {
       if (current !== entryNavigation) return
       clearEntryParticipants(document)
+      releaseScroll(current)
     },
     { once: true },
   )
@@ -138,6 +140,19 @@ const hasSharedPair = (current: Document, next: Document) => {
   return false
 }
 
+const holdScroll = () => {
+  const root = document.documentElement
+  if (previousScrollBehavior === null)
+    previousScrollBehavior = root.style.scrollBehavior
+  root.style.scrollBehavior = 'auto'
+}
+
+const releaseScroll = (navigation: number) => {
+  if (navigation !== entryNavigation || previousScrollBehavior === null) return
+  document.documentElement.style.scrollBehavior = previousScrollBehavior
+  previousScrollBehavior = null
+}
+
 const pinNavViewport = () => {
   if (pendingNavViewportTop === null) return
   const container = nav()
@@ -154,11 +169,12 @@ const pinNavViewport = () => {
 
 document.addEventListener('astro:before-swap', (event) => {
   const transition = event as TransitionBeforeSwapEvent
-  // 対になるタイトルと画像があるときだけ撮影する。本文全体は撮らない。
+  // 対になるタイトルがあるときだけ撮影する。画像と本文は撮らない。
   skipPageSnapshot = !hasSharedPair(document, transition.newDocument)
   pageTransition = transition.viewTransition
   if (skipPageSnapshot) transition.viewTransition.skipTransition()
 
+  const navigation = entryNavigation
   const traversal = transition.navigationType === 'traverse'
   const currentNav = nav()
   const generation = ++navPinGeneration
@@ -168,14 +184,18 @@ document.addEventListener('astro:before-swap', (event) => {
     if (generation !== navPinGeneration) return
     pendingNavViewportTop = null
   }
-  void transition.viewTransition.finished.then(release, release)
-  if (traversal) {
-    if (previousScrollBehavior === null) {
-      previousScrollBehavior = document.documentElement.style.scrollBehavior
-      document.documentElement.style.scrollBehavior = 'auto'
-    }
+  void transition.viewTransition.finished.then(
+    () => {
+      release()
+      releaseScroll(navigation)
+    },
+    () => {
+      release()
+      releaseScroll(navigation)
+    },
+  )
+  if (traversal)
     transition.newDocument.documentElement.style.scrollBehavior = 'auto'
-  }
 })
 
 const fadeInPage = () => {
@@ -185,7 +205,7 @@ const fadeInPage = () => {
   window.clearTimeout(pageEnterTimer)
   pageEnterTimer = window.setTimeout(() => {
     root.removeAttribute('data-page-enter')
-  }, 160)
+  }, 100)
 }
 
 document.addEventListener('astro:after-swap', () => {
@@ -196,10 +216,6 @@ document.addEventListener('astro:after-swap', () => {
   skipPageSnapshot = false
   pinNavViewport()
   void document.fonts.ready.then(pinNavViewport)
-  if (previousScrollBehavior !== null) {
-    document.documentElement.style.scrollBehavior = previousScrollBehavior
-    previousScrollBehavior = null
-  }
 })
 
 // タッチ操作時だけ、押されたリンクを Astro の先読み機能に渡す。

@@ -74,11 +74,6 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
   {image && (
     <EntryPreview
       image={image}
-      transitionName={
-        transitionHref
-          ? entryTransitionName(transitionHref, 'image')
-          : undefined
-      }
       href={href}
       label={imageLabel ?? `${title ?? '記事'}を開く`}
       sizes={imageSizes}

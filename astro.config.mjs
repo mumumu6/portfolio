@@ -114,6 +114,7 @@ export default defineConfig({
     defaultStrategy: 'hover',
   },
   experimental: {
-    clientPrerender: true,
+    // 先読みでページ全体を裏描画すると、遷移の取得と帯域を奪って遅くなる。
+    clientPrerender: false,
   },
 })

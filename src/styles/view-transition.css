@@ -1,6 +1,6 @@
 /* ナビの位置を保ちながら、ページ本文は控えめに切り替える。 */
 :root {
-  --page-transition-duration: 120ms;
+  --page-transition-duration: 80ms;
   --page-transition-ease: ease-out;
   view-transition-name: root;
 }
@@ -13,7 +13,7 @@
 /* 共有画像・タイトルは、始まりで止まって見えない曲線で短く移動する。
    animation-name はブラウザーが生成する位置・サイズの補間を利用する。 */
 ::view-transition-group(*) {
-  animation-duration: 120ms;
+  animation-duration: 80ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 

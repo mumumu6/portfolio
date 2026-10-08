@@ -119,7 +119,6 @@ const threadItems = [
         <p class="work-thread-summary">{data.summary}</p>
         <ResponsiveImage
           className="work-thread-cover"
-          transitionName={entryTransitionName(transitionHref, 'image')}
           src={data.cover.src}
           alt={data.cover.alt}
           sizes="(max-width: 760px) calc(100vw - 92px), 680px"
