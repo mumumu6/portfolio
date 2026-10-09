@@ -51,10 +51,7 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
   ]}
 >
   <article id="article-page" class="article-page">
-    <div
-      class="article-hero"
-      style={`view-transition-name: ${entryTransitionName(transitionHref, 'image')}`}
-    >
+    <div class="article-hero">
       <ResponsiveImage
         className="article-cover"
         src={data.cover}

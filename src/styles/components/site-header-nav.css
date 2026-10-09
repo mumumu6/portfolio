@@ -1,6 +1,6 @@
 .section-nav {
-  /* 描画されるナビ自身に遷移名を付ける。 */
-  view-transition-name: section-navigation;
+  /* ページ遷移のスナップショットから外し、バー自体は動かさない。 */
+  view-transition-name: none !important;
   position: sticky;
   top: 0;
   z-index: 60;
@@ -22,10 +22,9 @@
   transform: translate3d(0, -100%, 0);
 }
 
-/* テーマ切り替え時は、ナビをページ全体のクロスフェードに含める。 */
+/* テーマ切り替え中は、表示切替の transform を止めてページ全体のフェードに乗せる。 */
 :root[data-theme-transitioning] .section-nav,
 :root[data-theme-transitioning] .section-nav__indicator {
-  view-transition-name: none !important;
   transition: none;
 }
 
@@ -75,7 +74,7 @@
 }
 
 .section-nav__indicator {
-  view-transition-name: section-navigation-indicator;
+  view-transition-name: none !important;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -92,53 +91,9 @@
     width 200ms ease;
 }
 
-/* デスクトップではスナップショット間で、モバイルでは実要素で移動する。 */
-@media (min-width: 768px) and (pointer: fine) {
-  :root:active-view-transition .section-nav__indicator {
-    transition: none;
-  }
-}
-
-@media (max-width: 767px), (pointer: coarse) {
-  :root:not([data-theme-transitioning]) .section-nav__indicator {
-    view-transition-name: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .section-nav,
   .section-nav__indicator {
     transition: none;
   }
-}
-
-::view-transition-old(section-navigation) {
-  animation: none;
-  opacity: 0;
-  mix-blend-mode: normal;
-}
-
-::view-transition-new(section-navigation),
-::view-transition-group(section-navigation) {
-  animation: none;
-}
-
-::view-transition-group(section-navigation) {
-  z-index: 1;
-}
-
-::view-transition-group(section-navigation-indicator) {
-  z-index: 1;
-  animation-duration: 200ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-::view-transition-old(section-navigation-indicator) {
-  animation: none;
-  opacity: 0;
-}
-
-::view-transition-new(section-navigation-indicator) {
-  animation: none;
-  mix-blend-mode: normal;
 }

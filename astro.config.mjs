@@ -101,13 +101,17 @@ export default defineConfig({
       },
     }),
   ],
-  prefetch: {
-    // 内部の詳細リンクだけ hover で HTML を先読みする。
-    // タッチ操作の先読みは page-enhancements に任せる。
-    prefetchAll: false,
-    defaultStrategy: 'hover',
+  vite: {
+    server: {
+      // Cloudflare Quick Tunnel のホスト名で開発サーバを開けるようにする。
+      allowedHosts: ['.trycloudflare.com'],
+    },
   },
+  // <link rel="prefetch"> は、キャッシュヘッダーの無い HTML を
+  // ルーターの fetch が再利用できない。先読みは page-enhancements で持つ。
+  prefetch: false,
   experimental: {
-    clientPrerender: true,
+    // 先読みでページ全体を裏描画すると、遷移の取得と帯域を奪って遅くなる。
+    clientPrerender: false,
   },
 })

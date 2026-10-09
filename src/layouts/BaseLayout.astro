@@ -61,7 +61,9 @@ const { showProfileHeader = true, ...seoProps } = Astro.props
     <main class="site-shell" id="main-content">
       {showProfileHeader && <ProfileHeader />}
       <SectionNavigation pathname={Astro.url.pathname} />
-      <slot />
+      <div class="page-content">
+        <slot />
+      </div>
     </main>
 
     <script>

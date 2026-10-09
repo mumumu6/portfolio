@@ -263,6 +263,8 @@
 }
 
 .feed-list--timeline .feed-entry {
+  /* 短い記録を仮高さで省略すると、入ってきた瞬間に高さが跳ねて画面がちらつく。 */
+  content-visibility: visible;
   background: transparent;
 }
 

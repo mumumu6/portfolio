@@ -1,11 +1,11 @@
 /* ナビの位置を保ちながら、ページ本文は控えめに切り替える。 */
 :root {
-  --page-transition-duration: 150ms;
+  --page-transition-duration: 80ms;
   --page-transition-ease: ease-out;
   view-transition-name: root;
 }
 
-/* ページ遷移では本文をスナップショット化せず、テーマ切替だけ root を使う。 */
+/* ページ遷移では画面全体を撮影せず、テーマ切替だけ root を使う。 */
 :root:not([data-theme-transitioning]) {
   view-transition-name: none;
 }
@@ -13,7 +13,7 @@
 /* 共有画像・タイトルは、始まりで止まって見えない曲線で短く移動する。
    animation-name はブラウザーが生成する位置・サイズの補間を利用する。 */
 ::view-transition-group(*) {
-  animation-duration: 180ms;
+  animation-duration: 80ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -30,7 +30,7 @@
 }
 
 /* 遷移グループの重なりは、元要素の z-index とは独立する。
-   本文 → ナビ → 共有画像 → タイトルの順で描画する。 */
+   共有画像 → タイトルの順で描画する。本文とナビは撮影しない。 */
 .work-thread-cover {
   view-transition-class: entry-image;
 }
@@ -95,16 +95,19 @@
   }
 }
 
+/* プロフィールとナビの外側にある本文。余白が外に抜けないようにする。 */
+.page-content {
+  display: flow-root;
+}
+
 /* 一覧間は画面全体を撮影せず、ページ本文だけを短くフェードする。 */
-html[data-page-enter] .site-shell > :not(.section-nav):not(.profile-header) {
+html[data-page-enter] .page-content {
   animation: page-fade-in var(--page-transition-duration)
     var(--page-transition-ease) both;
 }
 
-/* モバイルのページ遷移では、追従ナビとインジケーターをそのまま表示する。
-   テーマ切り替え時は、ページ全体の遷移を利用する。 */
+/* モバイルでは Astro が付けた遷移名も使わない。テーマ切替はページ全体を使う。 */
 @media (max-width: 767px), (pointer: coarse) {
-  :root:not([data-theme-transitioning]) .section-nav,
   :root:not([data-theme-transitioning]) [data-astro-transition-scope] {
     view-transition-name: none !important;
   }

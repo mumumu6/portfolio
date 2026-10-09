@@ -1,4 +1,3 @@
-import { prefetch } from 'astro:prefetch'
 import type {
   TransitionBeforePreparationEvent,
   TransitionBeforeSwapEvent,
@@ -21,6 +20,36 @@ loadReadingProgress()
 const nav = () => document.querySelector<HTMLElement>('[data-nav-container]')
 const isEntryDetail = (url: URL) =>
   /^\/(?:blog|works)\/[^/]+\/?$/.test(url.pathname)
+const involvesEntry = (from: URL, to: URL) =>
+  isEntryDetail(from) || isEntryDetail(to)
+
+const transitionTargets = (root: ParentNode) => {
+  const names = new Map<string, HTMLElement[]>()
+  for (const element of root.querySelectorAll<HTMLElement>(
+    '[style*="view-transition-name"]',
+  )) {
+    const name = element.style.viewTransitionName
+    if (!name || name === 'none') continue
+    const elements = names.get(name)
+    if (elements) elements.push(element)
+    else names.set(name, [element])
+  }
+  return names
+}
+
+/* 両ページに無い名前は本文フェードに含め、単独で移動させない。 */
+const keepPairedTransitionNames = (current: Document, next: Document) => {
+  const currentNames = transitionTargets(current)
+  const nextNames = transitionTargets(next)
+  for (const [name, elements] of currentNames) {
+    if (nextNames.has(name)) continue
+    for (const element of elements) element.style.viewTransitionName = ''
+  }
+  for (const [name, elements] of nextNames) {
+    if (currentNames.has(name)) continue
+    for (const element of elements) element.style.viewTransitionName = ''
+  }
+}
 
 let entryNavigation = 0
 const clearEntryParticipants = (target: Document) => {
@@ -51,11 +80,23 @@ const selectEntryParticipants = (target: Document, from: URL, to: URL) => {
 document.addEventListener('astro:before-preparation', (event) => {
   const transition = event as TransitionBeforePreparationEvent
   const current = ++entryNavigation
+  const fadeSharedPage = involvesEntry(transition.from, transition.to)
   selectEntryParticipants(document, transition.from, transition.to)
+  holdScroll()
+  const loader = transition.loader
+  transition.loader = async () => {
+    await loader()
+    if (transition.signal.aborted || current !== entryNavigation) return
+    const next = transition.newDocument
+    if (!fadeSharedPage || !next) return
+    keepPairedTransitionNames(document, next)
+  }
   transition.signal.addEventListener(
     'abort',
     () => {
-      if (current === entryNavigation) clearEntryParticipants(document)
+      if (current !== entryNavigation) return
+      clearEntryParticipants(document)
+      releaseScroll(current)
     },
     { once: true },
   )
@@ -70,82 +111,246 @@ document.addEventListener('astro:before-swap', (event) => {
     transition.to,
   )
   const cleanup = () => {
-    if (current === entryNavigation) clearEntryParticipants(document)
+    if (current !== entryNavigation) return
+    clearEntryParticipants(document)
   }
   void transition.viewTransition.finished.then(cleanup, cleanup)
 })
 
-let pendingViewportTop: number | null = null
+let pendingNavViewportTop: number | null = null
+let navPinGeneration = 0
 let previousScrollBehavior: string | null = null
-let fadePageContent = false
+let skipPageSnapshot = false
+let pageTransition: { ready: Promise<void> } | null = null
 let pageEnterTimer = 0
 
-const getStickyStart = () => {
-  const profile = document.querySelector('.profile-header')
-  return profile ? profile.getBoundingClientRect().bottom + window.scrollY : 0
+// transform で隠れている間も、レイアウト上の位置を返す。
+const navLayoutTop = (container: HTMLElement) => {
+  const rect = container.getBoundingClientRect()
+  const shift = new DOMMatrixReadOnly(getComputedStyle(container).transform).m42
+  return rect.top - shift
+}
+
+const hasSharedPair = (current: Document, next: Document) => {
+  const nextNames = transitionTargets(next)
+  for (const name of transitionTargets(current).keys()) {
+    if (nextNames.has(name)) return true
+  }
+  return false
+}
+
+const holdScroll = () => {
+  const root = document.documentElement
+  if (previousScrollBehavior === null)
+    previousScrollBehavior = root.style.scrollBehavior
+  root.style.scrollBehavior = 'auto'
+}
+
+const releaseScroll = (navigation: number) => {
+  if (navigation !== entryNavigation || previousScrollBehavior === null) return
+  document.documentElement.style.scrollBehavior = previousScrollBehavior
+  previousScrollBehavior = null
+}
+
+const pinNavViewport = () => {
+  if (pendingNavViewportTop === null) return
+  const container = nav()
+  if (!container) return
+  const documentTop = navLayoutTop(container) + window.scrollY
+  const nextScroll = Math.max(0, documentTop - pendingNavViewportTop)
+  if (Math.abs(window.scrollY - nextScroll) <= 0.5) return
+  const root = document.documentElement
+  const previous = root.style.scrollBehavior
+  root.style.scrollBehavior = 'auto'
+  window.scrollTo({ top: nextScroll, behavior: 'instant' })
+  root.style.scrollBehavior = previous
 }
 
 document.addEventListener('astro:before-swap', (event) => {
   const transition = event as TransitionBeforeSwapEvent
-  // 一覧同士は画面全体を撮影しない。本文のフェードは入れ替え後に付ける。
-  fadePageContent =
-    !isEntryDetail(transition.from) && !isEntryDetail(transition.to)
-  if (fadePageContent) transition.viewTransition.skipTransition()
+  // 対になるタイトルがあるときだけ撮影する。画像と本文は撮らない。
+  skipPageSnapshot = !hasSharedPair(document, transition.newDocument)
+  pageTransition = transition.viewTransition
+  if (skipPageSnapshot) transition.viewTransition.skipTransition()
 
+  const navigation = entryNavigation
   const traversal = transition.navigationType === 'traverse'
   const currentNav = nav()
-  pendingViewportTop =
-    !traversal && transition.newDocument.querySelector('.profile-header')
-      ? Math.max(0, currentNav?.getBoundingClientRect().top ?? 0)
-      : null
-  if (traversal) {
-    if (previousScrollBehavior === null) {
-      previousScrollBehavior = document.documentElement.style.scrollBehavior
-      document.documentElement.style.scrollBehavior = 'auto'
-    }
-    transition.newDocument.documentElement.style.scrollBehavior = 'auto'
+  const generation = ++navPinGeneration
+  pendingNavViewportTop =
+    !traversal && currentNav ? navLayoutTop(currentNav) : null
+  const release = () => {
+    if (generation !== navPinGeneration) return
+    pendingNavViewportTop = null
   }
+  void transition.viewTransition.finished.then(
+    () => {
+      release()
+      releaseScroll(navigation)
+    },
+    () => {
+      release()
+      releaseScroll(navigation)
+    },
+  )
+  if (traversal)
+    transition.newDocument.documentElement.style.scrollBehavior = 'auto'
 })
+
+const fadeInPage = () => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const root = document.documentElement
+  root.setAttribute('data-page-enter', '')
+  window.clearTimeout(pageEnterTimer)
+  pageEnterTimer = window.setTimeout(() => {
+    root.removeAttribute('data-page-enter')
+  }, 100)
+}
 
 document.addEventListener('astro:after-swap', () => {
-  if (
-    fadePageContent &&
-    !matchMedia('(prefers-reduced-motion: reduce)').matches
-  ) {
-    const root = document.documentElement
-    root.setAttribute('data-page-enter', '')
-    window.clearTimeout(pageEnterTimer)
-    pageEnterTimer = window.setTimeout(() => {
-      root.removeAttribute('data-page-enter')
-    }, 180)
-  }
-  fadePageContent = false
-  if (pendingViewportTop !== null) {
-    window.scrollTo({
-      top: Math.max(0, getStickyStart() - pendingViewportTop),
-      behavior: 'instant',
-    })
-    pendingViewportTop = null
-  }
-  if (previousScrollBehavior !== null) {
-    document.documentElement.style.scrollBehavior = previousScrollBehavior
-    previousScrollBehavior = null
-  }
+  const transition = pageTransition
+  pageTransition = null
+  if (skipPageSnapshot || !transition) fadeInPage()
+  else void transition.ready.then(fadeInPage, fadeInPage)
+  skipPageSnapshot = false
+  pinNavViewport()
+  void document.fonts.ready.then(pinNavViewport)
 })
 
-// タッチ操作時だけ、押されたリンクを Astro の先読み機能に渡す。
-const coarsePointer = matchMedia('(pointer: coarse)')
-const prefetchTouchedLink = (event: Event) => {
-  if (!coarsePointer.matches || !(event.target instanceof Element)) return
-  const link = event.target.closest<HTMLAnchorElement>('a[href]')
-  if (
-    link?.origin === location.origin &&
-    link.dataset.astroPrefetch !== 'false'
-  )
-    prefetch(link.href, { ignoreSlowConnection: true })
+// ルーターの fetch は HTTP キャッシュを再利用しない。HTML はメモリに置く。
+const nativeFetchKey = '__mumumuNativeFetch'
+const browser = window as Window & { [nativeFetchKey]?: typeof fetch }
+const nativeFetch = browser[nativeFetchKey] ?? window.fetch.bind(window)
+browser[nativeFetchKey] = nativeFetch
+const pageHtml = new Map<string, Promise<string | null>>()
+
+const pageKey = (href: string) => {
+  try {
+    const url = new URL(href, location.href)
+    if (url.origin !== location.origin) return null
+    return `${url.pathname}${url.search}`
+  } catch {
+    return null
+  }
 }
-for (const type of ['touchstart', 'mousedown'])
-  document.addEventListener(type, prefetchTouchedLink, { passive: true })
+
+const loadPageHtml = (href: string, priority: 'high' | 'low' = 'low') => {
+  const key = pageKey(href)
+  if (
+    !key ||
+    key === `${location.pathname}${location.search}` ||
+    pageHtml.has(key)
+  )
+    return
+  const pending = nativeFetch(new URL(key, location.origin).href, {
+    credentials: 'same-origin',
+    priority,
+  })
+    .then(async (response) => {
+      const type = response.headers.get('content-type') ?? ''
+      if (!response.ok || !type.includes('text/html')) {
+        pageHtml.delete(key)
+        return null
+      }
+      const html = await response.text()
+      warmStyles(html)
+      return html
+    })
+    .catch(() => {
+      pageHtml.delete(key)
+      return null
+    })
+  pageHtml.set(key, pending)
+}
+
+// 新しい CSS が head に無いと、ルーターは遷移の前にその読み込みを待つ。
+const warmStyles = (html: string) => {
+  const existing = new Set(
+    [...document.querySelectorAll('link[rel="stylesheet"]')].map((el) =>
+      el.getAttribute('href'),
+    ),
+  )
+  for (const tag of html.matchAll(/<link\b[^>]*>/gi)) {
+    const markup = tag[0]
+    if (!/\brel=["']stylesheet["']/i.test(markup)) continue
+    const href = markup.match(/\bhref=["']([^"']+)["']/i)?.[1]
+    if (!href || existing.has(href) || href.startsWith('//')) continue
+    if (/^https?:/i.test(href)) {
+      try {
+        if (new URL(href).origin !== location.origin) continue
+      } catch {
+        continue
+      }
+    }
+    existing.add(href)
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.setAttribute('href', href)
+    document.head.append(link)
+  }
+}
+
+window.fetch = async (input, init) => {
+  const method = (
+    init?.method ?? (input instanceof Request ? input.method : 'GET')
+  ).toUpperCase()
+  const raw =
+    typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.href
+        : input.url
+  const key = method === 'GET' && !init?.body ? pageKey(raw) : null
+  const cached = key ? pageHtml.get(key) : undefined
+  if (cached) {
+    const html = await cached
+    if (html)
+      return new Response(html, {
+        status: 200,
+        headers: { 'content-type': 'text/html; charset=utf-8' },
+      })
+  }
+  return nativeFetch(input, init)
+}
+
+const warmLink = (event: Event) => {
+  if (!(event.target instanceof Element)) return
+  const link = event.target.closest<HTMLAnchorElement>('a[href]')
+  if (!link || link.origin !== location.origin || link.target === '_blank')
+    return
+  loadPageHtml(link.href, 'high')
+}
+document.addEventListener('mouseover', warmLink, {
+  capture: true,
+  passive: true,
+})
+document.addEventListener('focusin', warmLink, { passive: true })
+document.addEventListener('touchstart', warmLink, { passive: true })
+
+let entryObserver: IntersectionObserver | undefined
+const warmLinkedPages = () => {
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    '[data-nav-link]',
+  ))
+    loadPageHtml(link.href)
+  entryObserver?.disconnect()
+  if (!('IntersectionObserver' in window)) return
+  entryObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting || !(entry.target instanceof HTMLAnchorElement))
+        continue
+      loadPageHtml(entry.target.href)
+      entryObserver?.unobserve(entry.target)
+    }
+  })
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href]')) {
+    if (link.origin !== location.origin) continue
+    if (!/^\/(?:blog|works)\/[^/]+\/?$/.test(link.pathname)) continue
+    entryObserver.observe(link)
+  }
+}
+document.addEventListener('astro:page-load', warmLinkedPages)
+warmLinkedPages()
 
 document.addEventListener('astro:before-swap', (event) => {
   const { newDocument } = event as TransitionBeforeSwapEvent
