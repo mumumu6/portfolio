@@ -22,7 +22,7 @@
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource/space-grotesk": "^5.3.0",
     "@mdi/js": "^7.4.47",
-    "astro": "7.3.5"
+    "astro": "7.3.6"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",

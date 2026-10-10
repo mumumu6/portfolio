@@ -101,7 +101,7 @@ html[data-page-enter] .site-shell > :not(.section-nav):not(.profile-header) {
     var(--page-transition-ease) both;
 }
 
-/* モバイルのページ遷移では、追従ナビとインジケーターをそのまま表示する。
+/* モバイルのページ遷移では、詳細ページの共有要素を撮影しない。
    テーマ切り替え時は、ページ全体の遷移を利用する。 */
 @media (max-width: 767px), (pointer: coarse) {
   :root:not([data-theme-transitioning]) .section-nav,

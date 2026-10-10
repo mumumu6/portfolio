@@ -27,9 +27,6 @@ const reducedMotion = () =>
 
 const indicatorEasing = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
-const isEntryDetail = (pathname: string) =>
-  /^\/(?:blog|works)\/[^/]+\/?$/.test(pathname)
-
 const measure = (container: HTMLElement, animate = false) => {
   const indicator = container.querySelector<HTMLElement>('[data-nav-indicator]')
   const link = container.querySelector<HTMLElement>('a.active')
@@ -71,7 +68,6 @@ const measure = (container: HTMLElement, animate = false) => {
   const moved =
     Math.abs(originX - nextX) >= 0.5 || Math.abs(originWidth - width) >= 0.5
   if (!animate || !moved || reducedMotion() || width <= 0) return
-  indicator.style.transition = 'none'
   const animation = indicator.animate(
     [
       {
@@ -81,10 +77,7 @@ const measure = (container: HTMLElement, animate = false) => {
     ],
     { duration: 200, easing: indicatorEasing },
   )
-  const restore = () => {
-    indicator.style.transition = ''
-  }
-  void animation.finished.then(restore, restore)
+  void animation.finished.catch(() => {})
 }
 
 const measureCurrent = () => {
@@ -110,6 +103,11 @@ const updateVisibility = () => {
   const container = nav()
   if (!container) return
   const scrollY = window.scrollY
+  if (container.getAttribute('aria-busy') === 'true') {
+    container.classList.remove('section-nav--hidden')
+    lastY = scrollY
+    return
+  }
   const delta = scrollY - lastY
   if (scrollY <= 4 || scrollY < stickyStart) {
     container.classList.remove('section-nav--hidden')
@@ -163,15 +161,11 @@ document.addEventListener('astro:before-swap', (event) => {
   if (!container) return
   container.classList.remove('section-nav--hidden')
   syncLinks(container, transition.to.pathname)
-  const detail =
-    isEntryDetail(transition.from.pathname) ||
-    isEntryDetail(transition.to.pathname)
-  measure(container, !detail)
+  measure(container, true)
 })
 
 document.addEventListener('astro:after-swap', () => {
   activePreparation = undefined
-  nav()?.removeAttribute('aria-busy')
   lastY = window.scrollY
   refreshSticky()
   measureCurrent()
@@ -180,10 +174,20 @@ document.addEventListener('astro:after-swap', () => {
 const start = () => {
   const container = nav()
   if (!container) return
+  const transitioning = container.getAttribute('aria-busy') === 'true'
   syncLinks(container, window.location.pathname)
   lastY = window.scrollY
   refreshSticky()
   measure(container)
+  if (transitioning) {
+    requestAnimationFrame(() => {
+      if (activePreparation || !container.isConnected) return
+      container.classList.remove('section-nav--hidden')
+      lastY = window.scrollY
+      refreshSticky()
+      container.removeAttribute('aria-busy')
+    })
+  }
   void document.fonts.ready.then(() => {
     if (nav()) measureCurrent()
   })
