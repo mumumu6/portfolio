@@ -102,6 +102,7 @@
   height: auto;
   margin: 0;
   border: 0;
+  border-radius: 0;
 }
 
 .article-prose picture > img {
