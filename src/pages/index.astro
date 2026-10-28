@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import BlogCard from '@/components/feed/BlogCard.astro'
-import WorkCard from '@/components/feed/WorkCard.astro'
-import SectionHeading from '@/components/layout/SectionHeading.astro'
-import { blogPosts } from '@/lib/portfolio/blogs'
-import { works } from '@/lib/portfolio/works'
+import BaseLayout from '@/components/shell/BaseLayout.astro'
+import BlogCard from '@/features/blog/BlogCard.astro'
+import WorkCard from '@/features/works/WorkCard.astro'
+import SectionHeading from '@/components/ui/SectionHeading.astro'
+import { blogPosts } from '@/data/portfolio/blogs'
+import { works } from '@/data/portfolio/works'
 ---
 
 <BaseLayout

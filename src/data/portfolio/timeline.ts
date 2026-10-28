@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content'
-import { getAiReplies } from '@/lib/portfolio/ai'
+import { getAiReplies } from '@/data/portfolio/ai'
 import type { TimelineEntry } from '@/lib/portfolio/types'
 
 export const getExperiences = async (): Promise<TimelineEntry[]> => {

@@ -1,4 +1,4 @@
-import { applyTheme, type Theme } from '@/lib/theme'
+import { applyTheme, type Theme } from '@/scripts/client/theme'
 
 const label = (dark: boolean) =>
   dark ? 'ライトテーマに切り替える' : 'ダークテーマに切り替える'

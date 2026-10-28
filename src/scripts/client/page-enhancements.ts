@@ -3,16 +3,16 @@ import type {
   TransitionBeforePreparationEvent,
   TransitionBeforeSwapEvent,
 } from 'astro:transitions/client'
-import { applyTheme } from '@/lib/theme'
+import { applyTheme } from '@/scripts/client/theme'
 import { entryTransitionName } from '@/lib/entry-transition'
-import '@/scripts/disclosure'
-import '@/scripts/image-loading'
-import '@/scripts/section-navigation'
-import '@/scripts/theme-toggle'
+import '@/scripts/client/disclosure'
+import '@/scripts/client/image-loading'
+import '@/scripts/client/section-navigation'
+import '@/scripts/client/theme-toggle'
 
 const loadReadingProgress = () => {
   if (document.querySelector('[data-article-controls]'))
-    void import('@/scripts/reading-progress')
+    void import('@/scripts/client/reading-progress')
 }
 
 document.addEventListener('astro:page-load', loadReadingProgress)

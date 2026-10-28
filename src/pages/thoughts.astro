@@ -1,10 +1,10 @@
 ---
 import '@/styles/components/ai-disclosure.css'
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import TimelineEntry from '@/components/feed/TimelineEntry.astro'
-import TimelineIndex from '@/components/layout/TimelineIndex.astro'
-import TimelineSection from '@/components/layout/TimelineSection.astro'
-import { thoughts } from '@/lib/portfolio/ai'
+import BaseLayout from '@/components/shell/BaseLayout.astro'
+import TimelineEntry from '@/features/timeline/TimelineEntry.astro'
+import TimelineIndex from '@/features/timeline/TimelineIndex.astro'
+import TimelineSection from '@/features/timeline/TimelineSection.astro'
+import { thoughts } from '@/data/portfolio/ai'
 import { groupEntriesByPeriod } from '@/lib/portfolio/utils'
 
 const thoughtGroups = groupEntriesByPeriod(thoughts, (entry) =>

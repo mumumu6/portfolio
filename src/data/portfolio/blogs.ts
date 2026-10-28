@@ -1,6 +1,6 @@
 import { getCollection } from 'astro:content'
 import generatedBlogPosts from '@/data/generated/blogs.json'
-import { resolveBlogImage } from '@/lib/portfolio/images'
+import { resolveBlogImage } from '@/data/portfolio/images'
 import type { BlogEntry } from '@/lib/portfolio/types'
 import { estimateReadingMinutes } from '@/lib/portfolio/utils'
 

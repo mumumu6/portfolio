@@ -5,13 +5,13 @@ import '@/styles/components/work-detail.css'
 import '@/styles/components/article-prose.css'
 import '@/styles/components/eyebrow.css'
 import '@/styles/components/work-status.css'
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import { getAiReplies } from '@/lib/portfolio/ai'
+import BaseLayout from '@/components/shell/BaseLayout.astro'
+import { getAiReplies } from '@/data/portfolio/ai'
 import { statusLabels } from '@/lib/portfolio/constants'
 import { buildWorkThreadItems } from '@/lib/portfolio/work-thread'
-import WorkThreadRoot from '@/components/feed/WorkThreadRoot.astro'
-import WorkThreadReply from '@/components/feed/WorkThreadReply.astro'
-import WorkProjectDetails from '@/components/feed/WorkProjectDetails.astro'
+import WorkThreadRoot from '@/features/works/WorkThreadRoot.astro'
+import WorkThreadReply from '@/features/works/WorkThreadReply.astro'
+import WorkProjectDetails from '@/features/works/WorkProjectDetails.astro'
 
 export const getStaticPaths = async () => {
   const works = await getCollection('works')
