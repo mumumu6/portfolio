@@ -1,0 +1,65 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { entryTransitionName } from '@/lib/entry-transition'
+import Avatar from '@/components/common/Avatar.astro'
+import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+
+type Props = {
+  work: CollectionEntry<'works'>
+  publishedAt: string
+  dateLabel: string
+  statusLabel: string
+}
+
+const { work, publishedAt, dateLabel, statusLabel } = Astro.props
+const data = work.data
+const transitionHref = `/works/${work.id}/`
+---
+
+<section
+  class="work-thread-post work-thread-post--root"
+  aria-labelledby="work-title"
+>
+  <div class="work-thread-rail">
+    <Avatar author="mumumu" />
+    <span class="work-thread-line" aria-hidden="true"></span>
+  </div>
+  <div class="work-thread-content">
+    <header class="work-thread-head">
+      <strong>mumumu</strong>
+      <span aria-hidden="true">·</span>
+      <time datetime={publishedAt}>{dateLabel}</time>
+      <span aria-hidden="true">·</span>
+      <span class:list={['work-status', `work-status--${data.status}`]}>
+        {statusLabel}
+      </span>
+    </header>
+    <h1
+      id="work-title"
+      style={`view-transition-name: ${entryTransitionName(transitionHref, 'title')}`}
+    >
+      {data.title}
+    </h1>
+    <p class="work-thread-summary">{data.summary}</p>
+    <ResponsiveImage
+      className="work-thread-cover"
+      transitionName={entryTransitionName(transitionHref, 'image')}
+      src={data.cover.src}
+      alt={data.cover.alt}
+      sizes="(max-width: 760px) calc(100vw - 92px), 680px"
+      loading="eager"
+      fetchPriority="high"
+    />
+    <footer class="work-thread-meta">
+      <span>{data.tags.join(' / ')}</span>
+    </footer>
+    {data.links.length > 0 && (
+      <nav class="work-thread-links" aria-label="作品へのリンク">
+        {data.links.map((link) => (
+          <ExternalLinkCard href={link.href} label={link.label} />
+        ))}
+      </nav>
+    )}
+  </div>
+</section>

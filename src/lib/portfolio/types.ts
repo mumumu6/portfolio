@@ -45,9 +45,31 @@ export type WorkEntry = EntryBase & {
   href: string
   image: FeedImage
   status: WorkStatus
-  comment: {
-    label: string
-    body: string
-    date?: string | undefined
-  }
+  comment?:
+    | {
+        label: string
+        body: string
+        date?: string | undefined
+      }
+    | undefined
 }
+
+export type WorkThreadItem =
+  | {
+      kind: 'maker'
+      author: 'mumumu'
+      body: string
+      label: string
+      date: string
+      replyTo?: undefined
+      sourceOrder: number
+    }
+  | {
+      kind: 'ai'
+      author: AuthorId
+      body: string
+      label?: undefined
+      date: string
+      replyTo: AuthorId | undefined
+      sourceOrder: number
+    }

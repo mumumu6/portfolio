@@ -1,12 +1,13 @@
 import { getCollection } from 'astro:content'
 import type { WorkEntry } from '@/lib/portfolio/types'
+import { getLatestWorkComment } from '@/lib/portfolio/work-thread'
 
 const workDocuments = await getCollection('works')
 
 export const works: WorkEntry[] = workDocuments
   .map<WorkEntry>((work) => {
     const publishedAt = work.data.publishedAt.toISOString().slice(0, 10)
-    const latestComment = work.data.comments.at(-1)!
+    const latestComment = getLatestWorkComment(work.data.comments)
 
     return {
       id: work.id,
@@ -20,11 +21,13 @@ export const works: WorkEntry[] = workDocuments
       href: `/works/${work.id}/`,
       image: work.data.cover,
       status: work.data.status,
-      comment: {
-        label: latestComment.label,
-        body: latestComment.body,
-        date: latestComment.date?.toISOString().slice(0, 10),
-      },
+      comment: latestComment
+        ? {
+            label: latestComment.label,
+            body: latestComment.body,
+            date: latestComment.date?.toISOString().slice(0, 10),
+          }
+        : undefined,
     }
   })
   .sort((a, b) => b.date.localeCompare(a.date))

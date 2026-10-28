@@ -40,19 +40,21 @@ const { entry, headingLevel = 2, priority = false } = Astro.props
       <div class="entry-card-meta">
         <TagList tags={entry.tags} label="使用技術" />
 
-        <div class="work-entry-notes">
-          <div class="work-note-preview">
-            <Avatar author="mumumu" size="small" />
-            <span>
-              <strong>
-                {entry.comment.label}
-                {entry.comment.date &&
-                  ` · ${entry.comment.date.replaceAll('-', '.')}`}
-              </strong>
-              <span>{entry.comment.body}</span>
-            </span>
+        {entry.comment && (
+          <div class="work-entry-notes">
+            <div class="work-note-preview">
+              <Avatar author="mumumu" size="small" />
+              <span>
+                <strong>
+                  {entry.comment.label}
+                  {entry.comment.date &&
+                    ` · ${entry.comment.date.replaceAll('-', '.')}`}
+                </strong>
+                <span>{entry.comment.body}</span>
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </EntryBody>
   </div>

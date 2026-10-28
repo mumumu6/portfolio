@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+
+type Props = {
+  data: CollectionEntry<'works'>['data']
+}
+
+const { data } = Astro.props
+---
+
+<section class="work-details" aria-labelledby="work-details-title">
+  <header class="work-details__head">
+    <p class="eyebrow">PROJECT NOTES</p>
+    <h2 id="work-details-title">作品について</h2>
+  </header>
+  <div class="work-details__body">
+    <div class="article-prose work-thread-prose">
+      <slot />
+    </div>
+
+    {data.highlights.length > 0 && (
+      <div class="work-thread-highlights">
+        <p class="eyebrow">WHAT IT DOES</p>
+        <ul>
+          {data.highlights.map((highlight) => (
+            <li>{highlight}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {data.warning && (
+      <aside class="work-thread-warning">
+        <strong>更新状況</strong>
+        <p>{data.warning}</p>
+      </aside>
+    )}
+
+    {data.gallery.map((image) => (
+      <figure class="work-thread-gallery">
+        <ResponsiveImage
+          src={image.src}
+          alt={image.alt}
+          sizes="(max-width: 760px) calc(100vw - 84px), 680px"
+        />
+        {image.caption && <figcaption>{image.caption}</figcaption>}
+      </figure>
+    ))}
+  </div>
+</section>

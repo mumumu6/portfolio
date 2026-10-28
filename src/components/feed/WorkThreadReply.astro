@@ -1,0 +1,46 @@
+---
+import Avatar from '@/components/common/Avatar.astro'
+import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
+import type { WorkThreadItem } from '@/lib/portfolio/types'
+
+type Props = {
+  item: WorkThreadItem
+  index: number
+  isLast: boolean
+}
+
+const { item, index, isLast } = Astro.props
+const replyDate = formatReplyDate(item.date)
+---
+
+<section
+  class:list={['work-thread-post', 'work-thread-post--reply']}
+  aria-label={
+    item.kind === 'ai'
+      ? `${authorNames[item.author]}のコメント ${index + 1}`
+      : `mumumuの${item.label} ${index + 1}`
+  }
+>
+  <div class="work-thread-rail">
+    <Avatar author={item.author} />
+    {!isLast && <span class="work-thread-line" aria-hidden="true" />}
+  </div>
+  <div class="work-thread-content">
+    <header class="work-thread-head">
+      <strong>{authorNames[item.author]}</strong>
+      {item.kind === 'maker' && <span>{item.label}</span>}
+      {replyDate && (
+        <>
+          <span aria-hidden="true">·</span>
+          <time datetime={item.date}>{replyDate}</time>
+        </>
+      )}
+    </header>
+    {item.replyTo && (
+      <p class="work-thread-reply-context">
+        {authorNames[item.replyTo]}への返信
+      </p>
+    )}
+    <p>{item.body}</p>
+  </div>
+</section>

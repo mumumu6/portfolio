@@ -1,19 +1,17 @@
 ---
-import { entryTransitionName } from '@/lib/entry-transition'
 import type { CollectionEntry } from 'astro:content'
 import { getCollection, render } from 'astro:content'
 import '@/styles/components/work-detail.css'
 import '@/styles/components/article-prose.css'
 import '@/styles/components/eyebrow.css'
 import '@/styles/components/work-status.css'
-import Avatar from '@/components/common/Avatar.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro'
-import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
-import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
 import { getAiReplies } from '@/lib/portfolio/ai'
 import { statusLabels } from '@/lib/portfolio/constants'
-import type { AuthorId, Reply } from '@/lib/portfolio/types'
+import { buildWorkThreadItems } from '@/lib/portfolio/work-thread'
+import WorkThreadRoot from '@/components/feed/WorkThreadRoot.astro'
+import WorkThreadReply from '@/components/feed/WorkThreadReply.astro'
+import WorkProjectDetails from '@/components/feed/WorkProjectDetails.astro'
 
 export const getStaticPaths = async () => {
   const works = await getCollection('works')
@@ -23,57 +21,15 @@ export const getStaticPaths = async () => {
 type Props = { work: CollectionEntry<'works'> }
 const { work }: Props = Astro.props
 const { Content } = await render(work)
-const transitionHref = `/works/${work.id}/`
 const data = work.data
 const publishedAt = data.publishedAt.toISOString().slice(0, 10)
 const dateLabel = publishedAt.slice(0, 7).replace('-', '.')
 const statusLabel = statusLabels[data.status]
-const aiReplies = getAiReplies('work', work.id) ?? []
-const makerReplies = [
-  ...data.comments.map((comment) => ({
-    ...comment,
-    date: comment.date ?? data.publishedAt,
-  })),
-]
-type ThreadItem =
-  | {
-      kind: 'maker'
-      author: 'mumumu'
-      body: string
-      label: string
-      date: string
-      replyTo?: undefined
-      sourceOrder: number
-    }
-  | {
-      kind: 'ai'
-      author: Reply['author']
-      body: string
-      label?: undefined
-      date: string
-      replyTo: AuthorId | undefined
-      sourceOrder: number
-    }
-const threadItems = [
-  ...makerReplies.map<ThreadItem>((reply, index) => ({
-    kind: 'maker',
-    author: 'mumumu',
-    body: reply.body,
-    label: reply.label,
-    date: reply.date.toISOString().slice(0, 10),
-    replyTo: undefined,
-    sourceOrder: index,
-  })),
-  ...aiReplies.map<ThreadItem>((reply, index) => ({
-    kind: 'ai',
-    author: reply.author,
-    body: reply.body,
-    label: undefined,
-    date: reply.createdAt ?? publishedAt,
-    replyTo: reply.replyTo,
-    sourceOrder: makerReplies.length + index,
-  })),
-].sort((a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder)
+const threadItems = buildWorkThreadItems(
+  data.comments,
+  getAiReplies('work', work.id) ?? [],
+  data.publishedAt,
+)
 ---
 
 <BaseLayout
@@ -93,131 +49,25 @@ const threadItems = [
   ]}
 >
   <article class="work-thread-page">
-    <section
-      class="work-thread-post work-thread-post--root"
-      aria-labelledby="work-title"
-    >
-      <div class="work-thread-rail">
-        <Avatar author="mumumu" />
-        <span class="work-thread-line" aria-hidden="true"></span>
-      </div>
-      <div class="work-thread-content">
-        <header class="work-thread-head">
-          <strong>mumumu</strong>
-          <span aria-hidden="true">·</span>
-          <time datetime={publishedAt}>{dateLabel}</time>
-          <span aria-hidden="true">·</span>
-          <span class:list={['work-status', `work-status--${data.status}`]}>
-            {statusLabel}
-          </span>
-        </header>
-        <h1
-          id="work-title"
-          style={`view-transition-name: ${entryTransitionName(transitionHref, 'title')}`}
-        >
-          {data.title}
-        </h1>
-        <p class="work-thread-summary">{data.summary}</p>
-        <ResponsiveImage
-          className="work-thread-cover"
-          transitionName={entryTransitionName(transitionHref, 'image')}
-          src={data.cover.src}
-          alt={data.cover.alt}
-          sizes="(max-width: 760px) calc(100vw - 92px), 680px"
-          loading="eager"
-          fetchPriority="high"
-        />
-        <footer class="work-thread-meta">
-          <span>{data.tags.join(' / ')}</span>
-        </footer>
-        {data.links.length > 0 && (
-          <nav class="work-thread-links" aria-label="作品へのリンク">
-            {data.links.map((link) => (
-              <ExternalLinkCard href={link.href} label={link.label} />
-            ))}
-          </nav>
-        )}
-      </div>
-    </section>
+    <WorkThreadRoot
+      work={work}
+      publishedAt={publishedAt}
+      dateLabel={dateLabel}
+      statusLabel={statusLabel}
+    />
 
     {threadItems.map((item, index) => {
-      const replyDate = formatReplyDate(item.date)
       return (
-        <section
-          class:list={['work-thread-post', 'work-thread-post--reply']}
-          aria-label={
-            item.kind === 'ai'
-              ? `${authorNames[item.author]}のコメント ${index + 1}`
-              : `mumumuの${item.label} ${index + 1}`
-          }
-        >
-          <div class="work-thread-rail">
-            <Avatar author={item.author} />
-            {index < threadItems.length - 1 && (
-              <span class="work-thread-line" aria-hidden="true" />
-            )}
-          </div>
-          <div class="work-thread-content">
-            <header class="work-thread-head">
-              <strong>{authorNames[item.author]}</strong>
-              {item.kind === 'maker' && <span>{item.label}</span>}
-              {replyDate && (
-                <>
-                  <span aria-hidden="true">·</span>
-                  <time datetime={item.date}>{replyDate}</time>
-                </>
-              )}
-            </header>
-            {item.replyTo && (
-              <p class="work-thread-reply-context">
-                {authorNames[item.replyTo]}への返信
-              </p>
-            )}
-            <p>{item.body}</p>
-          </div>
-        </section>
+        <WorkThreadReply
+          item={item}
+          index={index}
+          isLast={index === threadItems.length - 1}
+        />
       )
     })}
 
-    <section class="work-details" aria-labelledby="work-details-title">
-      <header class="work-details__head">
-        <p class="eyebrow">PROJECT NOTES</p>
-        <h2 id="work-details-title">作品について</h2>
-      </header>
-      <div class="work-details__body">
-        <div class="article-prose work-thread-prose">
-          <Content />
-        </div>
-
-        {data.highlights.length > 0 && (
-          <div class="work-thread-highlights">
-            <p class="eyebrow">WHAT IT DOES</p>
-            <ul>
-              {data.highlights.map((highlight) => (
-                <li>{highlight}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {data.warning && (
-          <aside class="work-thread-warning">
-            <strong>更新状況</strong>
-            <p>{data.warning}</p>
-          </aside>
-        )}
-
-        {data.gallery.map((image) => (
-          <figure class="work-thread-gallery">
-            <ResponsiveImage
-              src={image.src}
-              alt={image.alt}
-              sizes="(max-width: 760px) calc(100vw - 84px), 680px"
-            />
-            {image.caption && <figcaption>{image.caption}</figcaption>}
-          </figure>
-        ))}
-      </div>
-    </section>
+    <WorkProjectDetails data={data}>
+      <Content />
+    </WorkProjectDetails>
   </article>
 </BaseLayout>
