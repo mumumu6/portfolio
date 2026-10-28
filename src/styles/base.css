@@ -143,9 +143,27 @@ summary:focus-visible {
     max(var(--site-width), calc(100vw - 412px))
   );
   width: var(--adaptive-shell-width);
+  position: relative;
   min-height: calc(100vh - var(--header-height));
   margin: 0 auto;
   overflow: visible;
   border-inline: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface) 94%, transparent);
+}
+
+.site-theme-toggle {
+  position: absolute;
+  top: 7.5px;
+  right: 8px;
+  z-index: 61;
+}
+
+.site-theme-toggle--profile {
+  top: 11px;
+  right: 16px;
+  z-index: 1;
+}
+
+.site-shell--without-profile .section-nav {
+  padding-right: 50px;
 }

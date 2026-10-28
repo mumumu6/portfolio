@@ -96,7 +96,9 @@
 }
 
 /* 一覧間は画面全体を撮影せず、ページ本文だけを短くフェードする。 */
-html[data-page-enter] .site-shell > :not(.section-nav):not(.profile-header) {
+html[data-page-enter]
+  .site-shell
+  > :not(.section-nav):not(.profile-header):not(.site-theme-toggle) {
   animation: page-fade-in var(--page-transition-duration)
     var(--page-transition-ease) both;
 }

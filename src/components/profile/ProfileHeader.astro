@@ -1,8 +1,14 @@
 ---
 import '@/styles/components/profile.css'
 import Avatar from '@/components/common/Avatar.astro'
-import ThemeToggle from '@/components/layout/ThemeToggle.astro'
 import { getEntry } from 'astro:content'
+
+interface Props {
+  headingLevel: 1 | 2
+}
+
+const { headingLevel } = Astro.props
+const ProfileHeading = headingLevel === 1 ? 'h1' : 'h2'
 
 const profileEntry = await getEntry('site', 'profile')
 if (!profileEntry) throw new Error('Missing site profile content')
@@ -10,11 +16,7 @@ const { data: profile } = profileEntry
 ---
 
 <section class="profile-header" aria-labelledby="profile-name">
-  <div class="profile-cover">
-    <div class="profile-cover__actions">
-      <ThemeToggle />
-    </div>
-  </div>
+  <div class="profile-cover"></div>
   <div class="profile-main">
     <div class="profile-top">
       <a
@@ -58,10 +60,10 @@ const { data: profile } = profileEntry
     </div>
 
     <div class="profile-copy">
-      <h1 id="profile-name">
+      <ProfileHeading id="profile-name">
         {profile.name}
         <span>.</span>
-      </h1>
+      </ProfileHeading>
       <p class="profile-bio">{profile.bio}</p>
     </div>
     <ul class="profile-meta" aria-label="プロフィール情報">
