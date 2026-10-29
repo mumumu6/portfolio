@@ -1,6 +1,15 @@
-import { blogs } from '@/content/collections/blogs'
-import { experiences } from '@/content/collections/experiences'
-import { site } from '@/content/collections/site'
-import { works } from '@/content/collections/works'
+import { blogs } from '@/collections/blogs'
+import { experiences } from '@/collections/experiences'
+import { aiComments, thoughts, trapPosts } from '@/collections/generated'
+import { site } from '@/collections/site'
+import { works } from '@/collections/works'
 
-export const collections = { blogs, works, experiences, site }
+export const collections = {
+  blogs,
+  works,
+  experiences,
+  site,
+  trapPosts,
+  thoughts,
+  aiComments,
+}

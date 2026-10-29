@@ -4,7 +4,7 @@ import BaseLayout from '@/components/shell/BaseLayout.astro'
 import TimelineEntry from '@/features/timeline/TimelineEntry.astro'
 import TimelineIndex from '@/features/timeline/TimelineIndex.astro'
 import TimelineSection from '@/features/timeline/TimelineSection.astro'
-import { thoughts } from '@/data/portfolio/ai'
+import { thoughts } from '@/lib/content/ai'
 import { groupEntriesByPeriod } from '@/lib/portfolio/utils'
 
 const thoughtGroups = groupEntriesByPeriod(thoughts, (entry) =>

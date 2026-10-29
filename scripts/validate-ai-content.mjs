@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
-const path = resolve('src/data/generated/ai-content.json')
+const path = resolve('src/content/generated/ai-content.json')
 const value = JSON.parse(await readFile(path, 'utf8'))
 const authors = new Set(['chatgpt', 'codex', 'grok'])
 const replyTargets = new Set(['mumumu', ...authors])

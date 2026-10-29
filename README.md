@@ -31,7 +31,7 @@ Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox�
 
 ## Directory roles
 
-- `src/content/` — Astro Content Collectionsで管理する、本人が編集するMarkdown・MDX・サイト設定とその画像
-- `src/content/collections/` — Content Collectionsのスキーマ定義（ブログ・作品・経験・サイト設定）
-- `src/data/generated/` — RSS・AIフローが生成するJSON。外部同期・自動生成物なので、手書きコンテンツとは分離
-- `src/lib/portfolio/` — コレクションや生成JSONを画面用データへ変換するロジック
+- `src/content/` — 手書きの Markdown・MDX・サイト設定と、その画像。生成 JSON もここ（`generated/`）に置く。データだけ
+- `src/collections/` — Content Collections のスキーマ定義（ブログ・作品・経験・サイト設定・生成 JSON）
+- `src/lib/content/` — コレクションを画面用データへ変換する読み込み
+- `src/lib/portfolio/` — 型、定数、表示の補助

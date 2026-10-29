@@ -1,6 +1,5 @@
 import { getCollection } from 'astro:content'
-import generatedBlogPosts from '@/data/generated/blogs.json'
-import { resolveBlogImage } from '@/data/portfolio/images'
+import { resolveBlogImage } from '@/lib/content/images'
 import type { BlogEntry } from '@/lib/portfolio/types'
 import { estimateReadingMinutes } from '@/lib/portfolio/utils'
 
@@ -30,12 +29,15 @@ const localBlogPosts: BlogEntry[] = (await getCollection('blogs')).map(
 )
 
 export const blogPosts: BlogEntry[] = [
-  ...generatedBlogPosts.map<BlogEntry>((post) => ({
-    ...post,
-    image: resolveBlogImage(post.image),
-    kind: 'blog',
-    author: 'mumumu',
-    sourceLabel: 'traP Blogで読む',
-  })),
+  ...(await getCollection('trapPosts')).map<BlogEntry>(
+    ({ id, data: post }) => ({
+      id,
+      ...post,
+      image: resolveBlogImage(post.image),
+      kind: 'blog',
+      author: 'mumumu',
+      sourceLabel: 'traP Blogで読む',
+    }),
+  ),
   ...localBlogPosts,
 ].sort((a, b) => b.date.localeCompare(a.date))
