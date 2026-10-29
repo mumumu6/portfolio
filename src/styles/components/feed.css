@@ -320,9 +320,32 @@
   text-decoration: none;
 }
 
-.entry-title a:hover {
+.entry-title a:has(.entry-title-text:hover) {
   color: var(--link);
   text-decoration: underline;
+}
+
+/* タイトルのリンクをカード全体に広げる。文字と画像のホバーは、それぞれの要素の上だけ残す。 */
+.feed-entry:has(.entry-title-link) {
+  position: relative;
+}
+
+.entry-title-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.entry-title-text {
+  position: relative;
+  z-index: 2;
+}
+
+.feed-entry:has(.entry-title-link)
+  :is(a.ogp-preview, .entry-source, a.entry-link) {
+  position: relative;
+  z-index: 2;
 }
 
 .entry-body {
