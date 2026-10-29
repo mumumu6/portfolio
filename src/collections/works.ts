@@ -17,7 +17,6 @@ export const works = defineCollection({
       summary: z.string(),
       publishedAt: z.coerce.date(),
       status: z.enum(['active', 'wip', 'paused', 'archived']),
-      tags: z.array(z.string()),
       cover: workImage(context),
       gallery: z.array(workImage(context)).default([]),
       links: z

@@ -17,7 +17,6 @@ const localBlogPosts: BlogEntry[] = (await getCollection('blogs')).map(
       title: data.title,
       body: data.description,
       readingMinutes: estimateReadingMinutes(post.body ?? data.description),
-      tags: data.tags,
       href: `/blog/${post.id}/`,
       sourceLabel: 'この記事を読む',
       image: {

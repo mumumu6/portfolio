@@ -51,9 +51,6 @@ const transitionHref = `/works/${work.id}/`
       loading="eager"
       fetchPriority="high"
     />
-    <footer class="work-thread-meta">
-      <span>{data.tags.join(' / ')}</span>
-    </footer>
     {data.links.length > 0 && (
       <nav class="work-thread-links" aria-label="作品へのリンク">
         {data.links.map((link) => (

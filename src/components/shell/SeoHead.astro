@@ -18,7 +18,6 @@ type Props = {
     | 'BlogPosting'
     | 'CreativeWork'
     | undefined
-  tags?: string[] | undefined
   readingMinutes?: number | undefined
   breadcrumbs?: { name: string; href: string }[] | undefined
 }
@@ -32,7 +31,6 @@ const {
   publishedTime,
   updatedTime,
   schemaType = 'WebPage',
-  tags = [],
   readingMinutes,
   breadcrumbs = [],
 } = Astro.props
@@ -121,7 +119,6 @@ const structuredData = {
       ...(publishedTime ? { datePublished: publishedTime } : {}),
       ...(updatedTime ? { dateModified: updatedTime } : {}),
       ...(readingMinutes ? { timeRequired: `PT${readingMinutes}M` } : {}),
-      ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
     },
     ...(breadcrumbData ? [breadcrumbData] : []),
   ],
@@ -160,9 +157,6 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll(
   <meta property="article:published_time" content={publishedTime} />
 )}
 {updatedTime && <meta property="article:modified_time" content={updatedTime} />}
-{tags.map((tag) => (
-  <meta property="article:tag" content={tag} />
-))}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />

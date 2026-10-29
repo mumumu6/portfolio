@@ -1,6 +1,5 @@
 ---
 import '@/styles/components/entry-link.css'
-import TagList from '@/components/ui/TagList.astro'
 import EntryBody from '@/components/ui/EntryBody.astro'
 import EntryFrame from '@/components/ui/EntryFrame.astro'
 import EntryHeader from '@/components/ui/EntryHeader.astro'
@@ -68,10 +67,6 @@ const sourceLabel = sourceUrl
           詳しく見る
         </a>
       )}
-
-      <div class="entry-card-meta">
-        <TagList tags={entry.tags} />
-      </div>
     </EntryBody>
   </div>
 </EntryFrame>

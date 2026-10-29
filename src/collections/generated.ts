@@ -19,7 +19,6 @@ export const trapPosts = defineCollection({
     title: z.string(),
     body: z.string(),
     readingMinutes: z.number(),
-    tags: z.array(z.string()).optional(),
     href: z.url(),
     image: z.object({ asset: z.string(), alt: z.string() }).loose(),
   }),

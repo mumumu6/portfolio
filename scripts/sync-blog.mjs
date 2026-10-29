@@ -177,7 +177,6 @@ for (const item of items) {
     readingMinutes: estimateReadingMinutes(
       item['content:encoded'] ?? item.description,
     ),
-    tags: asArray(item.category).map(cleanText).filter(Boolean).slice(0, 4),
     href,
     ...(image ? { image } : {}),
   })

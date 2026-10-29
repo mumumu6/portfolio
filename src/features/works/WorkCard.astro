@@ -1,6 +1,5 @@
 ---
 import '@/styles/components/work-entry.css'
-import TagList from '@/components/ui/TagList.astro'
 import EntryBody from '@/components/ui/EntryBody.astro'
 import EntryFrame from '@/components/ui/EntryFrame.astro'
 import EntryHeader from '@/components/ui/EntryHeader.astro'
@@ -37,10 +36,8 @@ const { entry, headingLevel = 2, priority = false } = Astro.props
       priority={priority}
       imageSizes="(max-width: 540px) calc(100vw - 40px), 360px"
     >
-      <div class="entry-card-meta">
-        <TagList tags={entry.tags} label="使用技術" />
-
-        {entry.comment && (
+      {entry.comment && (
+        <div class="entry-card-meta">
           <div class="work-entry-notes">
             <div class="work-note-preview">
               <Avatar author="mumumu" size="small" />
@@ -54,8 +51,8 @@ const { entry, headingLevel = 2, priority = false } = Astro.props
               </span>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </EntryBody>
   </div>
 </EntryFrame>

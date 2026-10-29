@@ -3,10 +3,6 @@ title: Portfolio v2
 summary: 今見ているこのポートフォリオサイト。Works・Blog・活動履歴を、ひとつの静的サイトとしてまとめ直しました。
 publishedAt: 2026-08-09
 status: wip
-tags:
-  - Astro
-  - TypeScript
-  - Cloudflare Workers
 cover:
   # 公開時にページのスクリーンショットへ差し替える。
   src: ./assets/portfolio-v2-cover.png

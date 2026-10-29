@@ -3,10 +3,6 @@ title: 科学大試験リンク生成サイト
 summary: 期末試験の日程を検索し、選んだ予定からiCalendarファイルを生成できるサイト。
 publishedAt: 2025-05-04
 status: paused
-tags:
-  - Vue
-  - Go
-  - Python
 cover:
   src: ./assets/sci-schedule.webp
   alt: 科学大試験リンク生成サイトの検索画面
