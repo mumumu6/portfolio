@@ -202,12 +202,15 @@
   padding-left: 10px;
 }
 
-.article-toc a {
+.article-toc a,
+.article-toc-mobile a {
   text-decoration: none;
 }
 
 .article-toc a:hover,
-.article-toc a.active {
+.article-toc a.active,
+.article-toc-mobile a:hover,
+.article-toc-mobile a.active {
   color: var(--link);
 }
 
@@ -292,15 +295,6 @@
     color: var(--muted);
     font-size: 0.74rem;
     line-height: 1.45;
-  }
-
-  .article-toc-mobile a {
-    text-decoration: none;
-  }
-
-  .article-toc-mobile a:hover,
-  .article-toc-mobile a.active {
-    color: var(--link);
   }
 
   .article-toc-mobile .article-toc--depth-3 {

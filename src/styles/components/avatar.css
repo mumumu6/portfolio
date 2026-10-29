@@ -45,8 +45,7 @@
   background: #ffffff;
 }
 
-.avatar--chatgpt,
-.avatar--chatgpt picture {
+.avatar--chatgpt {
   background-color: #ffffff;
 }
 
@@ -85,7 +84,6 @@
 }
 
 .avatar--grok img {
-  object-fit: cover;
   /* 顔は切らず、画像の暗い外枠だけが円の内側から消える倍率。 */
   transform: scale(1.1);
   transform-origin: 50% 100%;
