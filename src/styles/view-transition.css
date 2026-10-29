@@ -54,8 +54,7 @@
   display: none;
 }
 
-/* 対になる要素がない古いスナップショットを本文に重ねない。 */
-::view-transition-old(.entry-title):only-child,
+/* 対になる要素がない古い画像を本文に重ねない。タイトルは上の指定で常に隠す。 */
 ::view-transition-old(.entry-image):only-child {
   display: none;
 }

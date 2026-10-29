@@ -3,7 +3,7 @@ import BaseLayout from '@/components/shell/BaseLayout.astro'
 import TimelineEntry from '@/features/timeline/TimelineEntry.astro'
 import TimelineIndex from '@/features/timeline/TimelineIndex.astro'
 import TimelineSection from '@/features/timeline/TimelineSection.astro'
-import { getExperiences } from '@/data/portfolio/timeline'
+import { getExperiences } from '@/lib/content/timeline'
 import { groupEntriesByPeriod } from '@/lib/portfolio/utils'
 
 const experiences = await getExperiences()

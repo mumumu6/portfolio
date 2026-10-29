@@ -91,15 +91,12 @@
 .link-preview-card strong {
   display: -webkit-box;
   overflow: hidden;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.link-preview-card strong {
   font-size: 0.88rem;
   line-height: 1.45;
+  line-clamp: 2;
   overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .link-preview-card__description {

@@ -10,7 +10,7 @@ const IMAGE_TRANSFORM_VERSION = 6
 const BLOG_IMAGE_WIDTHS = [1440]
 const BLOG_IMAGE_FORMATS = ['webp']
 const root = fileURLToPath(new URL('..', import.meta.url))
-const outputFile = path.join(root, 'src/data/generated/blogs.json')
+const outputFile = path.join(root, 'src/content/generated/trap-posts.json')
 const imageDirectory = path.join(root, 'src/assets/images/blog')
 
 const asArray = (value) =>
@@ -177,7 +177,6 @@ for (const item of items) {
     readingMinutes: estimateReadingMinutes(
       item['content:encoded'] ?? item.description,
     ),
-    tags: asArray(item.category).map(cleanText).filter(Boolean).slice(0, 4),
     href,
     ...(image ? { image } : {}),
   })

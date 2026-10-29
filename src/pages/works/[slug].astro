@@ -6,7 +6,7 @@ import '@/styles/components/article-prose.css'
 import '@/styles/components/eyebrow.css'
 import '@/styles/components/work-status.css'
 import BaseLayout from '@/components/shell/BaseLayout.astro'
-import { getAiReplies } from '@/data/portfolio/ai'
+import { getAiReplies } from '@/lib/content/ai'
 import { statusLabels } from '@/lib/portfolio/constants'
 import { buildWorkThreadItems } from '@/lib/portfolio/work-thread'
 import WorkThreadRoot from '@/features/works/WorkThreadRoot.astro'
@@ -27,7 +27,7 @@ const dateLabel = publishedAt.slice(0, 7).replace('-', '.')
 const statusLabel = statusLabels[data.status]
 const threadItems = buildWorkThreadItems(
   data.comments,
-  getAiReplies('work', work.id) ?? [],
+  (await getAiReplies('work', work.id)) ?? [],
   data.publishedAt,
 )
 ---
@@ -41,7 +41,6 @@ const threadItems = buildWorkThreadItems(
   profileHeadingLevel={2}
   publishedTime={publishedAt}
   schemaType="CreativeWork"
-  tags={data.tags}
   breadcrumbs={[
     { name: 'ホーム', href: '/' },
     { name: '作品', href: '/works/' },

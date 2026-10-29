@@ -51,6 +51,7 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
         }
       >
         <a
+          class="entry-title-link"
           href={href}
           data-astro-prefetch={
             transitionHref &&
@@ -62,7 +63,7 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
           target={external ? '_blank' : undefined}
           rel={external ? 'noreferrer' : undefined}
         >
-          {title}
+          <span class="entry-title-text">{title}</span>
         </a>
       </Heading>
     ) : (

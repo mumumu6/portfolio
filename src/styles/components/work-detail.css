@@ -84,17 +84,6 @@
   border-radius: 10px;
 }
 
-.work-thread-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 7px 16px;
-  margin-top: 11px;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.61rem;
-}
-
 .work-thread-links {
   width: min(100%, 680px);
   display: grid;

@@ -33,7 +33,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- src/data/generated/blog.json src/assets/images/blog; then
+          if [ -z "$(git status --porcelain -- src/content/generated/trap-posts.json src/assets/images/blog)" ]; then
             echo "No blog updates."
             exit 0
           fi
@@ -42,7 +42,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$branch"
-          git add src/data/generated/blog.json src/assets/images/blog
+          git add src/content/generated/trap-posts.json src/assets/images/blog
           git commit -m "chore: sync blog posts"
           git push --force origin "$branch"
 

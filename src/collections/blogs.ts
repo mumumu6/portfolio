@@ -10,7 +10,6 @@ export const blogs = defineCollection({
       description: z.string(),
       publishedAt: z.coerce.date(),
       updatedAt: z.coerce.date().optional(),
-      tags: z.array(z.string()).optional(),
       cover: image(),
       coverAlt: z.string(),
     }),

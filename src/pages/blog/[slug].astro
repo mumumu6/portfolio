@@ -7,7 +7,6 @@ import '@/styles/components/article-prose.css'
 import BaseLayout from '@/components/shell/BaseLayout.astro'
 import ArticleControls from '@/features/blog/ArticleControls.astro'
 import ResponsiveImage from '@/components/ui/ResponsiveImage.astro'
-import TagList from '@/components/ui/TagList.astro'
 import { estimateReadingMinutes } from '@/lib/portfolio/utils'
 
 type Props = { post: CollectionEntry<'blogs'> }
@@ -42,7 +41,6 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
   publishedTime={publishedAt}
   updatedTime={updatedAt}
   schemaType="BlogPosting"
-  tags={data.tags}
   readingMinutes={readingMinutes}
   breadcrumbs={[
     { name: 'ホーム', href: '/' },
@@ -79,9 +77,6 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
     </div>
     <div class="article-intro">
       <p class="article-lead">{data.description}</p>
-      <div class="article-tags">
-        <TagList tags={data.tags} />
-      </div>
     </div>
     <ArticleControls articleId="article-page" headings={tocHeadings}>
       <Content />

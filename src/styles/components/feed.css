@@ -102,11 +102,6 @@
     --preview-width: clamp(180px, calc(28cqi + 80px), 360px);
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, var(--preview-width));
-    align-items: start;
-    column-gap: 18px;
-  }
-
-  .feed-list--compact :is(.blog-entry-layout, .work-entry-layout) {
     grid-template-areas:
       'head head'
       'title title'
@@ -114,28 +109,18 @@
       'source preview'
       'link preview'
       'meta preview';
+    align-items: start;
+    column-gap: 18px;
   }
 
   .feed-list--compact
     :is(.blog-entry-layout, .work-entry-layout)
-    .entry-card-layout--has-image {
+    :is(.entry-card-layout--has-image, .entry-card-copy, .entry-copy-content) {
     display: contents;
   }
 
   .feed-list--compact :is(.blog-entry-layout, .work-entry-layout) .entry-head {
     grid-area: head;
-  }
-
-  .feed-list--compact
-    :is(.blog-entry-layout, .work-entry-layout)
-    .entry-card-copy {
-    display: contents;
-  }
-
-  .feed-list--compact
-    :is(.blog-entry-layout, .work-entry-layout)
-    .entry-copy-content {
-    display: contents;
   }
 
   .feed-list--compact :is(.blog-entry-layout, .work-entry-layout) .entry-body {
@@ -211,10 +196,6 @@
 
   .feed-list--compact .work-entry-layout .entry-card-meta {
     display: contents;
-  }
-
-  .feed-list--compact .work-entry-layout .entry-card-meta > .tag-list {
-    grid-area: meta;
   }
 
   .feed-list--compact .work-entry-layout .work-entry-notes {
@@ -317,16 +298,35 @@
   line-height: 1.4;
   letter-spacing: -0.025em;
   overflow-wrap: break-word;
-  text-wrap: normal;
 }
 
 .entry-title a {
   text-decoration: none;
 }
 
-.entry-title a:hover {
+.entry-title a:has(.entry-title-text:hover),
+.entry-source:hover {
   color: var(--link);
   text-decoration: underline;
+}
+
+/* タイトルのリンクをカード全体に広げる。文字と画像のホバーは、それぞれの要素の上だけ残す。 */
+.feed-entry:has(.entry-title-link) {
+  position: relative;
+}
+
+.entry-title-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.entry-title-text,
+.feed-entry:has(.entry-title-link)
+  :is(a.ogp-preview, .entry-source, a.entry-link) {
+  position: relative;
+  z-index: 2;
 }
 
 .entry-body {
@@ -351,11 +351,6 @@
   text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.entry-source:hover {
-  color: var(--link);
-  text-decoration: underline;
 }
 
 @media (max-width: 480px) {
@@ -405,8 +400,7 @@
     margin-top: 0;
   }
 
-  .feed-list--compact .blog-entry-layout .entry-body,
-  .feed-list--compact .blog-entry-layout .tag-list {
+  .feed-list--compact .blog-entry-layout .entry-body {
     display: none;
   }
 }

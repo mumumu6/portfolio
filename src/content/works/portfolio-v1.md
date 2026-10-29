@@ -3,12 +3,6 @@ title: Portfolio v1
 summary: Ghost CMSをヘッドレスCMSとして使い、Next.jsでフロントエンドを構築した旧ポートフォリオサイト。
 publishedAt: 2025-04-29
 status: archived
-tags:
-  - Next.js
-  - TypeScript
-  - Tailwind CSS
-  - Ghost CMS
-  - Docker
 cover:
   src: ./assets/portfolio.webp
   alt: Portfolio v1のプロフィール画面
