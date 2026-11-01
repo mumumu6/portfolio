@@ -2,11 +2,9 @@
 import '@/styles/components/profile.css'
 import Avatar from '@/components/common/Avatar.astro'
 import ThemeToggle from '@/components/layout/ThemeToggle.astro'
-import { getEntry } from 'astro:content'
+import { profileRepository } from '@/repository/astro/profile'
 
-const profileEntry = await getEntry('site', 'profile')
-if (!profileEntry) throw new Error('Missing site profile content')
-const { data: profile } = profileEntry
+const profile = profileRepository.getProfile()
 ---
 
 <section class="profile-header" aria-labelledby="profile-name">

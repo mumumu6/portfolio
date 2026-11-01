@@ -27,11 +27,11 @@ Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox�
 - `/experience/` — 活動履歴
 - `/thoughts/` — ChatGPTとCodexによるAI日記
 
-自サイトの記事は`src/content/blogs/`のMarkdown・MDXで管理し、traPの記事一覧はRSSから同期します。記事内で最適化対象の画像を使う場合はMDXから`ResponsiveImage`へローカル画像を渡します。Blog同期とprivate AI repositoryからの公開フローは、リポジトリ外の運用手順として管理します。
+自サイトの記事は`src/collections/content/blogs/`のMarkdown・MDXで管理し、traPの記事一覧はRSSから同期します。記事内で最適化対象の画像を使う場合はMDXから`ResponsiveImage`へローカル画像を渡します。Blog同期とprivate AI repositoryからの公開フローは、リポジトリ外の運用手順として管理します。
 
 ## Directory roles
 
-- `src/content/` — Astro Content Collectionsで管理する、本人が編集するMarkdown・MDX・サイト設定とその画像
-- `src/content/collections/` — Content Collectionsのスキーマ定義（ブログ・作品・経験・サイト設定）
-- `src/data/generated/` — RSS・AIフローが生成するJSON。外部同期・自動生成物なので、手書きコンテンツとは分離
-- `src/lib/portfolio/` — コレクションや生成JSONを画面用データへ変換するロジック
+- `src/collections/content/` — 手書きのMarkdown・MDX・プロフィール設定、およびRSS・AIフローが生成するJSON
+- `src/collections/` — Astro Content Collectionsのローダーとスキーマ
+- `src/repository/` — データ型・取得契約・ページ用の共通処理
+- `src/repository/astro/` — Astro Content Collectionsから取得し、ページ用データを組み立てる実装

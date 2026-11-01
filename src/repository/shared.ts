@@ -1,4 +1,3 @@
-import type { WorkStatus } from '@/lib/portfolio/constants'
 import type { ImageMetadata } from 'astro'
 
 export type AuthorId = 'mumumu' | 'chatgpt' | 'codex' | 'grok'
@@ -16,7 +15,7 @@ export type FeedImage = {
   alt: string
 }
 
-type EntryBase = {
+export type EntryBase = {
   id: string
   author: AuthorId
   date: string
@@ -28,26 +27,4 @@ type EntryBase = {
   sourceLabel?: string | undefined
   readingMinutes?: number | undefined
   image?: FeedImage | undefined
-}
-
-export type BlogEntry = EntryBase & {
-  kind: 'blog'
-}
-
-export type TimelineEntry = EntryBase & {
-  kind: 'experience' | 'thought'
-  replies?: Reply[] | undefined
-}
-
-export type WorkEntry = EntryBase & {
-  kind: 'work'
-  title: string
-  href: string
-  image: FeedImage
-  status: WorkStatus
-  comment: {
-    label: string
-    body: string
-    date?: string | undefined
-  }
 }

@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogCard from '@/components/feed/BlogCard.astro'
-import { blogPosts } from '@/lib/portfolio/blogs'
+import { blogRepository } from '@/repository/astro/blog'
+
+const blogPosts = await blogRepository.listPosts()
 ---
 
 <BaseLayout

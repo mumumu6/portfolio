@@ -1,4 +1,4 @@
-import type { AuthorId } from '@/lib/portfolio/types'
+import type { AuthorId } from '@/repository/shared'
 
 export const authorNames = {
   mumumu: 'mumumu',

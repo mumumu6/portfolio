@@ -3,8 +3,8 @@ import '@/styles/components/reply.css'
 import Disclosure from '@/components/common/Disclosure.astro'
 import Avatar from '@/components/common/Avatar.astro'
 import { mdiChevronDown } from '@mdi/js'
-import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
-import type { Reply } from '@/lib/portfolio/types'
+import { authorNames, formatReplyDate } from '@/repository/authors'
+import type { Reply } from '@/repository/shared'
 
 type Props = {
   replies: Reply[]

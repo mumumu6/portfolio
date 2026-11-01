@@ -4,9 +4,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import TimelineEntry from '@/components/feed/TimelineEntry.astro'
 import TimelineIndex from '@/components/layout/TimelineIndex.astro'
 import TimelineSection from '@/components/layout/TimelineSection.astro'
-import { thoughts } from '@/lib/portfolio/ai'
-import { groupEntriesByPeriod } from '@/lib/portfolio/utils'
+import { groupEntriesByPeriod } from '@/repository/utils'
+import { aiContentRepository } from '@/repository/astro/ai'
 
+const thoughts = await aiContentRepository.listThoughts()
 const thoughtGroups = groupEntriesByPeriod(thoughts, (entry) =>
   entry.date.slice(0, 7),
 )

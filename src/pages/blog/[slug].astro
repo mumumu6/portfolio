@@ -1,19 +1,21 @@
 ---
 import { entryTransitionName } from '@/lib/entry-transition'
-import type { CollectionEntry } from 'astro:content'
-import { getCollection, render } from 'astro:content'
 import '@/styles/pages/blog.css'
 import '@/styles/components/article-prose.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ArticleControls from '@/components/article/ArticleControls.astro'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 import TagList from '@/components/common/TagList.astro'
-import { estimateReadingMinutes } from '@/lib/portfolio/utils'
+import { estimateReadingMinutes } from '@/repository/utils'
+import { blogRepository } from '@/repository/astro/blog'
 
-type Props = { post: CollectionEntry<'blogs'> }
+type BlogDocument = Awaited<
+  ReturnType<typeof blogRepository.listDocuments>
+>[number]
+type Props = { post: BlogDocument }
 
 export const getStaticPaths = async () => {
-  const localPosts = await getCollection('blogs')
+  const localPosts = await blogRepository.listDocuments()
   return localPosts.map((post) => ({
     params: { slug: post.id },
     props: { post },
@@ -22,7 +24,7 @@ export const getStaticPaths = async () => {
 
 const props: Props = Astro.props
 const post = props.post
-const { Content, headings } = await render(post)
+const { Content, headings } = await blogRepository.renderDocument(post)
 const transitionHref = `/blog/${post.id}/`
 const data = post.data
 const readingMinutes = estimateReadingMinutes(post.body ?? data.description)

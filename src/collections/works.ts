@@ -10,7 +10,7 @@ const workImage = ({ image }: SchemaContext) =>
   })
 
 export const works = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/works' }),
+  loader: glob({ pattern: '**/*.md', base: './src/collections/content/works' }),
   schema: (context) =>
     z.object({
       title: z.string(),

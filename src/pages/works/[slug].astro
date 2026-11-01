@@ -1,7 +1,5 @@
 ---
 import { entryTransitionName } from '@/lib/entry-transition'
-import type { CollectionEntry } from 'astro:content'
-import { getCollection, render } from 'astro:content'
 import '@/styles/components/work-detail.css'
 import '@/styles/components/article-prose.css'
 import '@/styles/components/eyebrow.css'
@@ -10,25 +8,29 @@ import Avatar from '@/components/common/Avatar.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
-import { authorNames, formatReplyDate } from '@/lib/portfolio/authors'
-import { getAiReplies } from '@/lib/portfolio/ai'
-import { statusLabels } from '@/lib/portfolio/constants'
-import type { AuthorId, Reply } from '@/lib/portfolio/types'
+import { authorNames, formatReplyDate } from '@/repository/authors'
+import { workRepository } from '@/repository/astro/work'
+import { statusLabels } from '@/repository/work'
+import { aiContentRepository } from '@/repository/astro/ai'
+import type { AuthorId, Reply } from '@/repository/shared'
 
 export const getStaticPaths = async () => {
-  const works = await getCollection('works')
+  const works = await workRepository.listDocuments()
   return works.map((work) => ({ params: { slug: work.id }, props: { work } }))
 }
 
-type Props = { work: CollectionEntry<'works'> }
+type WorkDocument = Awaited<
+  ReturnType<typeof workRepository.listDocuments>
+>[number]
+type Props = { work: WorkDocument }
 const { work }: Props = Astro.props
-const { Content } = await render(work)
+const { Content } = await workRepository.renderDocument(work)
 const transitionHref = `/works/${work.id}/`
 const data = work.data
 const publishedAt = data.publishedAt.toISOString().slice(0, 10)
 const dateLabel = publishedAt.slice(0, 7).replace('-', '.')
 const statusLabel = statusLabels[data.status]
-const aiReplies = getAiReplies('work', work.id) ?? []
+const aiReplies = (await aiContentRepository.getReplies('work', work.id)) ?? []
 const makerReplies = [
   ...data.comments.map((comment) =>
     Object.assign({}, comment, { date: comment.date ?? data.publishedAt }),

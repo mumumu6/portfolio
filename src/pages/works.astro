@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import WorkCard from '@/components/feed/WorkCard.astro'
-import { works } from '@/lib/portfolio/works'
+import { workRepository } from '@/repository/astro/work'
+
+const works = await workRepository.listWorks()
 ---
 
 <BaseLayout

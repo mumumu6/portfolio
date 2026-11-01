@@ -3,10 +3,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import TimelineEntry from '@/components/feed/TimelineEntry.astro'
 import TimelineIndex from '@/components/layout/TimelineIndex.astro'
 import TimelineSection from '@/components/layout/TimelineSection.astro'
-import { getExperiences } from '@/lib/portfolio/timeline'
-import { groupEntriesByPeriod } from '@/lib/portfolio/utils'
+import { groupEntriesByPeriod } from '@/repository/utils'
+import { experienceRepository } from '@/repository/astro/experience'
 
-const experiences = await getExperiences()
+const experiences = await experienceRepository.listExperiences()
 const experienceGroups = groupEntriesByPeriod(experiences, (entry) =>
   entry.date.slice(0, 4),
 )

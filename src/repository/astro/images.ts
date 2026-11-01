@@ -1,5 +1,5 @@
 import type { ImageMetadata } from 'astro'
-import type { FeedImage } from '@/lib/portfolio/types'
+import type { FeedImage } from '@/repository/shared'
 
 type GeneratedBlogImage = {
   asset: string

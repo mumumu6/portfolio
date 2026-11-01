@@ -5,8 +5,8 @@ import EntryBody from '@/components/feed/EntryBody.astro'
 import EntryFrame from '@/components/feed/EntryFrame.astro'
 import EntryHeader from '@/components/feed/EntryHeader.astro'
 import Avatar from '@/components/common/Avatar.astro'
-import { statusLabels } from '@/lib/portfolio/constants'
-import type { WorkEntry } from '@/lib/portfolio/types'
+import { statusLabels } from '@/repository/work'
+import type { WorkEntry } from '@/repository/work'
 
 type Props = {
   entry: WorkEntry
