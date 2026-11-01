@@ -6,7 +6,14 @@ export const blogs = defineCollection({
   loader: glob({
     pattern: '**/*.{md,mdx}',
     base: './src/collections/content/blogs',
-    generateId: ({ entry }) => entry.split(/[\\/]/u)[0],
+    generateId: ({ entry }) => {
+      const segments = entry.split('/')
+      if (segments.length !== 2 || !segments[0]) {
+        throw new Error(`Blog entry path must be <slug>/<file>: ${entry}`)
+      }
+
+      return segments[0]
+    },
   }),
   schema: ({ image }) =>
     z.object({
