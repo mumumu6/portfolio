@@ -14,8 +14,8 @@ const runtimeCaching = [
       (request.mode === 'navigate' ||
         (request.destination === '' &&
           (url.pathname === '/' ||
-            /^\/(?:blog|works)(?:\/[^/]+)?\/?$/.test(url.pathname) ||
-            /^\/(?:experience|thoughts)\/?$/.test(url.pathname)))),
+            /^\/(?:blog|works)(?:\/[^/]+)?\/?$/u.test(url.pathname) ||
+            /^\/(?:experience|thoughts)\/?$/u.test(url.pathname)))),
     handler: 'CacheFirst',
     options: {
       cacheName: 'mumumu-portfolio-pages-v2',

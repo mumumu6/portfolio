@@ -4,19 +4,19 @@
   "type": "module",
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build:ci": "pnpm validate:ai && pnpm lint && pnpm fmt:check && pnpm check && pnpm build",
+    "build:ci": "vp run validate:ai && vp run check && vp run build",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
-    "perf": "pnpm build && pnpm exec lhci autorun --config=./lighthouserc.json",
+    "perf": "vp run build && vp exec lhci autorun --config=./lighthouserc.json",
     "workers:deploy": "wrangler deploy",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
-    "lint": "oxlint src scripts",
-    "lint:fix": "oxlint src scripts --fix",
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check",
-    "validate:ai": "node scripts/validate-ai-content.mjs",
-    "sync:blog": "node scripts/sync-blog.mjs",
-    "prepare": "husky"
+    "check": "vp check && ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "lint": "vp lint src scripts",
+    "lint:fix": "vp lint src scripts --fix",
+    "fmt": "vp fmt",
+    "fmt:check": "vp fmt --check",
+    "validate:ai": "vpx scripts/validate-ai-content.mjs",
+    "sync:blog": "vpx scripts/sync-blog.mjs",
+    "prepare": "vp config --no-agent"
   },
   "dependencies": {
     "@astrojs/mdx": "8.1.0",
@@ -31,26 +31,21 @@
     "@lhci/cli": "0.15.1",
     "@vite-pwa/astro": "1.2.0",
     "fast-xml-parser": "5.11.2",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.6.0",
-    "oxfmt": "^0.75.0",
-    "oxlint": "^1.86.0",
     "oxlint-config-presets": "^0.1.21",
     "sharp": "0.35.5",
     "typescript": "^6.0.3",
-    "vite": "^8.3.4",
+    "vite": "catalog:",
     "vite-plugin-pwa": "2.0.0",
+    "vite-plus": "catalog:",
     "workbox-window": "^7.4.1",
     "wrangler": "4.147.0"
   },
-  "lint-staged": {
-    "*.{js,mjs,ts,astro}": [
-      "oxfmt --no-error-on-unmatched-pattern",
-      "oxlint --fix"
-    ],
-    "*.{css,md,mdx,json,jsonc,yml,yaml,toml}": [
-      "oxfmt --no-error-on-unmatched-pattern"
-    ]
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26.13.0",
+      "onFail": "download"
+    }
   },
   "packageManager": "pnpm@12.9.1"
 }

@@ -4,16 +4,18 @@ Astroで静的生成する、軽量なポートフォリオサイトのUIプロ�
 
 ## Commands
 
+Vite+のグローバルCLIを公式インストーラーで入れてください。
+
 ```sh
-mise install
-pnpm install
-pnpm dev
-pnpm check
-pnpm build
-pnpm sync:blog
+curl -fsSL https://vite.plus | bash
+vp install
+vp run dev
+vp run check
+vp run build
+vp run sync:blog
 ```
 
-Node.jsのバージョンは`mise.toml`で管理し、pnpmのバージョンは`package.json`の`packageManager`を正とします。
+Node.jsのバージョンは`package.json`の`devEngines.runtime`、pnpmのバージョンは`packageManager`で管理します。Vite+のプロジェクト用ツールチェーンはpnpm catalogで固定しています。CIでは公式の`setup-vp`を使います。
 
 本番成果物は`dist/`へ生成されます。Cloudflare Workers Static Assets向けのキャッシュ・セキュリティヘッダーは`public/_headers`で管理しています。
 
