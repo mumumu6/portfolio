@@ -29,7 +29,7 @@
 .link-preview-card--with-image {
   grid-template-columns:
     minmax(0, 1fr)
-    min(42%, calc(var(--link-image-ratio, 1.7778) * 146px));
+    calc(var(--link-image-ratio, 1.7778) * 146px);
   grid-template-rows: minmax(0, 1fr);
   height: 148px;
   min-height: 148px;
@@ -110,6 +110,14 @@
   color: var(--muted);
   font-size: 0.72rem;
   line-height: 1.55;
+}
+
+@media (max-width: 560px) {
+  .link-preview-card--with-image {
+    grid-template-columns:
+      minmax(0, 1fr)
+      min(38%, calc(var(--link-image-ratio, 1.7778) * 146px));
+  }
 }
 
 @media (max-width: 480px) {
