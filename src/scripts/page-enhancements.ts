@@ -20,31 +20,33 @@ loadReadingProgress()
 
 const nav = () => document.querySelector<HTMLElement>('[data-nav-container]')
 const isEntryDetail = (url: URL) =>
-  /^\/(?:blog|works)\/[^/]+\/?$/.test(url.pathname)
+  /^\/(?:blog|works)\/[^/]+\/?$/u.test(url.pathname)
 
 let entryNavigation = 0
 const clearEntryParticipants = (target: Document) => {
-  target.documentElement.removeAttribute('data-entry-transition-scoped')
-  for (const card of target.querySelectorAll('[data-entry-transition-active]'))
-    card.removeAttribute('data-entry-transition-active')
+  delete target.documentElement.dataset.entryTransitionScoped
+  for (const card of target.querySelectorAll<HTMLElement>(
+    '[data-entry-transition-active]',
+  ))
+    delete card.dataset.entryTransitionActive
 }
 const selectEntryParticipants = (target: Document, from: URL, to: URL) => {
   clearEntryParticipants(target)
-  target.documentElement.setAttribute('data-entry-transition-scoped', '')
+  target.documentElement.dataset.entryTransitionScoped = ''
   const names = new Set(
     [from, to]
-      .filter(isEntryDetail)
+      .filter((url) => isEntryDetail(url))
       .map((url) =>
-        entryTransitionName(`${url.pathname.replace(/\/$/, '')}/`, 'title'),
+        entryTransitionName(`${url.pathname.replace(/\/$/u, '')}/`, 'title'),
       ),
   )
   for (const title of target.querySelectorAll<HTMLElement>(
     '.feed-entry .entry-title[style]',
   )) {
-    if (names.has(title.style.viewTransitionName))
-      title
-        .closest('.feed-entry')
-        ?.setAttribute('data-entry-transition-active', '')
+    if (names.has(title.style.viewTransitionName)) {
+      const entry = title.closest<HTMLElement>('.feed-entry')
+      if (entry) entry.dataset.entryTransitionActive = ''
+    }
   }
 }
 
@@ -113,10 +115,10 @@ document.addEventListener('astro:after-swap', () => {
     !matchMedia('(prefers-reduced-motion: reduce)').matches
   ) {
     const root = document.documentElement
-    root.setAttribute('data-page-enter', '')
+    root.dataset.pageEnter = ''
     window.clearTimeout(pageEnterTimer)
     pageEnterTimer = window.setTimeout(() => {
-      root.removeAttribute('data-page-enter')
+      delete root.dataset.pageEnter
     }, 180)
   }
   fadePageContent = false

@@ -11,8 +11,8 @@
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "lint": "oxlint src scripts",
     "lint:fix": "oxlint src scripts --fix",
-    "fmt": "prettier --write .",
-    "fmt:check": "prettier --check .",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "validate:ai": "node scripts/validate-ai-content.mjs",
     "sync:blog": "node scripts/sync-blog.mjs",
     "prepare": "husky"
@@ -26,13 +26,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
+    "@astrojs/compiler-rs": "^0.5.2",
     "@vite-pwa/astro": "1.2.0",
     "fast-xml-parser": "5.11.2",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
+    "oxfmt": "^0.75.0",
     "oxlint": "^1.86.0",
-    "prettier": "^3.9.9",
-    "prettier-plugin-astro": "^1.1.0",
+    "oxlint-config-presets": "^0.1.21",
     "sharp": "0.35.5",
     "typescript": "^6.0.3",
     "vite": "^8.3.4",
@@ -40,13 +41,14 @@
     "workbox-window": "^7.4.1",
     "wrangler": "4.147.0"
   },
-  "packageManager": "pnpm@12.9.1",
   "lint-staged": {
-    "*.{js,mjs,ts,astro,css,md,json,yml,yaml}": [
-      "prettier --write"
-    ],
-    "*.{js,mjs,ts}": [
+    "*.{js,mjs,ts,astro}": [
+      "oxfmt --no-error-on-unmatched-pattern",
       "oxlint --fix"
+    ],
+    "*.{css,md,mdx,json,jsonc,yml,yaml,toml}": [
+      "oxfmt --no-error-on-unmatched-pattern"
     ]
-  }
+  },
+  "packageManager": "pnpm@12.9.1"
 }

@@ -11,31 +11,31 @@ const cache = new Map<string, Promise<OgpData>>()
 
 const decodeHtml = (value: string) =>
   value
-    .replace(/&#(\d+);/g, (_, code: string) =>
+    .replaceAll(/&#(\d+);/gu, (_, code: string) =>
       String.fromCodePoint(Number(code)),
     )
-    .replace(/&#x([\da-f]+);/gi, (_, code: string) =>
-      String.fromCodePoint(parseInt(code, 16)),
+    .replaceAll(/&#x([\da-f]+);/giu, (_, code: string) =>
+      String.fromCodePoint(Number.parseInt(code, 16)),
     )
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&#39;|&apos;/g, "'")
+    .replaceAll('&quot;', '"')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll(/&#39;|&apos;/gu, "'")
 
 const getMetaContent = (html: string, property: string) => {
-  const escapedProperty = property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const escapedProperty = property.replaceAll(/[.*+?^${}()|[\]\\]/gu, '\\$&')
   const pattern = new RegExp(
     `<meta[^>]+(?:property|name)=["']${escapedProperty}["'][^>]+content=["']([^"']*)["'][^>]*>` +
       `|<meta[^>]+content=["']([^"']*)["'][^>]+(?:property|name)=["']${escapedProperty}["'][^>]*>`,
-    'i',
+    'iu',
   )
   const match = html.match(pattern)
   return match?.[1] ?? match?.[2]
 }
 
 const getTitle = (html: string) =>
-  html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]
+  html.match(/<title[^>]*>([\s\S]*?)<\/title>/iu)?.[1]
 
 const loadOgp = async (href: string): Promise<OgpData> => {
   try {

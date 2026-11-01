@@ -15,8 +15,8 @@ const nextToken = (root: HTMLElement) => {
 
 const durationOf = (content: HTMLElement, name: string, fallback: number) => {
   const value = getComputedStyle(content).getPropertyValue(name).trim()
-  if (value.endsWith('ms')) return Number.parseFloat(value)
-  if (value.endsWith('s')) return Number.parseFloat(value) * 1000
+  if (value.endsWith('ms')) return Number(value.slice(0, -2))
+  if (value.endsWith('s')) return Number(value.slice(0, -1)) * 1000
   return fallback
 }
 

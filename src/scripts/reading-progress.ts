@@ -14,7 +14,7 @@ const controls = () =>
 const measure = () => {
   const root = controls()
   const id = root?.dataset.articleId
-  const next = id ? document.getElementById(id) : null
+  const next = id ? document.querySelector<HTMLElement>(`#${id}`) : null
   if (!next) {
     article = null
     return
@@ -99,6 +99,8 @@ const bind = () => {
   })
 }
 
+export const initializeReadingProgress = bind
+
 window.addEventListener('scroll', schedule, { passive: true })
 window.addEventListener(
   'resize',
@@ -118,5 +120,3 @@ document.fonts.addEventListener('loadingdone', () => {
   render()
 })
 bind()
-
-export {}

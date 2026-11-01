@@ -6,7 +6,7 @@ export const getExperiences = async (): Promise<TimelineEntry[]> => {
   const entries = await getCollection('experiences')
 
   return entries
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+    .toSorted((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
     .map<TimelineEntry>((entry) => ({
       id: entry.id,
       kind: 'experience',

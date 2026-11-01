@@ -15,7 +15,7 @@ const syncThemeToggle = () => {
 
 const toggleTheme = () => {
   const root = document.documentElement
-  if (root.hasAttribute('data-theme-transitioning')) return
+  if (Object.hasOwn(root.dataset, 'themeTransitioning')) return
   const theme: Theme = root.dataset.theme === 'light' ? 'dark' : 'light'
   const apply = () => {
     applyTheme(theme)
@@ -33,9 +33,9 @@ const toggleTheme = () => {
     apply()
     return
   }
-  root.setAttribute('data-theme-transitioning', '')
+  root.dataset.themeTransitioning = ''
   const transition = document.startViewTransition(apply)
-  const finish = () => root.removeAttribute('data-theme-transitioning')
+  const finish = () => delete root.dataset.themeTransitioning
   void transition.ready.catch(() => {})
   void transition.finished.then(finish, finish)
 }

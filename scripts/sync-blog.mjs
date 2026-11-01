@@ -14,26 +14,30 @@ const outputFile = path.join(root, 'src/data/generated/blogs.json')
 const imageDirectory = path.join(root, 'src/assets/images/blog')
 
 const asArray = (value) =>
-  value == null ? [] : Array.isArray(value) ? value : [value]
+  value === null || value === undefined
+    ? []
+    : Array.isArray(value)
+      ? value
+      : [value]
 const asText = (value) =>
   typeof value === 'string' ? value : String(value ?? '')
 
 const cleanText = (value) =>
   asText(value)
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&#x([0-9a-f]+);/gi, (_, value) =>
-      String.fromCodePoint(Number.parseInt(value, 16)),
+    .replaceAll(/<[^>]*>/gu, ' ')
+    .replaceAll(/&#x([0-9a-f]+);/giu, (_, hexCode) =>
+      String.fromCodePoint(Number.parseInt(hexCode, 16)),
     )
-    .replace(/&#([0-9]+);/g, (_, value) =>
-      String.fromCodePoint(Number.parseInt(value, 10)),
+    .replaceAll(/&#([0-9]+);/gu, (_, decimalCode) =>
+      String.fromCodePoint(Number(decimalCode)),
     )
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/\s+/g, ' ')
+    .replaceAll('&nbsp;', ' ')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll(/\s+/gu, ' ')
     .trim()
 
 const excerpt = (value, limit = 140) => {
@@ -55,8 +59,8 @@ const estimateReadingMinutes = (value) => {
     text.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu)
       ?.length ?? 0
   const otherWords = text
-    .replace(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu, ' ')
-    .split(/\s+/)
+    .replaceAll(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/gu, ' ')
+    .split(/\s+/u)
     .filter(Boolean).length
   return Math.max(1, Math.ceil(japaneseCharacters / 500 + otherWords / 200))
 }
@@ -132,14 +136,16 @@ const previousById = new Map(previousPosts.map((post) => [post.id, post]))
 
 await mkdir(path.dirname(outputFile), { recursive: true })
 await mkdir(imageDirectory, { recursive: true })
+const existingFiles = new Set(await readdir(imageDirectory))
 
 const posts = []
 for (const item of items) {
   const href = asText(item.link)
   const url = new URL(href)
   const rawId =
-    url.pathname.split('/').filter(Boolean).at(-1) ?? asText(item.guid)
-  const postId = rawId.replace(/[^a-zA-Z0-9-]/g, '')
+    url.pathname.split('/').findLast((segment) => segment !== '') ??
+    asText(item.guid)
+  const postId = rawId.replaceAll(/[^a-zA-Z0-9-]/gu, '')
   if (!postId) throw new Error(`Could not determine post id: ${href}`)
 
   const id = `trap-${postId}`
@@ -152,14 +158,17 @@ for (const item of items) {
     const expectedFiles = BLOG_IMAGE_WIDTHS.flatMap((width) =>
       BLOG_IMAGE_FORMATS.map((format) => `trap-${postId}-${width}.${format}`),
     )
-    const existingFiles = new Set(await readdir(imageDirectory))
     const canReuse =
       previousImage?.source === imageUrl &&
       previousImage?.transformVersion === IMAGE_TRANSFORM_VERSION &&
       expectedFiles.every((file) => existingFiles.has(file))
-    const generated = canReuse
-      ? previousImage
-      : await downloadImage(imageUrl, postId)
+    let generated = previousImage
+    if (!canReuse) {
+      // Keep image downloads sequential to avoid sending a burst of requests to the source host.
+      // eslint-disable-next-line no-await-in-loop -- Preserve sequential downloads.
+      generated = await downloadImage(imageUrl, postId)
+      for (const file of expectedFiles) existingFiles.add(file)
+    }
     image = { ...generated, alt: cleanText(item.title) }
   }
 
@@ -177,7 +186,10 @@ for (const item of items) {
     readingMinutes: estimateReadingMinutes(
       item['content:encoded'] ?? item.description,
     ),
-    tags: asArray(item.category).map(cleanText).filter(Boolean).slice(0, 4),
+    tags: asArray(item.category)
+      .map((category) => cleanText(category))
+      .filter(Boolean)
+      .slice(0, 4),
     href,
     ...(image ? { image } : {}),
   })
@@ -193,14 +205,14 @@ const activeImages = new Set(
       ),
     ),
 )
-for (const file of await readdir(imageDirectory)) {
-  if (
-    /^trap-[a-zA-Z0-9-]+-\d+\.(?:avif|webp)$/.test(file) &&
-    !activeImages.has(file)
-  ) {
-    await rm(path.join(imageDirectory, file))
-  }
-}
+const staleImages = (await readdir(imageDirectory)).filter(
+  (file) =>
+    /^trap-[a-zA-Z0-9-]+-\d+\.(?:avif|webp)$/u.test(file) &&
+    !activeImages.has(file),
+)
+await Promise.all(
+  staleImages.map((file) => rm(path.join(imageDirectory, file))),
+)
 
 await writeFile(outputFile, `${JSON.stringify(posts, null, 2)}\n`)
 console.log(`Synced ${posts.length} posts from ${RSS_URL}`)

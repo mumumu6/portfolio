@@ -30,12 +30,13 @@ const localBlogPosts: BlogEntry[] = (await getCollection('blogs')).map(
 )
 
 export const blogPosts: BlogEntry[] = [
-  ...generatedBlogPosts.map<BlogEntry>((post) => ({
-    ...post,
-    image: resolveBlogImage(post.image),
-    kind: 'blog',
-    author: 'mumumu',
-    sourceLabel: 'traP Blogで読む',
-  })),
+  ...generatedBlogPosts.map<BlogEntry>((post) =>
+    Object.assign({}, post, {
+      image: resolveBlogImage(post.image),
+      kind: 'blog' as const,
+      author: 'mumumu' as const,
+      sourceLabel: 'traP Blogで読む',
+    }),
+  ),
   ...localBlogPosts,
-].sort((a, b) => b.date.localeCompare(a.date))
+].toSorted((a, b) => b.date.localeCompare(a.date))

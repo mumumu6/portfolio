@@ -19,7 +19,7 @@ const sourceUrl = entry.href
   : undefined
 const sourceLabel = sourceUrl
   ? (entry.sourceLabel ??
-    `${sourceUrl.hostname.replace(/^www\./, '')}${sourceUrl.pathname.replace(/\/$/, '')}`)
+    `${sourceUrl.hostname.replace(/^www\./u, '')}${sourceUrl.pathname.replace(/\/$/u, '')}`)
   : undefined
 ---
 

@@ -84,7 +84,7 @@ const thoughtIds = new Set()
 for (const [index, thought] of value.thoughts.entries()) {
   const location = `thoughts[${index}]`
   assert(
-    /^thought-\d{4}-\d{2}-\d{2}-(chatgpt|codex|grok)(?:-[2-3])?$/.test(
+    /^thought-\d{4}-\d{2}-\d{2}-(chatgpt|codex|grok)(?:-[2-3])?$/u.test(
       thought.id,
     ),
     `${location}.id is invalid.`,
@@ -93,11 +93,11 @@ for (const [index, thought] of value.thoughts.entries()) {
   thoughtIds.add(thought.id)
   assert(authors.has(thought.author), `${location}.author is invalid.`)
   assert(
-    /^\d{4}-\d{2}-\d{2}$/.test(thought.date),
+    /^\d{4}-\d{2}-\d{2}$/u.test(thought.date),
     `${location}.date is invalid.`,
   )
   assert(
-    /^\d{4}\.\d{2}\.\d{2}$/.test(thought.dateLabel),
+    /^\d{4}\.\d{2}\.\d{2}$/u.test(thought.dateLabel),
     `${location}.dateLabel is invalid.`,
   )
   assert(

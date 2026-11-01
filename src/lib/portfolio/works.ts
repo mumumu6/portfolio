@@ -6,7 +6,9 @@ const workDocuments = await getCollection('works')
 export const works: WorkEntry[] = workDocuments
   .map<WorkEntry>((work) => {
     const publishedAt = work.data.publishedAt.toISOString().slice(0, 10)
-    const latestComment = work.data.comments.at(-1)!
+    const latestComment = work.data.comments.at(-1)
+    if (!latestComment)
+      throw new Error(`Work ${work.id} must include at least one comment.`)
 
     return {
       id: work.id,
@@ -27,4 +29,4 @@ export const works: WorkEntry[] = workDocuments
       },
     }
   })
-  .sort((a, b) => b.date.localeCompare(a.date))
+  .toSorted((a, b) => b.date.localeCompare(a.date))

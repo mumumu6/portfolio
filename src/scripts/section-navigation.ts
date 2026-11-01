@@ -27,6 +27,25 @@ const reducedMotion = () =>
 
 const indicatorEasing = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
+const animateIndicator = (
+  indicator: HTMLElement,
+  originX: number,
+  originWidth: number,
+  nextX: number,
+  width: number,
+) => {
+  const animation = indicator.animate(
+    [
+      {
+        transform: `translate3d(${originX}px, 0, 0) scaleX(${originWidth / width})`,
+      },
+      { transform: `translate3d(${nextX}px, 0, 0) scaleX(1)` },
+    ],
+    { duration: 200, easing: indicatorEasing },
+  )
+  void animation.finished.catch(() => {})
+}
+
 const measure = (container: HTMLElement, animate = false) => {
   const indicator = container.querySelector<HTMLElement>('[data-nav-indicator]')
   const link = container.querySelector<HTMLElement>('a.active')
@@ -34,7 +53,7 @@ const measure = (container: HTMLElement, animate = false) => {
   if (!indicator) return
   if (!link || !label) {
     indicator.hidden = true
-    indicator.removeAttribute('data-nav-ready')
+    delete indicator.dataset.navReady
     return
   }
   const available = Math.max(36, link.offsetWidth - 16)
@@ -68,16 +87,7 @@ const measure = (container: HTMLElement, animate = false) => {
   const moved =
     Math.abs(originX - nextX) >= 0.5 || Math.abs(originWidth - width) >= 0.5
   if (!animate || !moved || reducedMotion() || width <= 0) return
-  const animation = indicator.animate(
-    [
-      {
-        transform: `translate3d(${originX}px, 0, 0) scaleX(${originWidth / width})`,
-      },
-      { transform: `translate3d(${nextX}px, 0, 0) scaleX(1)` },
-    ],
-    { duration: 200, easing: indicatorEasing },
-  )
-  void animation.finished.catch(() => {})
+  animateIndicator(indicator, originX, originWidth, nextX, width)
 }
 
 const measureCurrent = () => {

@@ -30,10 +30,9 @@ const dateLabel = publishedAt.slice(0, 7).replace('-', '.')
 const statusLabel = statusLabels[data.status]
 const aiReplies = getAiReplies('work', work.id) ?? []
 const makerReplies = [
-  ...data.comments.map((comment) => ({
-    ...comment,
-    date: comment.date ?? data.publishedAt,
-  })),
+  ...data.comments.map((comment) =>
+    Object.assign({}, comment, { date: comment.date ?? data.publishedAt }),
+  ),
 ]
 type ThreadItem =
   | {
@@ -61,7 +60,6 @@ const threadItems = [
     body: reply.body,
     label: reply.label,
     date: reply.date.toISOString().slice(0, 10),
-    replyTo: undefined,
     sourceOrder: index,
   })),
   ...aiReplies.map<ThreadItem>((reply, index) => ({
@@ -73,7 +71,9 @@ const threadItems = [
     replyTo: reply.replyTo,
     sourceOrder: makerReplies.length + index,
   })),
-].sort((a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder)
+].toSorted(
+  (a, b) => a.date.localeCompare(b.date) || a.sourceOrder - b.sourceOrder,
+)
 ---
 
 <BaseLayout

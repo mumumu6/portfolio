@@ -42,16 +42,14 @@ const imageSrc = typeof image === 'string' ? image : image.src
 const socialImage = new URL(imageSrc, Astro.site ?? Astro.url.origin)
 const socialImageWidth = typeof image === 'string' ? undefined : image.width
 const socialImageHeight = typeof image === 'string' ? undefined : image.height
-const socialImageType =
-  typeof image !== 'string'
-    ? `image/${image.format}`
-    : image.endsWith('.png')
-      ? 'image/png'
-      : image.endsWith('.avif')
-        ? 'image/avif'
-        : image.endsWith('.webp')
-          ? 'image/webp'
-          : undefined
+let socialImageType: string | undefined
+if (typeof image === 'string') {
+  if (image.endsWith('.png')) socialImageType = 'image/png'
+  else if (image.endsWith('.avif')) socialImageType = 'image/avif'
+  else if (image.endsWith('.webp')) socialImageType = 'image/webp'
+} else {
+  socialImageType = `image/${image.format}`
+}
 const personId = new URL('/#person', Astro.site ?? Astro.url.origin).href
 const websiteId = new URL('/#website', Astro.site ?? Astro.url.origin).href
 const pageId = `${canonical.href}#webpage`

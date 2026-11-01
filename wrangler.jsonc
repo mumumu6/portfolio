@@ -5,10 +5,10 @@
   "routes": [
     {
       "pattern": "mumumu6.net/*",
-      "zone_name": "mumumu6.net"
-    }
+      "zone_name": "mumumu6.net",
+    },
   ],
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+  },
 }

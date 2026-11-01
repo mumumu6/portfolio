@@ -18,7 +18,6 @@ export const getAiReplies = (kind: AiCommentTargetKind, id: string) =>
     (comment) => comment.target.kind === kind && comment.target.id === id,
   )?.replies
 
-export const thoughts: TimelineEntry[] = aiContent.thoughts.map((thought) => ({
-  ...thought,
-  kind: 'thought',
-}))
+export const thoughts: TimelineEntry[] = aiContent.thoughts.map((thought) =>
+  Object.assign({}, thought, { kind: 'thought' as const }),
+)
