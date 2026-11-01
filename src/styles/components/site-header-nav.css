@@ -65,7 +65,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .section-nav__link:not(.active):hover > span {
+  .section-nav__link:hover > span {
     background: color-mix(in srgb, var(--text) 4%, transparent);
   }
 }
