@@ -1,6 +1,7 @@
 node_modules/
 .pnpm-store/
 dist/
+.lighthouseci/
 .astro/
 auto-imports.d.ts
 components.d.ts

@@ -1,0 +1,19 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "url": [
+        "http://localhost/",
+        "http://localhost/blog/",
+        "http://localhost/blog/gocon-2026/",
+        "http://localhost/works/",
+        "http://localhost/works/portfolio-v2/"
+      ],
+      "numberOfRuns": 1
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
+    }
+  }
+}
