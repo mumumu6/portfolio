@@ -6,6 +6,7 @@ export const blogs = defineCollection({
   loader: glob({
     pattern: '**/*.{md,mdx}',
     base: './src/collections/content/blogs',
+    generateId: ({ entry }) => entry.split(/[\\/]/u)[0],
   }),
   schema: ({ image }) =>
     z.object({
