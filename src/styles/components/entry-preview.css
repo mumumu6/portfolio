@@ -19,11 +19,16 @@
   height: 100%;
 }
 
+.ogp-preview > .responsive-image {
+  width: 100%;
+  height: 100%;
+}
+
 .ogp-preview:hover {
   border-color: var(--muted);
 }
 
-.ogp-preview picture[data-progressive-image] > img[data-progressive-image] {
+.ogp-preview picture > img {
   width: 100%;
   height: 100%;
   display: block;

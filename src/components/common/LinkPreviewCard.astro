@@ -41,7 +41,6 @@ const optimizedImageHeight = Math.round(
   {ogp.image && (
     <span class="link-preview-card__thumbnail" aria-hidden="true">
       <ResponsiveImage
-        className="link-preview-card__image"
         src={ogp.image}
         alt=""
         width={optimizedImageWidth}
@@ -50,6 +49,7 @@ const optimizedImageHeight = Math.round(
         sizes={`${optimizedImageWidth}px`}
         quality="low"
         loading="lazy"
+        className="link-preview-card__image"
       />
     </span>
   )}

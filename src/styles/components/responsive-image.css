@@ -1,41 +1,36 @@
-picture[data-progressive-image] {
+.responsive-image {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.responsive-image > picture {
+  position: relative;
+  z-index: 1;
   display: block;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  background-color: var(--surface);
 }
 
-picture[data-progressive-image] > img[data-progressive-image] {
+.responsive-image > picture > img {
   position: relative;
   display: block;
   max-width: 100%;
   height: auto;
 }
 
-/* SSR の時点からスケルトンを表示し、画像の配置は変えない。 */
-.optimized-image > .responsive-image__skeleton {
+.responsive-image__skeleton {
   position: absolute;
-  z-index: 1;
+  z-index: 0;
   inset: 0;
   overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
   background: var(--surface);
-  animation: none;
   opacity: 0.82;
-  transition: opacity 50ms ease;
-}
-
-.optimized-image[data-image-state='loaded'] > .responsive-image__skeleton,
-.optimized-image[data-image-state='error'] > .responsive-image__skeleton {
-  opacity: 0;
-  animation: none;
-  transition:
-    opacity 50ms ease,
-    visibility 0s linear 50ms;
-  visibility: hidden;
 }
 
 .responsive-image__skeleton::after {
@@ -52,14 +47,9 @@ picture[data-progressive-image] > img[data-progressive-image] {
   );
 }
 
-.optimized-image[data-image-in-view='true'][data-image-state='loading']
+.responsive-image[data-image-state='loading']
   .responsive-image__skeleton::after {
   animation: image-skeleton 1.4s linear infinite;
-}
-
-/* JavaScript が無効でも、ネイティブで読み込まれた画像を見せる。 */
-html:not(.js) .optimized-image > .responsive-image__skeleton {
-  display: none;
 }
 
 @keyframes image-skeleton {
@@ -73,24 +63,7 @@ html:not(.js) .optimized-image > .responsive-image__skeleton {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .optimized-image[data-image-in-view='true'][data-image-state='loading']
-    .responsive-image__skeleton::after {
+  .responsive-image__skeleton::after {
     animation: none;
   }
-}
-.optimized-image {
-  position: relative;
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.optimized-image > picture {
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-}
-
-.ogp-preview .optimized-image {
-  height: 100%;
 }
