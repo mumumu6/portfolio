@@ -1,0 +1,18 @@
+---
+import '@/styles/components/responsive-pair.css'
+
+type Props = {
+  gap?: string
+  stackAt?: 'narrow' | 'wide'
+}
+
+const { gap = '1.5rem', stackAt = 'narrow' } = Astro.props
+---
+
+<div class="responsive-pair" style={`--responsive-pair-gap: ${gap}`}>
+  <div
+    class:list={['responsive-pair__grid', `responsive-pair__grid--${stackAt}`]}
+  >
+    <slot />
+  </div>
+</div>

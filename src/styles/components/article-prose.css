@@ -37,14 +37,31 @@
   font-size: 1rem;
 }
 
+.article-prose p {
+  white-space: pre-line;
+}
+
 .article-prose p,
-.article-prose ul,
-.article-prose ol,
 .article-prose blockquote,
 .article-prose pre,
 .article-prose hr,
 .article-prose table {
-  margin-block: 1.2em;
+  margin-block: 0.8em;
+}
+
+.article-prose li > ul,
+.article-prose li > ol {
+  margin-block: 0.35em;
+}
+
+.article-prose li,
+.article-prose ul,
+.article-prose ol {
+  margin-block: 0.3em;
+}
+.article-prose p:has(+ ul),
+.article-prose p:has(+ ol) {
+  margin-bottom: 0em;
 }
 
 .article-prose a {

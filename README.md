@@ -9,6 +9,7 @@ Vite+のグローバルCLIを公式インストーラーで入れてください
 ```sh
 curl -fsSL https://vite.plus | bash
 vp install
+vp run prepare
 vp run dev
 vp run check
 vp run build

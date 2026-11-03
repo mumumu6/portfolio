@@ -1,0 +1,89 @@
+---
+import { Picture } from 'astro:assets'
+import { YouTube } from '@astro-community/astro-embed-youtube'
+import '@/styles/components/youtube-embed.css'
+
+type Props = {
+  id: string
+  title?: string
+  posterUrl?: string
+  sizes?: string
+  widths?: number[]
+  loading?: 'eager' | 'lazy'
+}
+
+const {
+  id,
+  title: providedTitle,
+  posterUrl = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`,
+  sizes = '(max-width: 760px) calc(100vw - 40px), 720px',
+  widths = [320, 480, 640, 960, 1280],
+  loading = 'lazy',
+} = Astro.props
+
+let title = providedTitle
+
+if (!title) {
+  try {
+    const oEmbedUrl = new URL('https://www.youtube.com/oembed')
+    oEmbedUrl.searchParams.set(
+      'url',
+      `https://www.youtube.com/watch?v=${encodeURIComponent(id)}`,
+    )
+    oEmbedUrl.searchParams.set('format', 'json')
+
+    const response = await fetch(oEmbedUrl)
+    if (response.ok) {
+      const metadata = (await response.json()) as { title?: string }
+      title = metadata.title
+    }
+  } catch {
+    // Keep embeds buildable if YouTube metadata is temporarily unavailable.
+  }
+}
+
+title ??= 'YouTube video'
+---
+
+<div class="youtube-embed">
+  <YouTube
+    id={id}
+    title={title}
+    poster="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+    playlabel={`「${title}」を再生`}
+    class="youtube-embed__player"
+  />
+  <a
+    class="youtube-embed__poster"
+    href={`https://www.youtube.com/watch?v=${id}`}
+    aria-label={`「${title}」を YouTube で再生`}
+  >
+    <Picture
+      src={posterUrl}
+      inferSize
+      widths={widths}
+      sizes={sizes}
+      formats={['avif', 'webp']}
+      quality={70}
+      alt=""
+      loading={loading}
+      decoding="async"
+    />
+    <span class="youtube-embed__play-icon" aria-hidden="true"></span>
+  </a>
+</div>
+
+<script>
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return
+    const poster = event.target.closest<HTMLAnchorElement>(
+      '.youtube-embed__poster',
+    )
+    const player = poster?.parentElement?.querySelector('lite-youtube')
+    const playButton = player?.querySelector<HTMLAnchorElement>('.lyt-playbtn')
+    if (!poster || !playButton) return
+
+    event.preventDefault()
+    playButton.click()
+  })
+</script>

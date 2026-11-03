@@ -50,6 +50,7 @@ export default defineConfig({
       'files.speakerdeck.com',
       'gocon.github.io',
       'gocon.jp',
+      'i.ytimg.com',
       'yt3.googleusercontent.com',
     ],
   },

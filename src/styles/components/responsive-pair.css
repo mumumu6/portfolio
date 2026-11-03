@@ -1,0 +1,23 @@
+.responsive-pair {
+  container-type: inline-size;
+  margin-block: 1.5rem;
+}
+
+.responsive-pair__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--responsive-pair-gap, 1.5rem);
+}
+
+@container (max-width: 560px) {
+  .responsive-pair__grid--narrow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 760px) {
+  .responsive-pair__grid--wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
