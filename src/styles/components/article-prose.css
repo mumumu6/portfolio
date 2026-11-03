@@ -13,10 +13,54 @@
 .article-prose h2,
 .article-prose h3,
 .article-prose h4 {
+  position: relative;
   color: var(--text);
   font-family: var(--font-display);
   scroll-margin-top: 65px;
   letter-spacing: -0.035em;
+}
+
+.article-prose .heading-permalink {
+  position: absolute;
+  inset-inline-start: -28px;
+  top: calc((1lh - 26px) / 2);
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  color: var(--muted);
+  opacity: 0;
+}
+
+.article-prose .heading-permalink::before {
+  display: block;
+  width: 15px;
+  height: 15px;
+  background: currentColor;
+  content: '';
+  mask: url('/icons/link-variant.svg') center / contain no-repeat;
+  -webkit-mask: url('/icons/link-variant.svg') center / contain no-repeat;
+}
+
+.article-prose :is(h2, h3, h4):hover .heading-permalink,
+.article-prose .heading-permalink:focus-visible {
+  opacity: 1;
+}
+
+.article-prose .heading-permalink:hover {
+  color: var(--link);
+}
+
+@media (hover: none) {
+  .article-prose .heading-permalink {
+    opacity: 0.55;
+  }
+}
+
+@media (max-width: 760px) {
+  .article-prose .heading-permalink {
+    inset-inline-start: -14px;
+  }
 }
 
 .article-prose h2 {

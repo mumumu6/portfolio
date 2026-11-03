@@ -1,24 +1,13 @@
 {
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
-  "[astro]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "[astro][javascript][javascriptreact][typescript][typescriptreact][json][jsonc][css][mdx]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.oxc": "explicit"
-  }
+  "oxc.disableNestedConfig": true,
+  "oxc.fmt.disableNestedConfig": true,
+  "editor.formatOnSaveMode": "file",
+  "npm.scriptRunner": "vp",
+  "eslint.validate": ["astro", "mdx"],
+  "eslint.run": "onType"
 }

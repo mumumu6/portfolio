@@ -24,7 +24,7 @@ const {
   alt,
   width,
   height,
-  sizes = '100vw',
+  sizes: customSizes,
   widths: customWidths,
   quality,
   loading = 'lazy',
@@ -32,6 +32,7 @@ const {
   className,
   showSkeleton = false,
 } = Astro.props
+const sizes = customSizes ?? (loading === 'lazy' ? 'auto, 100vw' : '100vw')
 
 const isRemoteImage = typeof src === 'string'
 
@@ -53,9 +54,18 @@ if (resolvedWidth === undefined || resolvedHeight === undefined) {
 const maximumGeneratedWidth = Math.min(sourceWidth ?? 2400, 2400)
 const defaultWidths = [
   ...new Set(
-    [480, 960, 1440, 1920, 2400, maximumGeneratedWidth].filter(
-      (candidate) => candidate <= maximumGeneratedWidth,
-    ),
+    [
+      360,
+      480,
+      640,
+      720,
+      960,
+      1080,
+      1440,
+      1920,
+      2400,
+      maximumGeneratedWidth,
+    ].filter((candidate) => candidate <= maximumGeneratedWidth),
   ),
 ]
 const widths = customWidths ?? defaultWidths
@@ -78,13 +88,10 @@ const imageOptions = {
   layout: 'none' as const,
   ...(quality === undefined ? {} : { quality }),
 }
-const optimized =
-  alt === ''
-    ? undefined
-    : await Promise.all([
-        getImage({ ...imageOptions, format: 'avif' }),
-        getImage({ ...imageOptions, format: 'webp' }),
-      ])
+const optimized = await Promise.all([
+  getImage({ ...imageOptions, format: 'avif' }),
+  getImage({ ...imageOptions, format: 'webp' }),
+])
 const pictureProps = optimized
   ? {
       image: {

@@ -6,6 +6,10 @@ export const run = {
       command: 'astro dev',
       cache: false,
     },
+    stop: {
+      command: 'astro dev stop',
+      cache: false,
+    },
     'build:ci': {
       command: 'vp run validate:ai && vp run check && vp run build',
       cache: false,
@@ -31,9 +35,12 @@ export const run = {
       command: 'vp check && astro check',
     },
     lint: {
-      command: 'vp lint src scripts',
+      command: 'vp lint src scripts && eslint "src/**/*.{astro,mdx}"',
     },
-    'lint:fix': { command: 'vp lint src scripts --fix', cache: false },
+    'lint:fix': {
+      command:
+        'vp lint src scripts --fix && eslint "src/**/*.{astro,mdx}" --fix',
+    },
     fmt: { command: 'vp fmt', cache: false },
     'fmt:check': {
       command: 'vp fmt --check',

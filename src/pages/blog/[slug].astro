@@ -5,6 +5,7 @@ import '@/styles/components/article-prose.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ArticleControls from '@/components/article/ArticleControls.astro'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+import ThemeToggle from '@/components/layout/ThemeToggle.astro'
 import TagList from '@/components/common/TagList.astro'
 import { estimateReadingMinutes } from '@/repository/utils'
 import { blogRepository } from '@/repository/astro/blog'
@@ -78,6 +79,9 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
           <span>約{readingMinutes}分</span>
         </div>
       </header>
+      <div class="article-theme-toggle">
+        <ThemeToggle />
+      </div>
     </div>
     <div class="article-intro">
       <p class="article-lead">{data.description}</p>

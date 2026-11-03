@@ -15,8 +15,37 @@ const loadReadingProgress = () => {
     void import('@/scripts/reading-progress')
 }
 
+const addHeadingPermalinks = () => {
+  for (const heading of document.querySelectorAll<HTMLElement>(
+    '.article-prose h2[id], .article-prose h3[id], .article-prose h4[id]',
+  )) {
+    if (heading.querySelector('[data-heading-permalink]')) continue
+
+    const link = document.createElement('a')
+    link.className = 'heading-permalink'
+    link.dataset.headingPermalink = ''
+    link.href = `#${encodeURIComponent(heading.id)}`
+    link.setAttribute('aria-label', `${heading.textContent?.trim()}へのリンク`)
+    heading.append(link)
+  }
+}
+
+const scrollToHash = () => {
+  if (!location.hash) return
+  const id = decodeURIComponent(location.hash.slice(1))
+  document
+    .querySelector<HTMLElement>(`#${CSS.escape(id)}`)
+    ?.scrollIntoView({ block: 'start' })
+}
+
 document.addEventListener('astro:page-load', loadReadingProgress)
+document.addEventListener('astro:page-load', addHeadingPermalinks)
+document.addEventListener('astro:page-load', () =>
+  requestAnimationFrame(scrollToHash),
+)
+window.addEventListener('hashchange', scrollToHash)
 loadReadingProgress()
+addHeadingPermalinks()
 
 const nav = () => document.querySelector<HTMLElement>('[data-nav-container]')
 const isEntryDetail = (url: URL) =>

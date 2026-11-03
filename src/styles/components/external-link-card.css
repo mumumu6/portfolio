@@ -67,7 +67,10 @@
 .link-preview-card__thumbnail
   > .link-preview-card__image
   > img[data-progressive-image] {
-  display: block;
+  inset: -0.5%;
+  width: 101%;
+  height: 101%;
+  transform: none;
   object-fit: contain;
   object-position: center;
   background: var(--surface);

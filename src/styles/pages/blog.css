@@ -13,6 +13,28 @@
   isolation: isolate;
 }
 
+.article-theme-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 22%, transparent);
+  transition: background-color 140ms ease;
+}
+
+.article-theme-toggle:hover {
+  background: color-mix(in srgb, var(--surface) 56%, transparent);
+}
+
+.article-theme-toggle .theme-toggle:hover {
+  background: transparent;
+}
+
 .article-header {
   position: absolute;
   inset: 0;
@@ -166,8 +188,8 @@
 .article-layout {
   display: grid;
   grid-template-columns: 150px minmax(0, 1fr);
-  gap: 28px;
-  padding: 34px 60px 0 20px;
+  gap: 36px;
+  padding: 34px 48px 0 20px;
 }
 
 .article-toc {

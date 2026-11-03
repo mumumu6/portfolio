@@ -1,0 +1,183 @@
+---
+title: Vue Fes Japan 2026に参加しました！
+description: Vue Fes Japan 2026に学生として参加した感想や、印象に残ったセッション、懇親会などについて書きました。
+publishedAt: 2026-11-01
+updatedAt: 2026-11-01
+tags:
+  - Vue.js
+  - Vue Fes Japan
+  - カンファレンス
+cover: ./assets/vuefes-cover.jpg
+coverAlt: Vue Fes Japanの入口にあったVueのロゴ
+---
+
+import LinkPreviewCard from '@/components/common/LinkPreviewCard.astro'
+import ResponsivePair from '@/components/common/ResponsivePair.astro'
+import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
+import YouTubeEmbed from '@/components/common/YouTubeEmbed.astro'
+import piniaImage from './assets/pinia.jpg'
+import lunchImage from './assets/vuefes-lunch.jpg'
+import partyImage from './assets/after-party.jpg'
+
+こんにちは、mumumuです!!
+Vue Fes Japan 2026に学生支援制度を利用して参加させていただいたので、その参加記を書きます。
+
+<LinkPreviewCard href="https://vuefes.jp/2026/" />
+
+## 参加したきっかけ
+
+普段サークルでは主に Vue を使っていて、最近は特に Vue が好きです。
+去年、友人が Vue Fes の参加記を書いていて、それを読んで「来年は行ってみたいな」と思っていました。
+
+今回、本来は一万円近くかかるチケットが学生支援制度のおかげで無料になり、懇親会にまで参加させていただきました。本当にありがとうございます。
+
+## 会場に到着するまで
+
+前日の深夜、スマホを盗まれるというハプニングがあり、スマホなしでのVue Fes参戦の可能性にかなり焦りましたが、位置情報を頼りに空き家の草むらからスマホ見つけることができました。ただ定期券と学生証は捨てられており、PASMOの残高までしっかり使われていました...
+
+それでも何とか無事に起床し、会場へ向かうことができました。
+
+---
+
+会場に入るとすぐにタトゥーシールを配っていて、せっかくなのでVueのシールを左手に貼りました。
+ただ、参加者のネームプレートの作成はうまくいっていなかったみたいで、アイコン付きのものは作れませんでした。
+来年は作りたい！
+
+<ResponsivePair>
+
+<div>
+  去年参加記を書いていた友人は今年は不参加だったので、お土産にPiniaのアクリルキーホルダーを買いました。
+  私はアクリルキーホルダーを3つとシールを買いました。参加費無料だったからいいのだ！！！
+</div>
+
+<ResponsiveImage
+  src={piniaImage}
+  alt="お土産のPiniaのアクリルキーホルダー"
+  width={360}
+  height={334}
+/>
+
+</ResponsivePair>
+
+## オープニング
+
+お土産を買った後、友人と一緒に座って待っているとオープニングが始まりました
+このオープニングの曲と映像がかっこよすぎた！！！
+テンション爆上げのまま、kazuponさんのオープニングトークが始まりました。
+
+<ResponsivePair>
+  <YouTubeEmbed id="j0oVYUShtLw" />
+  <YouTubeEmbed id="hEowEzCAROw" />
+</ResponsivePair>
+
+## キーノート
+
+Vueの作者で、VoidZeroのCEOであるEvan Youさんのキーノートです。
+覚悟はしていましたが、もちろん英語だったので気合を入れて聞いていました。
+
+初めはAI関連の話で、
+
+- ここ数年AIの影響でダウンロード数が爆増しているよ～
+- AIって、大きな変更を入れると古い記法で書いちゃうよね～（Vue 2で書いちゃうとか）
+- auto importはAIにわかりにくいからやめよう
+- SFCはAIにコンテキストを渡しやすくていいよ
+
+といった話をされていたと思います。
+
+また、Vue 3.6はもうほぼ完成しているとのことで、Vapor Modeも楽しみですね！！仮想DOMなくそう！！
+DevToolsでリアクティブの依存関係が見られるようになる話もあって、おもしろそう。
+
+一番印象に残ったのは、VoidZeroがAIエージェントに合ったツールチェインを作ろうとしていることでした。エージェントはlintもbuildも何度も実行するので、全部が速くないといけない。ビルドで同じ処理を共通化したり、CLIをエージェントにも使いやすくしたり、メモリ消費を抑えたりしたい、という話です。
+
+worktree間でビルドキャッシュを共有できたら、だいぶ楽になりそうです。
+
+AIにやさしいツールにするという話はパネルディスカッションでも強調されていました。
+
+## 印象に残ったセッション
+
+### Vite Task’s Cache Magic
+
+<LinkPreviewCard href="https://vuefes.jp/2026/speaker/wan9chi" />
+
+Vite Taskは、Vite+に組み込まれているタスクランナーです。OSレベルでファイルへのアクセスを追跡し、実際に読み込んだファイルなどをもとにキャッシュが有効かどうか判断してくれるそうです。
+Turborepoでは`inputs`でキャッシュ判定に使う入力ファイルを調整できます。Vite Taskはファイルへのアクセスから自動で判断してくれるので、そこが楽そうですね。
+
+ビルドに影響しないテストなどの変更ではキャッシュがヒットし、ボタンのサイズなどを変えると再ビルドされるそうです。キャッシュミスの原因まで教えてくれるとのことでした。
+
+### Astro is the new WordPress
+
+<LinkPreviewCard href="https://vuefes.jp/2026/speaker/ascorbic" />
+
+Cloudflareのブログで使われているEmDashというCMSの話でした。WordPressみたいなやつですね。
+権限まわりもしっかりしていて、ISR もできるのでパフォーマンスも良さそうです。
+それと、プラグインの配布にBlueskyでも使われているAT Protocolを使っていて、誰でもサーバーを立てて配布できるようになっているみたいです。
+
+VS Codeを開いて編集し、pushするのは若干面倒なので、このサイトの裏側をEmDashにしようかな～、とちょっと思いました。Webから編集できると便利ですし。
+ただ、全部をローカルで持っているほうが LLM に考えさせやすいというメリットもあるので悩ましいところです。
+
+……と思っていたら、EmDashはMCPにも対応していて、個人的に欲しい機能がそろっていました。D1とWorkersの無料枠で動かせそうなので、このサイトもEmDashに移行するのはありかもしれません。
+
+### パネル「JavaScriptエコシステムの境界線を問い直す」
+
+<LinkPreviewCard href="https://vuefes.jp/2026/event?section=panel-discussion#panel-discussion" />
+
+JavaScriptエコシステムの最前線にいる人たちのパネルディスカッションで、うお〜となりました。
+こんな話を直接聞けたのはうれしかった。
+
+全部理解できたわけではないけど多分こんな感じ？
+
+**VoidZero**
+
+- 今あるものをよくしていきつつ、AI 時代に合ったツールを作りたい
+
+**Bun**
+
+- AIがあるし全部作る。既存のものをそのまま使うと、そこが最適化のネックになることもある。
+
+**Node.js**
+
+- エコシステムに任せてコアを小さく保ちつつ、パフォーマンスも向上させたい。
+
+**Deno**
+
+- なくなっちゃった……
+
+## お昼
+
+お昼は学生向けのランチミートアップで、学生が集まってLTを聞いたりご飯を食べたりしました。
+思っていた以上に学生がいて、私はオープニングでお話されていた kazupon さんと学生の4人で食べました。
+Vue 好き～っていう話をした気がします。
+お弁当おいしかったです！！
+
+<ResponsiveImage
+  src={lunchImage}
+  alt="Vue Fes Japanでいただいたお昼ごはん"
+  width={360}
+  height={250}
+/>
+
+## アフターパーティー
+
+懇親会では同じ学生同士で話したり、スタッフさんとも少し話したりしました。
+サークルの外の学生の方と話す機会はあまりないので毎回新鮮です。
+先輩と餅つきもしました。テック系のイベントなのに餅つきできるのがおもろい。
+
+「どうしてReactのほうが流行ってるんですかね？」と聞いたら、Vue 3が出てからNuxt 3が出るまで2年くらい空いたのも大きそう、と教えてもらいました。ほ～ん。かなり変更が大きかったから、しかたないところもあったんでしょうね。
+
+<ResponsiveImage
+  src={partyImage}
+  alt="after party開催前"
+  width={360}
+  height={250}
+/>
+
+## おわりに
+
+キーノートやセッションで気になるツールの話をたくさん聞けたので、これからVoidZeroやCloudflareを使っていくのがますます楽しみになりました！
+さっそく試したくて、このサイトのフォーマッターをoxfmtに移行し、Vite+も導入しました。
+特に、Vite+でpre-commitフックやNode.jsのバージョン管理までできることに感動しました。
+Astroやlintまわりでまだ対応されていないところもありますが、とても使いやすいですね。
+
+TypeScript 7.1 も楽しみです！！
+
+また来年も参加したいな～

@@ -51,6 +51,7 @@ export default defineConfig({
       'gocon.github.io',
       'gocon.jp',
       'i.ytimg.com',
+      'vuefes.jp',
       'yt3.googleusercontent.com',
     ],
   },
