@@ -1,6 +1,8 @@
 .article-page {
   padding-bottom: 64px;
   view-timeline: --article-progress block;
+  /* ビルド時に animation-timeline が shorthand に統合されないようにする。 */
+  --article-progress-timeline: --article-progress;
 }
 
 .article-hero {
@@ -225,8 +227,11 @@
 
 @supports (animation-timeline: view()) {
   .reading-progress-value {
-    animation: reading-progress 1ms linear both;
-    animation-timeline: --article-progress;
+    animation-name: reading-progress;
+    animation-duration: 1ms;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: var(--article-progress-timeline);
     animation-range: contain;
   }
 }
