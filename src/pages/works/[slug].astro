@@ -1,15 +1,15 @@
 ---
 import { entryTransitionName } from '@/lib/entry-transition'
-import '@/styles/components/work-detail.css'
-import '@/styles/components/article-prose.css'
-import '@/styles/components/eyebrow.css'
-import '@/styles/components/work-status.css'
+import styles from '@/styles/components/work-detail.module.css'
+import proseStyles from '@/styles/components/article-prose.module.css'
+import eyebrowStyles from '@/styles/components/eyebrow.module.css'
+import statusStyles from '@/styles/components/work-status.module.css'
 import Avatar from '@/components/common/Avatar.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ExternalLinkCard from '@/components/common/ExternalLinkCard.astro'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 import { authorNames, formatReplyDate } from '@/repository/authors'
-import { workRepository } from '@/repository/astro/work'
+import { workRepository, type WorkDocument } from '@/repository/astro/work'
 import { statusLabels } from '@/repository/work'
 import { aiContentRepository } from '@/repository/astro/ai'
 import type { AuthorId, Reply } from '@/repository/shared'
@@ -19,9 +19,6 @@ export const getStaticPaths = async () => {
   return works.map((work) => ({ params: { slug: work.id }, props: { work } }))
 }
 
-type WorkDocument = Awaited<
-  ReturnType<typeof workRepository.listDocuments>
->[number]
 type Props = { work: WorkDocument }
 const { work }: Props = Astro.props
 const { Content } = await workRepository.renderDocument(work)
@@ -93,46 +90,46 @@ const threadItems = [
     { name: data.title, href: Astro.url.pathname },
   ]}
 >
-  <article class="work-thread-page">
+  <article class={styles.workThreadPage}>
     <section
-      class="work-thread-post work-thread-post--root"
+      class:list={[styles.workThreadPost, styles.workThreadPostRoot]}
       aria-labelledby="work-title"
     >
-      <div class="work-thread-rail">
+      <div class={styles.workThreadRail}>
         <Avatar author="mumumu" />
-        <span class="work-thread-line" aria-hidden="true"></span>
+        <span class={styles.workThreadLine} aria-hidden="true"></span>
       </div>
-      <div class="work-thread-content">
-        <header class="work-thread-head">
+      <div class={styles.workThreadContent}>
+        <header class={styles.workThreadHead} data-work-thread-head>
           <strong>mumumu</strong>
           <span aria-hidden="true">·</span>
           <time datetime={publishedAt}>{dateLabel}</time>
           <span aria-hidden="true">·</span>
-          <span class:list={['work-status', `work-status--${data.status}`]}>
-            {statusLabel}
-          </span>
+          <span class={statusStyles.workStatus}>{statusLabel}</span>
         </header>
         <h1
           id="work-title"
+          data-entry-title
           style={`view-transition-name: ${entryTransitionName(transitionHref, 'title')}`}
         >
           {data.title}
         </h1>
-        <p class="work-thread-summary">{data.summary}</p>
+        <p class={styles.workThreadSummary}>{data.summary}</p>
         <ResponsiveImage
-          className="work-thread-cover"
+          className={styles.workThreadCover}
           transitionName={entryTransitionName(transitionHref, 'image')}
+          workCover
           src={data.cover.src}
           alt={data.cover.alt}
           sizes="(max-width: 760px) calc(100vw - 92px), 680px"
           loading="eager"
           fetchPriority="high"
         />
-        <footer class="work-thread-meta">
+        <footer class={styles.workThreadMeta}>
           <span>{data.tags.join(' / ')}</span>
         </footer>
         {data.links.length > 0 && (
-          <nav class="work-thread-links" aria-label="作品へのリンク">
+          <nav class={styles.workThreadLinks} aria-label="作品へのリンク">
             {data.links.map((link) => (
               <ExternalLinkCard href={link.href} label={link.label} />
             ))}
@@ -145,21 +142,22 @@ const threadItems = [
       const replyDate = formatReplyDate(item.date)
       return (
         <section
-          class:list={['work-thread-post', 'work-thread-post--reply']}
+          class:list={[styles.workThreadPost, styles.workThreadPostReply]}
+          data-work-thread-post="reply"
           aria-label={
             item.kind === 'ai'
               ? `${authorNames[item.author]}のコメント ${index + 1}`
               : `mumumuの${item.label} ${index + 1}`
           }
         >
-          <div class="work-thread-rail">
+          <div class={styles.workThreadRail}>
             <Avatar author={item.author} />
             {index < threadItems.length - 1 && (
-              <span class="work-thread-line" aria-hidden="true" />
+              <span class={styles.workThreadLine} aria-hidden="true" />
             )}
           </div>
-          <div class="work-thread-content">
-            <header class="work-thread-head">
+          <div class={styles.workThreadContent}>
+            <header class={styles.workThreadHead} data-work-thread-head>
               <strong>{authorNames[item.author]}</strong>
               {item.kind === 'maker' && <span>{item.label}</span>}
               {replyDate && (
@@ -170,7 +168,7 @@ const threadItems = [
               )}
             </header>
             {item.replyTo && (
-              <p class="work-thread-reply-context">
+              <p data-work-thread-reply-context>
                 {authorNames[item.replyTo]}への返信
               </p>
             )}
@@ -180,19 +178,22 @@ const threadItems = [
       )
     })}
 
-    <section class="work-details" aria-labelledby="work-details-title">
-      <header class="work-details__head">
-        <p class="eyebrow">PROJECT NOTES</p>
+    <section class={styles.workDetails} aria-labelledby="work-details-title">
+      <header class={styles.workDetailsHead}>
+        <p class={eyebrowStyles.eyebrow}>PROJECT NOTES</p>
         <h2 id="work-details-title">作品について</h2>
       </header>
-      <div class="work-details__body">
-        <div class="article-prose work-thread-prose">
+      <div class={styles.workDetailsBody}>
+        <div
+          class:list={[proseStyles.articleProse, styles.workThreadProse]}
+          data-article-prose
+        >
           <Content />
         </div>
 
         {data.highlights.length > 0 && (
-          <div class="work-thread-highlights">
-            <p class="eyebrow">WHAT IT DOES</p>
+          <div class={styles.workThreadHighlights}>
+            <p class={eyebrowStyles.eyebrow}>WHAT IT DOES</p>
             <ul>
               {data.highlights.map((highlight) => (
                 <li>{highlight}</li>
@@ -202,15 +203,16 @@ const threadItems = [
         )}
 
         {data.warning && (
-          <aside class="work-thread-warning">
+          <aside class={styles.workThreadWarning}>
             <strong>更新状況</strong>
             <p>{data.warning}</p>
           </aside>
         )}
 
         {data.gallery.map((image) => (
-          <figure class="work-thread-gallery">
+          <figure class={styles.workThreadGallery}>
             <ResponsiveImage
+              className={styles.workThreadGalleryImage}
               src={image.src}
               alt={image.alt}
               sizes="(max-width: 760px) calc(100vw - 84px), 680px"

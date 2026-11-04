@@ -1,5 +1,6 @@
 ---
-import '@/styles/components/entry-link.css'
+import styles from '@/styles/components/entry-link.module.css'
+import feedStyles from '@/styles/components/feed.module.css'
 import TagList from '@/components/common/TagList.astro'
 import EntryBody from '@/components/feed/EntryBody.astro'
 import EntryFrame from '@/components/feed/EntryFrame.astro'
@@ -23,8 +24,8 @@ const sourceLabel = sourceUrl
   : undefined
 ---
 
-<EntryFrame author={entry.author} className="blog-entry">
-  <div class="blog-entry-layout">
+<EntryFrame author={entry.author}>
+  <div class={feedStyles.blogEntryLayout}>
     <EntryHeader
       author={entry.author}
       date={entry.date}
@@ -44,9 +45,9 @@ const sourceLabel = sourceUrl
       priority={priority}
       imageSizes="(max-width: 540px) calc(100vw - 40px), 360px"
     >
-      {entry.href && sourceLabel && (
+      {external && sourceLabel && (
         <a
-          class="entry-source"
+          class={feedStyles.entrySource}
           aria-label={
             entry.title ? `${sourceLabel}: ${entry.title}` : sourceLabel
           }
@@ -60,7 +61,8 @@ const sourceLabel = sourceUrl
 
       {entry.href && !entry.image && (
         <a
-          class="entry-link"
+          class={styles.entryLink}
+          data-entry-link
           href={entry.href}
           target={external ? '_blank' : undefined}
           rel={external ? 'noreferrer' : undefined}
@@ -69,7 +71,7 @@ const sourceLabel = sourceUrl
         </a>
       )}
 
-      <div class="entry-card-meta">
+      <div class={feedStyles.entryCardMeta}>
         <TagList tags={entry.tags} />
       </div>
     </EntryBody>

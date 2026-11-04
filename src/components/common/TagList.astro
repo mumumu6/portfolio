@@ -1,5 +1,5 @@
 ---
-import '@/styles/components/tag-list.css'
+import styles from '@/styles/components/tag-list.module.css'
 
 type Props = {
   tags?: string[] | undefined
@@ -10,7 +10,7 @@ const { tags, label = 'タグ' } = Astro.props
 ---
 
 {tags && tags.length > 0 && (
-  <ul class="tag-list" aria-label={label}>
+  <ul class={styles.tagList} aria-label={label} data-tag-list>
     {tags.map((tag) => (
       <li>{tag}</li>
     ))}

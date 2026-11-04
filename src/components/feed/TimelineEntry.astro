@@ -1,10 +1,10 @@
 ---
-import '@/styles/components/entry-link.css'
 import TagList from '@/components/common/TagList.astro'
 import EntryBody from '@/components/feed/EntryBody.astro'
 import EntryFrame from '@/components/feed/EntryFrame.astro'
 import EntryHeader from '@/components/feed/EntryHeader.astro'
 import ReplyDisclosure from '@/components/feed/ReplyDisclosure.astro'
+import feedStyles from '@/styles/components/feed.module.css'
 import type { TimelineEntry as TimelineEntryData } from '@/repository/experience'
 
 type Props = {
@@ -32,7 +32,7 @@ const external = entry.href?.startsWith('http')
     imageLabel={`${entry.title ?? '記録'}を開く`}
     external={external}
   >
-    <div class="entry-card-meta">
+    <div class={feedStyles.entryCardMeta}>
       <TagList tags={entry.tags} />
       {entry.replies && entry.replies.length > 0 && (
         <ReplyDisclosure

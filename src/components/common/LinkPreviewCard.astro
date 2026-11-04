@@ -1,5 +1,5 @@
 ---
-import '@/styles/components/external-link-card.css'
+import styles from '@/styles/components/external-link-card.module.css'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 import { getOgp } from '@/repository/astro/ogp'
 
@@ -27,9 +27,9 @@ const optimizedImageHeight = Math.round(
 
 <a
   class:list={[
-    'external-card-link',
-    'link-preview-card',
-    { 'link-preview-card--with-image': ogp.image },
+    styles.externalCardLink,
+    styles.linkPreviewCard,
+    ogp.image && styles.linkPreviewCardWithImage,
   ]}
   style={
     resolvedImageRatio ? `--link-image-ratio: ${resolvedImageRatio}` : undefined
@@ -39,8 +39,9 @@ const optimizedImageHeight = Math.round(
   rel="noopener noreferrer"
 >
   {ogp.image && (
-    <span class="link-preview-card__thumbnail" aria-hidden="true">
+    <span class={styles.linkPreviewCardThumbnail} aria-hidden="true">
       <ResponsiveImage
+        fit="contain"
         src={ogp.image}
         alt=""
         width={optimizedImageWidth}
@@ -49,14 +50,14 @@ const optimizedImageHeight = Math.round(
         sizes={`${optimizedImageWidth}px`}
         quality="low"
         loading="lazy"
-        className="link-preview-card__image"
+        className={styles.linkPreviewCardImage}
       />
     </span>
   )}
-  <span class="link-preview-card__body">
+  <span class={styles.linkPreviewCardBody}>
     <strong>{title}</strong>
     {ogp.description && (
-      <span class="link-preview-card__description">{ogp.description}</span>
+      <span class={styles.linkPreviewCardDescription}>{ogp.description}</span>
     )}
     <small>{host}</small>
   </span>

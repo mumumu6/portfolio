@@ -1,5 +1,5 @@
 ---
-import '@/styles/components/reply.css'
+import styles from '@/styles/components/reply.module.css'
 import Disclosure from '@/components/common/Disclosure.astro'
 import Avatar from '@/components/common/Avatar.astro'
 import { mdiChevronDown } from '@mdi/js'
@@ -17,28 +17,28 @@ const { replies, label = 'AIのコメント' } = Astro.props
 <Disclosure
   class={
     label !== '返信'
-      ? 'reply-disclosure reply-disclosure--ai'
-      : 'reply-disclosure'
+      ? `${styles.replyDisclosure ?? ''} ${styles.replyDisclosureAi ?? ''}`
+      : (styles.replyDisclosure ?? '')
   }
-  contentClass="reply-thread-shell"
+  contentClass={styles.replyThreadShell ?? ''}
 >
   <span slot="summary" style="display: contents">
     <span>{label}</span>
-    <span class="reply-disclosure__count">{replies.length}</span>
-    <span class="reply-disclosure__indicator" aria-hidden="true">
-      <svg class="reply-disclosure__icon" viewBox="0 0 24 24">
+    <span>{replies.length}</span>
+    <span class={styles.replyDisclosureIndicator} aria-hidden="true">
+      <svg class={styles.replyDisclosureIcon} viewBox="0 0 24 24">
         <path d={mdiChevronDown}></path>
       </svg>
     </span>
   </span>
-  <div class="reply-thread">
+  <div class={styles.replyThread}>
     {replies.map((reply) => {
       const dateLabel = formatReplyDate(reply.createdAt)
       return (
-        <div class="reply">
+        <div class={styles.reply} data-reply>
           <Avatar author={reply.author} size="small" />
-          <div class="reply-content">
-            <header class="reply-head">
+          <div class={styles.replyContent}>
+            <header class={styles.replyHead} data-reply-head>
               <strong>{authorNames[reply.author]}</strong>
               {dateLabel && (
                 <>
@@ -47,7 +47,7 @@ const { replies, label = 'AIのコメント' } = Astro.props
                 </>
               )}
             </header>
-            <div class="reply-bubble">
+            <div class={styles.replyBubble}>
               <p>{reply.body}</p>
             </div>
           </div>

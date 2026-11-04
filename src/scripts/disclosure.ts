@@ -2,10 +2,10 @@ const reducedMotion = () =>
   matchMedia('(prefers-reduced-motion: reduce)').matches
 
 const contentOf = (root: HTMLElement) =>
-  root.querySelector<HTMLElement>(':scope > .disclosure-content')
+  root.querySelector<HTMLElement>(':scope > [data-disclosure-content]')
 
 const triggerOf = (root: HTMLElement) =>
-  root.querySelector<HTMLButtonElement>(':scope > .disclosure-trigger')
+  root.querySelector<HTMLButtonElement>(':scope > [data-disclosure-trigger]')
 
 const nextToken = (root: HTMLElement) => {
   const token = String(Number(root.dataset.disclosureToken ?? '0') + 1)
@@ -117,7 +117,9 @@ const setOpen = (root: HTMLElement, open: boolean) => {
 
 document.addEventListener('click', (event) => {
   if (!(event.target instanceof Element)) return
-  const trigger = event.target.closest<HTMLButtonElement>('.disclosure-trigger')
+  const trigger = event.target.closest<HTMLButtonElement>(
+    '[data-disclosure-trigger]',
+  )
   const root = trigger?.closest<HTMLElement>('[data-disclosure]')
   if (!trigger || !root || trigger !== triggerOf(root)) return
   setOpen(root, root.dataset.state !== 'open')

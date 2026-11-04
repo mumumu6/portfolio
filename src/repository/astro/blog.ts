@@ -28,7 +28,6 @@ export const blogRepository: BlogRepository<
         readingMinutes: estimateReadingMinutes(post.body ?? data.description),
         tags: data.tags,
         href: `/blog/${post.id}/`,
-        sourceLabel: 'この記事を読む',
         image: { src: data.cover, alt: data.coverAlt },
       }
     })

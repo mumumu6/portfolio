@@ -1,6 +1,4 @@
 .work-thread-page {
-  width: 100%;
-  margin: 0;
   padding: clamp(20px, calc(6.29px + 2.86vw), 28px) var(--content-gutter) 60px;
   background: var(--surface);
 }
@@ -26,7 +24,7 @@
   background: var(--line-strong);
 }
 
-.work-thread-post:not(.work-thread-post--root) .work-thread-rail::before {
+.work-thread-post:not(.work-thread-post-root) .work-thread-rail::before {
   position: absolute;
   top: -18px;
   left: 19px;
@@ -58,7 +56,7 @@
   font-size: 0.72rem;
 }
 
-.work-thread-post--root h1 {
+.work-thread-post-root h1 {
   margin: 6px 0 0;
   font-family: var(--font-display);
   font-size: clamp(1.45rem, 4vw, 1.9rem);
@@ -67,7 +65,7 @@
 }
 
 .work-thread-summary,
-.work-thread-post--reply .work-thread-content > p {
+.work-thread-post-reply .work-thread-content > p {
   max-width: 650px;
   margin: 7px 0 0;
   color: var(--text-soft);
@@ -163,10 +161,8 @@
   margin: 26px 0 0;
 }
 
-.work-thread-gallery img {
+.work-thread-gallery-image {
   width: 100%;
-  height: auto;
-  display: block;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
 }
@@ -184,16 +180,17 @@
   border-top: 1px solid var(--line-strong);
 }
 
-.work-details__head h2 {
+.work-details-head h2 {
   margin: 5px 0 0;
   font-family: var(--font-display);
   font-size: 1.45rem;
   letter-spacing: -0.04em;
 }
 
-.work-details__body {
+.work-details-body {
   margin-top: 26px;
 }
+
 @media (max-width: 480px) {
   .work-thread-post {
     grid-template-columns: 34px minmax(0, 1fr);
@@ -211,7 +208,7 @@
     left: 17px;
   }
 
-  .work-thread-post:not(.work-thread-post--root) .work-thread-rail::before {
+  .work-thread-post:not(.work-thread-post-root) .work-thread-rail::before {
     top: -16px;
     left: 17px;
     height: 16px;
@@ -221,12 +218,12 @@
     min-height: 34px;
   }
 
-  .work-thread-post--root h1 {
+  .work-thread-post-root h1 {
     font-size: 1.35rem;
   }
 
   .work-thread-summary,
-  .work-thread-post--reply .work-thread-content > p {
+  .work-thread-post-reply .work-thread-content > p {
     font-size: 0.8rem;
   }
 }

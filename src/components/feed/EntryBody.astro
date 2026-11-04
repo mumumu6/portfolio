@@ -1,6 +1,7 @@
 ---
 import { entryTransitionName } from '@/lib/entry-transition'
 import EntryPreview from '@/components/feed/EntryPreview.astro'
+import styles from '@/styles/components/feed.module.css'
 import type { FeedImage } from '@/repository/shared'
 
 type Props = {
@@ -34,15 +35,13 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
 ---
 
 <div
-  class:list={[
-    'entry-card-layout',
-    { 'entry-card-layout--has-image': Boolean(image) },
-  ]}
+  class:list={[styles.entryCardLayout, image && styles.entryCardLayoutHasImage]}
 >
   {title &&
     (href ? (
       <Heading
-        class="entry-title"
+        class={styles.entryTitle}
+        data-entry-title
         aria-label={title}
         style={
           transitionHref
@@ -66,7 +65,7 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
         </a>
       </Heading>
     ) : (
-      <Heading class="entry-title" aria-label={title}>
+      <Heading class={styles.entryTitle} aria-label={title} data-entry-title>
         {title}
       </Heading>
     ))}
@@ -87,12 +86,12 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
     />
   )}
 
-  <div class="entry-card-copy">
-    <div class="entry-copy-content">
+  <div class={styles.entryCardCopy}>
+    <div class={styles.entryCopyContent}>
       <p
         class:list={[
-          'entry-body',
-          { 'entry-body--two-lines': bodyLines === 2 },
+          styles.entryBody,
+          bodyLines === 2 && styles.entryBodyTwoLines,
         ]}
       >
         {body}

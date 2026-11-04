@@ -8,11 +8,17 @@ const { class: className, contentClass } = Astro.props
 ---
 
 <div class:list={[className]} data-disclosure data-state="closed">
-  <button type="button" class="disclosure-trigger" aria-expanded="false">
+  <button
+    type="button"
+    class="disclosure-trigger"
+    data-disclosure-trigger
+    aria-expanded="false"
+  >
     <slot name="summary" />
   </button>
   <div
     class:list={['disclosure-content', contentClass]}
+    data-disclosure-content
     data-state="closed"
     hidden
   >

@@ -24,7 +24,9 @@ const measure = () => {
   start = next.getBoundingClientRect().top + scrollY
   end = Math.max(start + next.offsetHeight - window.innerHeight, start + 1)
   headings = Array.from(
-    next.querySelectorAll<HTMLElement>('.article-prose h2, .article-prose h3'),
+    next.querySelectorAll<HTMLElement>(
+      '[data-article-prose] h2, [data-article-prose] h3',
+    ),
     (heading) => ({
       id: heading.id,
       top: heading.getBoundingClientRect().top + scrollY,

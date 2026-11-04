@@ -1,26 +1,22 @@
 ---
-import '@/styles/components/feed.css'
+import styles from '@/styles/components/feed.module.css'
 import Avatar from '@/components/common/Avatar.astro'
 import type { AuthorId } from '@/repository/shared'
 
 type Props = {
   author: AuthorId
-  className?: string
 }
 
-const { author, className } = Astro.props
-const authorClass =
-  author === 'mumumu' ? undefined : `feed-entry--author-${author}`
-const classes = ['feed-entry', className, authorClass]
+const { author } = Astro.props
 ---
 
-<article class:list={classes}>
-  <div class="entry-grid">
-    <div class="entry-rail">
+<article class={styles.feedEntry} data-feed-entry data-entry-author={author}>
+  <div class={styles.entryGrid}>
+    <div class={styles.entryRail} data-entry-rail>
       <Avatar author={author} />
-      <span class="entry-line" aria-hidden="true"></span>
+      <span class={styles.entryLine} data-entry-line aria-hidden="true"></span>
     </div>
-    <div class="entry-content">
+    <div class={styles.entryContent}>
       <slot />
     </div>
   </div>

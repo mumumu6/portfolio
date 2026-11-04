@@ -1,4 +1,4 @@
-const selector = '.responsive-image[data-image-state]'
+const selector = '[data-responsive-image][data-image-state]'
 
 const settle = async (root: HTMLElement, image: HTMLImageElement) => {
   const token = String(Number(root.dataset.imageToken ?? '0') + 1)

@@ -20,7 +20,7 @@
   letter-spacing: -0.035em;
 }
 
-.article-prose .heading-permalink {
+.article-prose [data-heading-permalink] {
   position: absolute;
   inset-inline-start: -28px;
   top: calc((1lh - 26px) / 2);
@@ -32,7 +32,16 @@
   opacity: 0;
 }
 
-.article-prose .heading-permalink::before {
+.article-prose :is(h2, h3, h4):hover [data-heading-permalink],
+.article-prose [data-heading-permalink]:focus-visible {
+  opacity: 1;
+}
+
+.article-prose [data-heading-permalink]:hover {
+  color: var(--link);
+}
+
+.article-prose [data-heading-permalink]::before {
   display: block;
   width: 15px;
   height: 15px;
@@ -42,23 +51,14 @@
   -webkit-mask: url('/icons/link-variant.svg') center / contain no-repeat;
 }
 
-.article-prose :is(h2, h3, h4):hover .heading-permalink,
-.article-prose .heading-permalink:focus-visible {
-  opacity: 1;
-}
-
-.article-prose .heading-permalink:hover {
-  color: var(--link);
-}
-
 @media (hover: none) {
-  .article-prose .heading-permalink {
+  .article-prose [data-heading-permalink] {
     opacity: 0.55;
   }
 }
 
 @media (max-width: 760px) {
-  .article-prose .heading-permalink {
+  .article-prose [data-heading-permalink] {
     inset-inline-start: -14px;
   }
 }
@@ -85,27 +85,20 @@
   white-space: pre-line;
 }
 
-.article-prose p,
-.article-prose blockquote,
-.article-prose pre,
-.article-prose hr,
-.article-prose table {
+.article-prose :is(p, blockquote, pre, hr, table) {
   margin-block: 0.8em;
 }
 
-.article-prose li > ul,
-.article-prose li > ol {
+.article-prose :is(li > ul, li > ol) {
   margin-block: 0.35em;
 }
 
-.article-prose li,
-.article-prose ul,
-.article-prose ol {
+.article-prose :is(li, ul, ol) {
   margin-block: 0.3em;
 }
-.article-prose p:has(+ ul),
-.article-prose p:has(+ ol) {
-  margin-bottom: 0em;
+
+.article-prose p:has(+ ul, + ol) {
+  margin-bottom: 0;
 }
 
 .article-prose a {
@@ -143,29 +136,12 @@
   font-size: 0.86em;
 }
 
-.article-prose .responsive-image {
+.article-prose [data-responsive-image]:not([data-image-fit]) {
   width: fit-content;
   max-width: 100%;
   margin: 1.8em auto;
   border: 1px solid var(--line-strong);
   border-radius: 12px;
-}
-
-.article-prose .responsive-image > picture {
-  width: auto;
-  height: auto;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-}
-
-.article-prose picture > img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
 }
 
 .article-prose hr {
@@ -180,8 +156,7 @@
   font-size: 0.82rem;
 }
 
-.article-prose th,
-.article-prose td {
+.article-prose :is(th, td) {
   padding: 8px 10px;
   border: 1px solid var(--line);
   text-align: left;

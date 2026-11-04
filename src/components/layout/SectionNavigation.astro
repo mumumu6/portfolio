@@ -1,5 +1,5 @@
 ---
-import '@/styles/components/site-header-nav.css'
+import styles from '@/styles/components/site-header-nav.module.css'
 import { matchesNavigationPath, navigationItems } from '@/lib/navigation'
 
 interface Props {
@@ -10,8 +10,9 @@ const { pathname } = Astro.props
 ---
 
 <nav
-  class="section-nav"
+  class={styles.sectionNav}
   data-nav-container
+  data-section-nav
   aria-label="メインナビゲーション"
   transition:persist="section-nav"
 >
@@ -20,7 +21,7 @@ const { pathname } = Astro.props
     return (
       <a
         href={item.href}
-        class:list={['section-nav__link', { active }]}
+        class={styles.sectionNavLink}
         aria-current={active ? 'page' : undefined}
         data-nav-link
         data-astro-prefetch
@@ -30,7 +31,7 @@ const { pathname } = Astro.props
     )
   })}
   <span
-    class="section-nav__indicator"
+    class={styles.sectionNavIndicator}
     data-nav-indicator
     hidden
     aria-hidden="true"

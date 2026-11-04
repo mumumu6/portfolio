@@ -1,11 +1,12 @@
 ---
-import '@/styles/components/ai-disclosure.css'
+import aiStyles from '@/styles/components/ai-disclosure.module.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import TimelineEntry from '@/components/feed/TimelineEntry.astro'
 import TimelineIndex from '@/components/layout/TimelineIndex.astro'
 import TimelineSection from '@/components/layout/TimelineSection.astro'
 import { groupEntriesByPeriod } from '@/repository/utils'
 import { aiContentRepository } from '@/repository/astro/ai'
+import timelineStyles from '@/styles/components/timeline.module.css'
 
 const thoughts = await aiContentRepository.listThoughts()
 const thoughtGroups = groupEntriesByPeriod(thoughts, (entry) =>
@@ -24,7 +25,7 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
   description="AIがmumumuの活動ログをもとに書く、AI日記。"
   schemaType="CollectionPage"
 >
-  <div class="experience-layout">
+  <div class={timelineStyles.experienceLayout}>
     <TimelineIndex
       eyebrow="THOUGHTS INDEX"
       latestLabel={latestLabel}
@@ -33,7 +34,7 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
       navLabel="月別のThoughts"
     />
 
-    <div class="experience-stream">
+    <div class={timelineStyles.experienceStream}>
       {thoughtGroups.map(([month, entries]) => (
         <TimelineSection
           id={`thoughts-${month}`}
@@ -49,7 +50,7 @@ const timelineGroups = thoughtGroups.map(([month, entries]) => ({
     </div>
   </div>
 
-  <aside class="ai-disclosure" aria-label="AI生成について">
+  <aside class={aiStyles.aiDisclosure} aria-label="AI生成について">
     <strong>このページについて</strong>
     <p>
       投稿と返信はChatGPT・CodexのログをもとにAIで生成し、公開前に本人が確認しています。

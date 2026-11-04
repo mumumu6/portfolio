@@ -1,6 +1,6 @@
 ---
-import '@/styles/components/section-heading.css'
-import '@/styles/components/eyebrow.css'
+import styles from '@/styles/components/section-heading.module.css'
+import eyebrowStyles from '@/styles/components/eyebrow.module.css'
 
 type Props = {
   id: string
@@ -12,9 +12,11 @@ type Props = {
 const { id, eyebrow, title, href } = Astro.props
 ---
 
-<header class="feed-heading">
+<header class={styles.feedHeading}>
   <div>
-    <p class="eyebrow">{eyebrow}</p>
+    <p class={eyebrowStyles.eyebrow} data-section-eyebrow>
+      {eyebrow}
+    </p>
     <h2 id={id}>
       <a href={href}>
         {title}
@@ -22,7 +24,7 @@ const { id, eyebrow, title, href } = Astro.props
       </a>
     </h2>
   </div>
-  <a class="section-more" href={href}>
+  <a class={styles.sectionMore} href={href}>
     すべて見る
   </a>
 </header>

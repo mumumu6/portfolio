@@ -3,7 +3,7 @@
   margin-block: 1.5rem;
 }
 
-.responsive-pair__grid {
+.responsive-pair-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
@@ -11,13 +11,13 @@
 }
 
 @container (max-width: 560px) {
-  .responsive-pair__grid--narrow {
+  [data-stack-at='narrow'] {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @container (max-width: 760px) {
-  .responsive-pair__grid--wide {
+  [data-stack-at='wide'] {
     grid-template-columns: minmax(0, 1fr);
   }
 }

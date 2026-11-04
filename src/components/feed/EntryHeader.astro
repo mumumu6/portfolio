@@ -1,5 +1,6 @@
 ---
-import '@/styles/components/work-status.css'
+import feedStyles from '@/styles/components/feed.module.css'
+import statusStyles from '@/styles/components/work-status.module.css'
 import { authorNames } from '@/repository/authors'
 import type { AuthorId } from '@/repository/shared'
 import type { WorkStatus } from '@/repository/work'
@@ -17,8 +18,8 @@ const { author, date, dateLabel, readingMinutes, status, statusLabel } =
   Astro.props
 ---
 
-<header class="entry-head">
-  <div class="entry-author">
+<header class={feedStyles.entryHead}>
+  <div class={feedStyles.entryAuthor}>
     <strong>{authorNames[author]}</strong>
     <span aria-hidden="true">·</span>
     <time datetime={date}>{dateLabel}</time>
@@ -31,9 +32,7 @@ const { author, date, dateLabel, readingMinutes, status, statusLabel } =
     {statusLabel && status && (
       <>
         <span aria-hidden="true">·</span>
-        <span class:list={['work-status', `work-status--${status}`]}>
-          {statusLabel}
-        </span>
+        <span class={statusStyles.workStatus}>{statusLabel}</span>
       </>
     )}
   </div>

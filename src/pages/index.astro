@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogCard from '@/components/feed/BlogCard.astro'
 import WorkCard from '@/components/feed/WorkCard.astro'
 import SectionHeading from '@/components/layout/SectionHeading.astro'
+import feedStyles from '@/styles/components/feed.module.css'
 import { blogRepository } from '@/repository/astro/blog'
 import { workRepository } from '@/repository/astro/work'
 
@@ -23,7 +24,7 @@ const works = await workRepository.listWorks()
       href="/works/"
     />
 
-    <div class="feed-list feed-list--compact">
+    <div class={feedStyles.feedListCompact}>
       {works.slice(0, 2).map((entry, index) => (
         <WorkCard entry={entry} headingLevel={3} priority={index === 0} />
       ))}
@@ -38,7 +39,7 @@ const works = await workRepository.listWorks()
       href="/blog/"
     />
 
-    <div class="feed-list feed-list--compact">
+    <div class={feedStyles.feedListCompact}>
       {blogPosts.slice(0, 3).map((entry) => (
         <BlogCard entry={entry} headingLevel={3} />
       ))}

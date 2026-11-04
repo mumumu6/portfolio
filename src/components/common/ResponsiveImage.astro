@@ -1,10 +1,11 @@
 ---
 import { Picture } from 'astro:assets'
 import type { ImageMetadata } from 'astro'
-import '../../styles/components/responsive-image.css'
+import styles from '../../styles/components/responsive-image.module.css'
 
 type Props = {
   transitionName?: string | undefined
+  workCover?: boolean | undefined
   src: ImageMetadata | string
   alt: string
   width?: number | undefined
@@ -14,12 +15,14 @@ type Props = {
   quality?: 'low' | 'mid' | 'high' | 'max' | number | undefined
   loading?: 'lazy' | 'eager' | undefined
   fetchPriority?: 'high' | 'low' | 'auto' | undefined
+  fit?: 'cover' | 'contain' | undefined
   className?: string | undefined
 }
 
 const {
   src,
   transitionName,
+  workCover = false,
   alt,
   width,
   height,
@@ -29,24 +32,22 @@ const {
   loading = 'lazy',
   fetchPriority = 'low',
   className,
+  fit,
 } = Astro.props
 const sizes = customSizes ?? (loading === 'lazy' ? 'auto, 100vw' : '100vw')
 
 const isRemoteImage = typeof src === 'string'
-
-if (isRemoteImage && (width === undefined || height === undefined)) {
-  throw new Error(
-    'ResponsiveImage requires width and height for remote image sources.',
-  )
-}
-
 const sourceWidth = isRemoteImage ? width : src.width
 const sourceHeight = isRemoteImage ? height : src.height
 const resolvedWidth = width ?? sourceWidth
 const resolvedHeight = height ?? sourceHeight
 
 if (resolvedWidth === undefined || resolvedHeight === undefined) {
-  throw new Error('ResponsiveImage could not determine the image dimensions.')
+  throw new Error(
+    isRemoteImage
+      ? 'ResponsiveImage requires width and height for remote image sources.'
+      : 'ResponsiveImage could not determine the image dimensions.',
+  )
 }
 
 const maximumGeneratedWidth = Math.min(sourceWidth ?? 2400, 2400)
@@ -71,27 +72,34 @@ const fallbackWidth = Math.min(resolvedWidth, maximumGeneratedWidth)
 const fallbackHeight = Math.round(
   (fallbackWidth * resolvedHeight) / resolvedWidth,
 )
+const pictureProps = {
+  width: fallbackWidth,
+  height: fallbackHeight,
+  alt,
+  widths,
+  sizes,
+  ...(quality === undefined ? {} : { quality }),
+  formats: ['avif'],
+  fallbackFormat: 'webp' as const,
+  layout: 'none' as const,
+  loading,
+  decoding: 'async' as const,
+  fetchpriority: fetchPriority,
+}
 ---
 
 <div
-  class:list={['responsive-image', className]}
+  class:list={[styles.responsiveImage, className]}
+  data-responsive-image
+  data-image-fit={fit}
+  data-work-cover={workCover ? '' : undefined}
   data-image-state="loading"
   style={transitionName ? `view-transition-name: ${transitionName}` : undefined}
 >
-  <Picture
-    src={src}
-    width={fallbackWidth}
-    height={fallbackHeight}
-    alt={alt}
-    widths={widths}
-    sizes={sizes}
-    {...(quality === undefined ? {} : { quality })}
-    formats={['avif']}
-    fallbackFormat="webp"
-    layout="none"
-    loading={loading}
-    decoding="async"
-    fetchpriority={fetchPriority}
-  />
-  <div class="responsive-image__skeleton" aria-hidden="true"></div>
+  {typeof src === 'string' ? (
+    <Picture src={src} {...pictureProps} />
+  ) : (
+    <Picture src={src} {...pictureProps} />
+  )}
+  <div class={styles.responsiveImageSkeleton} aria-hidden="true"></div>
 </div>

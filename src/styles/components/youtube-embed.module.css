@@ -9,7 +9,7 @@
   background: #000;
 }
 
-lite-youtube.youtube-embed__player {
+lite-youtube.youtube-embed-player {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -17,13 +17,13 @@ lite-youtube.youtube-embed__player {
   height: 100%;
 }
 
-.youtube-embed__poster {
+.youtube-embed-poster {
   position: absolute;
   z-index: 2;
   inset: 0;
 }
 
-.article-prose .youtube-embed__poster picture {
+.youtube-embed-poster picture {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -32,7 +32,13 @@ lite-youtube.youtube-embed__player {
   border: 0;
 }
 
-.youtube-embed__play-icon {
+.youtube-embed-poster img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.youtube-embed-play-icon {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -44,7 +50,7 @@ lite-youtube.youtube-embed__player {
   transition: background-color 150ms ease;
 }
 
-.youtube-embed__play-icon::after {
+.youtube-embed-play-icon::after {
   position: absolute;
   top: 50%;
   left: 52%;
@@ -57,11 +63,11 @@ lite-youtube.youtube-embed__player {
   transform: translate(-50%, -50%);
 }
 
-.youtube-embed__poster:hover .youtube-embed__play-icon,
-.youtube-embed__poster:focus-visible .youtube-embed__play-icon {
+.youtube-embed-poster:hover .youtube-embed-play-icon,
+.youtube-embed-poster:focus-visible .youtube-embed-play-icon {
   background: #c00;
 }
 
-.youtube-embed:has(.lyt-activated) .youtube-embed__poster {
+.youtube-embed:has(:global(.lyt-activated)) .youtube-embed-poster {
   display: none;
 }

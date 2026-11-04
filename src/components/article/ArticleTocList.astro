@@ -1,4 +1,6 @@
 ---
+import styles from '@/styles/pages/blog.module.css'
+
 type Heading = { depth: number; slug: string; text: string }
 
 interface Props {
@@ -10,7 +12,7 @@ const { headings } = Astro.props
 
 <ol>
   {headings.map((heading) => (
-    <li class={`article-toc--depth-${heading.depth}`}>
+    <li class={heading.depth === 3 ? styles.articleTocDepth3 : undefined}>
       <a
         href={`#${encodeURIComponent(heading.slug)}`}
         data-toc-link

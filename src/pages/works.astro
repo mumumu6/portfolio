@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import WorkCard from '@/components/feed/WorkCard.astro'
+import feedStyles from '@/styles/components/feed.module.css'
 import { workRepository } from '@/repository/astro/work'
 
 const works = await workRepository.listWorks()
@@ -11,7 +12,7 @@ const works = await workRepository.listWorks()
   description="mumumuが制作したWebサイト、アプリ、開発プロジェクトの一覧。技術構成や制作時に考えたことも紹介します。"
   schemaType="CollectionPage"
 >
-  <div class="feed-list feed-list--compact">
+  <div class={feedStyles.feedListCompact}>
     {works.map((entry, index) => (
       <WorkCard entry={entry} priority={index === 0} />
     ))}

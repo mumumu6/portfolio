@@ -28,7 +28,7 @@
   color: var(--link);
 }
 
-.feed-heading .eyebrow {
+.feed-heading [data-section-eyebrow] {
   font-size: 0.56rem;
 }
 

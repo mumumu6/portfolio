@@ -16,7 +16,6 @@ const syncLinks = (container: HTMLElement, pathname: string) => {
     const active =
       matchesNavigationPath(pathname, link.pathname) ||
       matchesNavigationPath(withSlash(pathname), link.pathname)
-    link.classList.toggle('active', active)
     if (active) link.setAttribute('aria-current', 'page')
     else link.removeAttribute('aria-current')
   }
@@ -48,7 +47,7 @@ const animateIndicator = (
 
 const measure = (container: HTMLElement, animate = false) => {
   const indicator = container.querySelector<HTMLElement>('[data-nav-indicator]')
-  const link = container.querySelector<HTMLElement>('a.active')
+  const link = container.querySelector<HTMLElement>("a[aria-current='page']")
   const label = link?.querySelector<HTMLElement>('span')
   if (!indicator) return
   if (!link || !label) {
@@ -102,7 +101,7 @@ let resizeFrame = 0
 let activePreparation: AbortSignal | undefined
 
 const refreshSticky = () => {
-  const profile = document.querySelector('.profile-header')
+  const profile = document.querySelector<HTMLElement>('[data-profile-header]')
   stickyStart = profile
     ? profile.getBoundingClientRect().bottom + window.scrollY
     : 0
@@ -114,16 +113,17 @@ const updateVisibility = () => {
   if (!container) return
   const scrollY = window.scrollY
   if (container.getAttribute('aria-busy') === 'true') {
-    container.classList.remove('section-nav--hidden')
+    delete container.dataset.navHidden
     lastY = scrollY
     return
   }
   const delta = scrollY - lastY
   if (scrollY <= 4 || scrollY < stickyStart) {
-    container.classList.remove('section-nav--hidden')
+    delete container.dataset.navHidden
     lastY = scrollY
   } else if (Math.abs(delta) >= 8) {
-    container.classList.toggle('section-nav--hidden', delta > 0)
+    if (delta > 0) container.dataset.navHidden = 'true'
+    else delete container.dataset.navHidden
     lastY = scrollY
   }
 }
@@ -169,7 +169,7 @@ document.addEventListener('astro:before-swap', (event) => {
   const transition = event as TransitionBeforeSwapEvent
   const container = nav()
   if (!container) return
-  container.classList.remove('section-nav--hidden')
+  delete container.dataset.navHidden
   syncLinks(container, transition.to.pathname)
   measure(container, true)
 })
@@ -192,7 +192,7 @@ const start = () => {
   if (transitioning) {
     requestAnimationFrame(() => {
       if (activePreparation || !container.isConnected) return
-      container.classList.remove('section-nav--hidden')
+      delete container.dataset.navHidden
       lastY = window.scrollY
       refreshSticky()
       container.removeAttribute('aria-busy')

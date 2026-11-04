@@ -1,0 +1,57 @@
+.avatar {
+  flex: none;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface-soft);
+}
+
+.avatar[data-avatar-size='large'] {
+  --image-position: center 30%;
+  width: clamp(90px, calc(66px + 5vw), 104px);
+  height: clamp(90px, calc(66px + 5vw), 104px);
+  border: 5px solid var(--surface);
+  transform: translateY(clamp(-52px, calc(-33px - 2.5vw), -45px));
+}
+
+.avatar[data-avatar-size='medium'] {
+  width: 38px;
+  height: 38px;
+}
+
+.avatar[data-avatar-size='small'] {
+  width: 30px;
+  height: 30px;
+}
+
+.avatar[data-avatar='codex'],
+.avatar[data-avatar='chatgpt'] {
+  --image-background: #fff;
+  background: #fff;
+}
+
+.avatar[data-avatar='chatgpt'] {
+  --image-padding: 6px;
+}
+
+.avatar[data-avatar='chatgpt'][data-avatar-size='small'] {
+  --image-padding: 4px;
+}
+
+.avatar[data-avatar='codex'] {
+  --image-transform: scale(1.24);
+}
+@media (max-width: 480px) {
+  .avatar[data-avatar-size='medium'] {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.avatar[data-avatar='grok'] {
+  background: #1b1a20;
+  /* 顔は切らず、画像の暗い外枠だけが円の内側から消える倍率。 */
+  --image-transform: scale(1.1);
+  --image-transform-origin: 50% 100%;
+}

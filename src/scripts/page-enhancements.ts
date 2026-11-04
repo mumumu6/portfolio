@@ -17,12 +17,11 @@ const loadReadingProgress = () => {
 
 const addHeadingPermalinks = () => {
   for (const heading of document.querySelectorAll<HTMLElement>(
-    '.article-prose h2[id], .article-prose h3[id], .article-prose h4[id]',
+    '[data-article-prose] h2[id], [data-article-prose] h3[id], [data-article-prose] h4[id]',
   )) {
     if (heading.querySelector('[data-heading-permalink]')) continue
 
     const link = document.createElement('a')
-    link.className = 'heading-permalink'
     link.dataset.headingPermalink = ''
     link.href = `#${encodeURIComponent(heading.id)}`
     link.setAttribute('aria-label', `${heading.textContent?.trim()}へのリンク`)
@@ -70,10 +69,10 @@ const selectEntryParticipants = (target: Document, from: URL, to: URL) => {
       ),
   )
   for (const title of target.querySelectorAll<HTMLElement>(
-    '.feed-entry .entry-title[style]',
+    '[data-feed-entry] [data-entry-title][style]',
   )) {
     if (names.has(title.style.viewTransitionName)) {
-      const entry = title.closest<HTMLElement>('.feed-entry')
+      const entry = title.closest<HTMLElement>('[data-feed-entry]')
       if (entry) entry.dataset.entryTransitionActive = ''
     }
   }
@@ -112,7 +111,7 @@ let fadePageContent = false
 let pageEnterTimer = 0
 
 const getStickyStart = () => {
-  const profile = document.querySelector('.profile-header')
+  const profile = document.querySelector<HTMLElement>('[data-profile-header]')
   return profile ? profile.getBoundingClientRect().bottom + window.scrollY : 0
 }
 
@@ -126,7 +125,7 @@ document.addEventListener('astro:before-swap', (event) => {
   const traversal = transition.navigationType === 'traverse'
   const currentNav = nav()
   pendingViewportTop =
-    !traversal && transition.newDocument.querySelector('.profile-header')
+    !traversal && transition.newDocument.querySelector('[data-profile-header]')
       ? Math.max(0, currentNav?.getBoundingClientRect().top ?? 0)
       : null
   if (traversal) {

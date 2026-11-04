@@ -1,6 +1,6 @@
 ---
-import '@/styles/components/timeline.css'
-import '@/styles/components/eyebrow.css'
+import styles from '@/styles/components/timeline.module.css'
+import eyebrowStyles from '@/styles/components/eyebrow.module.css'
 
 type TimelineGroup = {
   id: string
@@ -19,9 +19,9 @@ type Props = {
 const { eyebrow, latestLabel, groups, total, navLabel } = Astro.props
 ---
 
-<aside class="experience-index">
-  <p class="eyebrow">{eyebrow}</p>
-  <p class="experience-index__latest">
+<aside class={styles.experienceIndex}>
+  <p class={eyebrowStyles.eyebrow}>{eyebrow}</p>
+  <p class={styles.experienceIndexLatest}>
     <span>LATEST</span>
     <strong>{latestLabel}</strong>
   </p>
@@ -34,5 +34,5 @@ const { eyebrow, latestLabel, groups, total, navLabel } = Astro.props
       </a>
     ))}
   </nav>
-  <p class="experience-index__total">全{total}件</p>
+  <p class={styles.experienceIndexTotal}>全{total}件</p>
 </aside>

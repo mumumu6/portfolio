@@ -1,5 +1,6 @@
 ---
-import '@/styles/components/work-entry.css'
+import styles from '@/styles/components/work-entry.module.css'
+import feedStyles from '@/styles/components/feed.module.css'
 import TagList from '@/components/common/TagList.astro'
 import EntryBody from '@/components/feed/EntryBody.astro'
 import EntryFrame from '@/components/feed/EntryFrame.astro'
@@ -17,8 +18,8 @@ type Props = {
 const { entry, headingLevel = 2, priority = false } = Astro.props
 ---
 
-<EntryFrame author={entry.author} className="work-entry">
-  <div class="work-entry-layout">
+<EntryFrame author={entry.author}>
+  <div class={feedStyles.workEntryLayout}>
     <EntryHeader
       author={entry.author}
       date={entry.date}
@@ -37,11 +38,11 @@ const { entry, headingLevel = 2, priority = false } = Astro.props
       priority={priority}
       imageSizes="(max-width: 540px) calc(100vw - 40px), 360px"
     >
-      <div class="entry-card-meta">
+      <div class={feedStyles.entryCardMeta}>
         <TagList tags={entry.tags} label="使用技術" />
 
-        <div class="work-entry-notes">
-          <div class="work-note-preview">
+        <div class={feedStyles.workEntryNotes}>
+          <div class={styles.workNotePreview}>
             <Avatar author="mumumu" size="small" />
             <span>
               <strong>

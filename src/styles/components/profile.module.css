@@ -1,6 +1,4 @@
 .profile-header {
-  width: 100%;
-  margin-inline: auto;
   background: color-mix(in srgb, var(--surface) 72%, transparent);
 }
 
@@ -40,7 +38,7 @@
   left: -60px;
 }
 
-.profile-cover__actions {
+.profile-cover-actions {
   position: absolute;
   top: 11px;
   right: 16px;

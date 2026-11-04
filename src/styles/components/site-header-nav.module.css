@@ -6,10 +6,8 @@
   z-index: 60;
   width: 100%;
   height: 49px;
-  min-height: 49px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-inline: auto;
   overflow: hidden;
   border-block: 0;
   background-color: var(--surface);
@@ -18,18 +16,18 @@
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.section-nav--hidden:not(:focus-within) {
+.section-nav[data-nav-hidden='true']:not(:focus-within) {
   transform: translate3d(0, -100%, 0);
 }
 
 /* テーマ切り替え時は、ナビをページ全体のクロスフェードに含める。 */
 :root[data-theme-transitioning] .section-nav,
-:root[data-theme-transitioning] .section-nav__indicator {
+:root[data-theme-transitioning] .section-nav-indicator {
   view-transition-name: none !important;
   transition: none;
 }
 
-.section-nav__link {
+.section-nav-link {
   position: relative;
   min-width: 0;
   display: grid;
@@ -47,16 +45,16 @@
   transition: color 140ms ease;
 }
 
-.section-nav__link:hover,
-.section-nav__link.active {
+.section-nav-link:hover,
+.section-nav-link[aria-current='page'] {
   color: var(--text);
 }
 
-.section-nav__link:focus-visible {
+.section-nav-link:focus-visible {
   outline-offset: -4px;
 }
 
-.section-nav__link > span {
+.section-nav-link > span {
   grid-area: 1 / 1;
   display: inline-block;
   padding: 6px;
@@ -65,16 +63,16 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .section-nav__link:hover > span {
+  .section-nav-link:hover > span {
     background: color-mix(in srgb, var(--text) 4%, transparent);
   }
 }
 
-.section-nav__indicator[data-nav-ready='true'] {
+.section-nav-indicator[data-nav-ready='true'] {
   visibility: visible;
 }
 
-.section-nav__indicator {
+.section-nav-indicator {
   view-transition-name: none !important;
   position: absolute;
   bottom: 0;
@@ -91,7 +89,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .section-nav,
-  .section-nav__indicator {
+  .section-nav-indicator {
     transition: none;
   }
 }

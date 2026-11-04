@@ -1,5 +1,5 @@
 ---
-import '@/styles/components/entry-preview.css'
+import styles from '@/styles/components/entry-preview.module.css'
 import type { FeedImage } from '@/repository/shared'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 
@@ -37,11 +37,14 @@ const wrapperAttributes = href
 ---
 
 <Wrapper
-  class="ogp-preview"
+  class={styles.ogpPreview}
+  data-entry-preview
+  data-ogp-preview
   style={transitionName ? `view-transition-name: ${transitionName}` : undefined}
   {...wrapperAttributes}
 >
   <ResponsiveImage
+    fit="cover"
     src={image.src}
     alt={image.alt}
     widths={[320, 480, 640, 960]}

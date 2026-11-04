@@ -3,16 +3,17 @@
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  background: var(--surface);
+  background: var(--image-background, var(--surface));
 }
 
 .responsive-image > picture {
   position: relative;
   z-index: 1;
   display: block;
-  min-width: 0;
   max-width: 100%;
   overflow: hidden;
+  border-radius: inherit;
+  background: var(--image-background, transparent);
 }
 
 .responsive-image > picture > img {
@@ -20,20 +21,39 @@
   display: block;
   max-width: 100%;
   height: auto;
+  padding: var(--image-padding, 0);
+  object-position: var(--image-position, center);
+  transform: var(--image-transform, none);
+  transform-origin: var(--image-transform-origin, center);
 }
 
-.responsive-image__skeleton {
+.responsive-image[data-image-fit],
+.responsive-image[data-image-fit] > picture,
+.responsive-image[data-image-fit] > picture > img {
+  width: 100%;
+  height: 100%;
+}
+
+.responsive-image[data-image-fit='cover'] > picture > img {
+  object-fit: cover;
+}
+
+.responsive-image[data-image-fit='contain'] > picture > img {
+  object-fit: contain;
+}
+
+.responsive-image-skeleton {
   position: absolute;
   z-index: 0;
   inset: 0;
   overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
-  background: var(--surface);
+  background: var(--image-background, var(--surface));
   opacity: 0.82;
 }
 
-.responsive-image__skeleton::after {
+.responsive-image-skeleton::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -48,7 +68,7 @@
 }
 
 .responsive-image[data-image-state='loading']
-  .responsive-image__skeleton::after {
+  .responsive-image-skeleton::after {
   animation: image-skeleton 1.4s linear infinite;
 }
 
@@ -63,7 +83,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .responsive-image__skeleton::after {
+  .responsive-image-skeleton::after {
     animation: none;
   }
 }

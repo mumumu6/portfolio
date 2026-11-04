@@ -5,6 +5,7 @@ import TimelineIndex from '@/components/layout/TimelineIndex.astro'
 import TimelineSection from '@/components/layout/TimelineSection.astro'
 import { groupEntriesByPeriod } from '@/repository/utils'
 import { experienceRepository } from '@/repository/astro/experience'
+import styles from '@/styles/components/timeline.module.css'
 
 const experiences = await experienceRepository.listExperiences()
 const experienceGroups = groupEntriesByPeriod(experiences, (entry) =>
@@ -23,7 +24,7 @@ const timelineGroups = experienceGroups.map(([year, entries]) => ({
   description="mumumuの活動と経験のタイムライン。"
   schemaType="CollectionPage"
 >
-  <div class="experience-layout">
+  <div class={styles.experienceLayout}>
     <TimelineIndex
       eyebrow="EXPERIENCE INDEX"
       latestLabel={latestLabel}
@@ -32,7 +33,7 @@ const timelineGroups = experienceGroups.map(([year, entries]) => ({
       navLabel="年別の経歴"
     />
 
-    <div class="experience-stream">
+    <div class={styles.experienceStream}>
       {experienceGroups.map(([year, entries]) => (
         <TimelineSection
           id={`experience-${year}`}

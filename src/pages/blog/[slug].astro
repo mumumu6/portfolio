@@ -1,18 +1,14 @@
 ---
 import { entryTransitionName } from '@/lib/entry-transition'
-import '@/styles/pages/blog.css'
-import '@/styles/components/article-prose.css'
+import styles from '@/styles/pages/blog.module.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import ArticleControls from '@/components/article/ArticleControls.astro'
 import ResponsiveImage from '@/components/common/ResponsiveImage.astro'
 import ThemeToggle from '@/components/layout/ThemeToggle.astro'
 import TagList from '@/components/common/TagList.astro'
 import { estimateReadingMinutes } from '@/repository/utils'
-import { blogRepository } from '@/repository/astro/blog'
+import { blogRepository, type BlogDocument } from '@/repository/astro/blog'
 
-type BlogDocument = Awaited<
-  ReturnType<typeof blogRepository.listDocuments>
->[number]
 type Props = { post: BlogDocument }
 
 export const getStaticPaths = async () => {
@@ -53,39 +49,38 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
     { name: data.title, href: Astro.url.pathname },
   ]}
 >
-  <article id="article-page" class="article-page">
+  <article id="article-page" class={styles.articlePage}>
     <div
-      class="article-hero"
+      class={styles.articleHero}
       style={`view-transition-name: ${entryTransitionName(transitionHref, 'image')}`}
     >
       <ResponsiveImage
-        className="article-cover"
+        fit="cover"
+        className={styles.articleCover}
         src={data.cover}
-        widths={[480, 960, 1440]}
         sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 862px) calc(100vw - 42px), (max-width: 1232px) 778px, min(calc(100vw - 454px), 1398px)"
         alt={data.coverAlt}
-        quality={40}
         loading="eager"
         fetchPriority="high"
       />
-      <header class="article-header">
+      <header class={styles.articleHeader}>
         <h1
           style={`view-transition-name: ${entryTransitionName(transitionHref, 'title')}`}
         >
           {data.title}
         </h1>
-        <div class="article-meta">
+        <div class={styles.articleMeta}>
           <time datetime={publishedAt}>{dateLabel}</time>
           <span>約{readingMinutes}分</span>
         </div>
       </header>
-      <div class="article-theme-toggle">
+      <div class={styles.articleThemeToggle}>
         <ThemeToggle />
       </div>
     </div>
-    <div class="article-intro">
-      <p class="article-lead">{data.description}</p>
-      <div class="article-tags">
+    <div class={styles.articleIntro}>
+      <p class={styles.articleLead}>{data.description}</p>
+      <div class={styles.articleTags}>
         <TagList tags={data.tags} />
       </div>
     </div>

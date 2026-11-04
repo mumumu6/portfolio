@@ -60,6 +60,13 @@ export default defineConfig({
     // 大きなスタイルは別ファイルにしてキャッシュを利用する。
     inlineStylesheets: 'auto',
   },
+  vite: {
+    css: {
+      modules: {
+        localsConvention: 'camelCaseOnly',
+      },
+    },
+  },
   integrations: [
     mdx(),
     sitemap(),

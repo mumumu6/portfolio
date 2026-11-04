@@ -13,21 +13,21 @@
   align-self: start;
 }
 
-.experience-index__latest {
+.experience-index-latest {
   display: grid;
   gap: 2px;
   margin: 22px 0 20px;
 }
 
-.experience-index__latest span,
-.experience-index__total {
+.experience-index-latest span,
+.experience-index-total {
   color: var(--muted);
   font-family: var(--font-mono);
   font-size: 0.58rem;
   letter-spacing: 0.08em;
 }
 
-.experience-index__latest strong {
+.experience-index-latest strong {
   font-family: var(--font-display);
   font-size: 1.15rem;
   letter-spacing: -0.035em;
@@ -62,7 +62,7 @@
   font-weight: 500;
 }
 
-.experience-index__total {
+.experience-index-total {
   margin: 22px 0 0;
 }
 
@@ -76,7 +76,7 @@
 }
 
 @media (min-width: 1440px) {
-  .site-shell .experience-layout {
+  [data-site-shell] .experience-layout {
     grid-template-columns: 180px minmax(0, 1fr);
     justify-content: stretch;
   }
@@ -86,7 +86,7 @@
   scroll-margin-top: calc(var(--header-height) + 16px);
 }
 
-.timeline-group__heading {
+.timeline-group-heading {
   position: relative;
   display: flex;
   align-items: baseline;
@@ -98,7 +98,7 @@
   font-family: var(--font-mono);
 }
 
-.timeline-group:not(:first-child) .timeline-group__heading::before {
+.timeline-group:not(:first-child) .timeline-group-heading::before {
   position: absolute;
   top: -1px;
   bottom: -1px;
@@ -108,16 +108,16 @@
   content: '';
 }
 
-.timeline-group:not(:first-child) .timeline-group__heading {
+.timeline-group:not(:first-child) .timeline-group-heading {
   border-top: 1px solid var(--line);
 }
 
-.timeline-group__heading span {
+.timeline-group-heading span {
   font-size: 0.72rem;
   letter-spacing: 0.08em;
 }
 
-.timeline-group__heading small {
+.timeline-group-heading small {
   color: var(--muted);
   font-size: 0.57rem;
   font-weight: 500;
@@ -138,28 +138,26 @@
 }
 
 @media (max-width: 480px) {
-  .timeline-group__heading {
+  .timeline-group-heading {
     padding-right: 16px;
     padding-left: 54px;
-  }
-
-  .timeline-group:not(:first-child) .timeline-group__heading::before {
-    left: var(--timeline-axis);
   }
 
   .experience-stream {
     --timeline-center: 17px;
   }
 
-  .feed-list--timeline .entry-line {
+  [data-feed-list='timeline'] [data-entry-line] {
     top: 34px;
     left: var(--timeline-center);
   }
 
-  .feed-list--timeline .feed-entry:not(:first-child) .entry-rail::before,
+  [data-feed-list='timeline']
+    [data-feed-entry]:not(:first-child)
+    [data-entry-rail]::before,
   .timeline-group:not(:first-child)
-    .feed-entry:first-child
-    .entry-rail::before {
+    [data-feed-entry]:first-child
+    [data-entry-rail]::before {
     left: var(--timeline-center);
   }
 }

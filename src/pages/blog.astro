@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BlogCard from '@/components/feed/BlogCard.astro'
+import feedStyles from '@/styles/components/feed.module.css'
 import { blogRepository } from '@/repository/astro/blog'
 
 const blogPosts = await blogRepository.listPosts()
@@ -11,7 +12,7 @@ const blogPosts = await blogRepository.listPosts()
   description="mumumuが書いた技術記事と制作記録。"
   schemaType="CollectionPage"
 >
-  <div class="feed-list feed-list--compact">
+  <div class={feedStyles.feedListCompact}>
     {blogPosts.map((entry, index) => (
       <BlogCard entry={entry} priority={index === 0} />
     ))}
