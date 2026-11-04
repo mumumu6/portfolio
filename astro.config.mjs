@@ -61,6 +61,12 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   vite: {
+    devtools: true,
+    build: {
+      rolldownOptions: {
+        devtools: {},
+      },
+    },
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
