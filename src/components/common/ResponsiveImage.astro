@@ -101,5 +101,9 @@ const pictureProps = {
   ) : (
     <Picture src={src} {...pictureProps} />
   )}
-  <div class={styles.responsiveImageSkeleton} aria-hidden="true"></div>
+  <div
+    class={styles.responsiveImageSkeleton}
+    data-image-skeleton
+    aria-hidden="true"
+  ></div>
 </div>

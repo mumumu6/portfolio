@@ -32,12 +32,44 @@
   transition: background-color 140ms ease;
 }
 
+:root[data-theme-transitioning] .article-theme-toggle,
+:root[data-theme-transitioning] .article-shade,
+:root[data-theme-transitioning] .article-header .article-meta {
+  view-transition-name: none !important;
+}
+
+::view-transition-group(blog-theme-toggle),
+::view-transition-group(blog-article-meta) {
+  z-index: 4;
+}
+
 .article-theme-toggle:hover {
   background: color-mix(in srgb, var(--surface) 56%, transparent);
 }
 
 .article-theme-toggle [data-theme-toggle]:hover {
   background: transparent;
+}
+
+.article-shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 18%,
+    color-mix(in srgb, #000 72%, transparent) 100%
+  );
+}
+
+::view-transition-group(blog-article-shade) {
+  z-index: 3;
+}
+
+:root::view-transition-group(:global(.entry-title)) {
+  z-index: 5;
 }
 
 .article-header {
@@ -49,11 +81,6 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: clamp(16px, 4vw, 32px);
-  background: linear-gradient(
-    180deg,
-    transparent 18%,
-    color-mix(in srgb, #000 72%, transparent) 100%
-  );
   color: #fff;
 }
 

@@ -86,10 +86,3 @@
   transform: translate3d(0, 0, 0);
   transform-origin: left center;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .section-nav,
-  .section-nav-indicator {
-    transition: none;
-  }
-}

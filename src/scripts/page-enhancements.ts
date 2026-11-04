@@ -112,8 +112,6 @@ document.addEventListener('astro:before-swap', (event) => {
 
 let pendingViewportTop: number | null = null
 let previousScrollBehavior: string | null = null
-let fadePageContent = false
-let pageEnterTimer = 0
 
 const getStickyStart = () => {
   const profile = document.querySelector<HTMLElement>('[data-profile-header]')
@@ -122,10 +120,9 @@ const getStickyStart = () => {
 
 document.addEventListener('astro:before-swap', (event) => {
   const transition = event as TransitionBeforeSwapEvent
-  // 一覧同士は画面全体を撮影しない。本文のフェードは入れ替え後に付ける。
-  fadePageContent =
-    !isEntryDetail(transition.from) && !isEntryDetail(transition.to)
-  if (fadePageContent) transition.viewTransition.skipTransition()
+  // 一覧同士は画面全体を撮影しない。
+  if (!isEntryDetail(transition.from) && !isEntryDetail(transition.to))
+    transition.viewTransition.skipTransition()
 
   const traversal = transition.navigationType === 'traverse'
   const currentNav = nav()
@@ -143,18 +140,6 @@ document.addEventListener('astro:before-swap', (event) => {
 })
 
 document.addEventListener('astro:after-swap', () => {
-  if (
-    fadePageContent &&
-    !matchMedia('(prefers-reduced-motion: reduce)').matches
-  ) {
-    const root = document.documentElement
-    root.dataset.pageEnter = ''
-    window.clearTimeout(pageEnterTimer)
-    pageEnterTimer = window.setTimeout(() => {
-      delete root.dataset.pageEnter
-    }, 180)
-  }
-  fadePageContent = false
   if (pendingViewportTop !== null) {
     window.scrollTo({
       top: Math.max(0, getStickyStart() - pendingViewportTop),

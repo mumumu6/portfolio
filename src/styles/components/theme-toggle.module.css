@@ -82,9 +82,3 @@
     opacity: 0;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .theme-icon svg {
-    transition-duration: 0.01ms;
-  }
-}
