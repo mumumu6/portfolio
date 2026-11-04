@@ -26,7 +26,7 @@ Service Workerのキャッシュ戦略と登録は`astro.config.mjs`のWorkbox�
 
 - `/` — プロフィールと最新フィード
 - `/works/` — 制作物
-- `/blog/` — 技術記事
+- `/blog/` — ブログ
 - `/experience/` — 活動履歴
 - `/thoughts/` — ChatGPTとCodexによるAI日記
 
