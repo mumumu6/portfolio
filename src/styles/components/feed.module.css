@@ -1,14 +1,24 @@
 .feed-entry {
-  content-visibility: auto;
-  contain-intrinsic-block-size: auto 320px;
+  --feed-hover-background: color-mix(
+    in srgb,
+    var(--text) var(--feed-hover-strength),
+    var(--surface)
+  );
+  position: relative;
   padding: 18px var(--content-gutter);
   border-bottom: 1px solid var(--line);
   background: var(--surface);
-  transition: background-color 120ms ease;
 }
 
-.feed-entry:hover {
-  background: color-mix(in srgb, var(--surface-soft) 54%, var(--surface));
+.feed-entry [data-card-link]::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  content: '';
+}
+
+.feed-entry:has([data-card-link]):hover {
+  background: var(--feed-hover-background);
 }
 
 .feed-entry:last-child {
@@ -258,10 +268,6 @@
   z-index: 1;
 }
 
-[data-feed-list='timeline'] [data-feed-entry] {
-  background: transparent;
-}
-
 .entry-head {
   min-height: 38px;
 }
@@ -315,7 +321,6 @@
 
 .entry-title a:hover {
   color: var(--link);
-  text-decoration: underline;
 }
 
 .entry-body {

@@ -51,6 +51,7 @@ const Heading = headingLevel === 3 ? 'h3' : 'h2'
       >
         <a
           href={href}
+          data-card-link
           data-astro-prefetch={
             transitionHref &&
             /^\/(?:blog|works)\/[^/]+\/?$/.test(transitionHref)

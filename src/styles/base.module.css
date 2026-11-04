@@ -7,6 +7,7 @@
   --bg: #090d12;
   --surface: #0d1218;
   --surface-soft: #121920;
+  --feed-hover-strength: 5%;
   --text: #edf2f6;
   --text-soft: #cbd3da;
   --muted: #87929d;
@@ -33,6 +34,7 @@
   --bg: #eef1f4;
   --surface: #ffffff;
   --surface-soft: #f5f7f9;
+  --feed-hover-strength: 10%;
   --text: #111820;
   --text-soft: #34404b;
   --muted: #65717c;
@@ -176,10 +178,6 @@ summary:focus-visible {
 ::view-transition-group(:global(.entry-image)) {
   animation-duration: 180ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-:root:active-view-transition [data-feed-entry][data-entry-transition-active] {
-  content-visibility: visible;
 }
 
 [data-work-cover] {

@@ -1,10 +1,6 @@
 let article: HTMLElement | null = null
-let start = 0
-let end = 1
 let headings: { id: string; top: number }[] = []
 let frame = 0
-let lastProgress = -1
-let lastPercent = -1
 let lastHeading: string | null = null
 let resizeObserver: ResizeObserver | undefined
 
@@ -21,8 +17,6 @@ const measure = () => {
   }
   article = next
   const scrollY = window.scrollY
-  start = next.getBoundingClientRect().top + scrollY
-  end = Math.max(start + next.offsetHeight - window.innerHeight, start + 1)
   headings = Array.from(
     next.querySelectorAll<HTMLElement>(
       '[data-article-prose] h2, [data-article-prose] h3',
@@ -38,32 +32,8 @@ const render = () => {
   frame = 0
   if (!article?.isConnected) return
   const y = window.scrollY
-  const distance = end - start
-  const progress =
-    y <= start
-      ? 0
-      : distance <= 1 || y >= end - 1
-        ? 100
-        : Math.max(0, Math.min(100, ((y - start) / distance) * 100))
-  const percent = Math.floor(progress)
   const current =
     headings.findLast((heading) => heading.top <= y + 150)?.id ?? null
-
-  if (Math.abs(progress - lastProgress) >= 0.1 || percent !== lastPercent) {
-    lastProgress = progress
-    lastPercent = percent
-    const label = `${percent}%`
-    for (const node of document.querySelectorAll(
-      '[data-reading-progress-label]',
-    ))
-      node.textContent = label
-    for (const ring of document.querySelectorAll<HTMLElement>(
-      '[data-reading-progress-ring]',
-    )) {
-      ring.style.strokeDasharray = progress === 100 ? 'none' : '100'
-      ring.style.strokeDashoffset = String(100 - progress)
-    }
-  }
 
   if (current === lastHeading) return
   lastHeading = current
@@ -84,8 +54,6 @@ const schedule = () => {
 
 const bind = () => {
   resizeObserver?.disconnect()
-  lastProgress = -1
-  lastPercent = -1
   lastHeading = null
   measure()
   if (!article) return
@@ -120,5 +88,10 @@ document.addEventListener('astro:page-load', bind)
 document.fonts.addEventListener('loadingdone', () => {
   measure()
   render()
+})
+document.addEventListener('click', (event) => {
+  if (!(event.target instanceof Element)) return
+  if (!event.target.closest('[data-scroll-to-top]')) return
+  window.scrollTo({ top: 0, behavior: 'auto' })
 })
 bind()

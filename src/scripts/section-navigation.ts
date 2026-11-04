@@ -122,8 +122,12 @@ const updateVisibility = () => {
     delete container.dataset.navHidden
     lastY = scrollY
   } else if (Math.abs(delta) >= 8) {
-    if (delta > 0) container.dataset.navHidden = 'true'
-    else delete container.dataset.navHidden
+    if (delta > 0) {
+      if (container.dataset.navHidden !== 'true')
+        container.dataset.navHidden = 'true'
+    } else if (container.dataset.navHidden === 'true') {
+      delete container.dataset.navHidden
+    }
     lastY = scrollY
   }
 }

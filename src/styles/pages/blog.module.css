@@ -1,5 +1,6 @@
 .article-page {
   padding-bottom: 64px;
+  view-timeline: --article-progress block;
 }
 
 .article-hero {
@@ -174,8 +175,9 @@
   border: 1px solid var(--line-strong);
   border-radius: 50%;
   background: var(--surface);
+  color: var(--text);
   contain: layout paint;
-  pointer-events: none;
+  cursor: pointer;
 }
 
 .reading-progress-ring {
@@ -197,18 +199,42 @@
   stroke: var(--line);
 }
 
+.reading-progress-arrow {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.reading-progress:hover {
+  background: var(--surface-soft);
+  color: var(--link);
+}
+
+.reading-progress:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
 .reading-progress-value {
   stroke: var(--accent);
   stroke-linecap: round;
-  transition: stroke-dashoffset 120ms linear;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
 }
 
-.reading-progress-label {
-  position: relative;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  font-weight: 700;
+@supports (animation-timeline: view()) {
+  .reading-progress-value {
+    animation: reading-progress 1ms linear both;
+    animation-timeline: --article-progress;
+    animation-range: contain;
+  }
+}
+
+@keyframes reading-progress {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .article-layout {
