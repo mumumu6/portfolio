@@ -25,6 +25,11 @@ const addHeadingPermalinks = () => {
     link.dataset.headingPermalink = ''
     link.href = `#${encodeURIComponent(heading.id)}`
     link.setAttribute('aria-label', `${heading.textContent?.trim()}へのリンク`)
+
+    const icon = document.createElement('span')
+    icon.dataset.headingPermalinkIcon = ''
+    icon.setAttribute('aria-hidden', 'true')
+    link.append(icon)
     heading.append(link)
   }
 }

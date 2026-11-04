@@ -21,15 +21,16 @@
 }
 
 .article-prose [data-heading-permalink] {
-  position: absolute;
-  inset-inline-start: -28px;
-  top: calc((1lh - 26px) / 2);
-  display: grid;
-  width: 26px;
-  height: 26px;
+  position: relative;
+  top: -0.1em;
+  display: inline-grid;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.3em;
   place-items: center;
   color: var(--muted);
   opacity: 0;
+  vertical-align: middle;
 }
 
 .article-prose :is(h2, h3, h4):hover [data-heading-permalink],
@@ -41,12 +42,11 @@
   color: var(--link);
 }
 
-.article-prose [data-heading-permalink]::before {
+.article-prose [data-heading-permalink-icon] {
   display: block;
   width: 15px;
   height: 15px;
   background: currentColor;
-  content: '';
   mask: url('/icons/link-variant.svg') center / contain no-repeat;
   -webkit-mask: url('/icons/link-variant.svg') center / contain no-repeat;
 }
