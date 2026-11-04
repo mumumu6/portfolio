@@ -3,7 +3,6 @@
 }
 
 .article-hero {
-  view-transition-class: entry-image;
   position: relative;
   width: calc(100% - var(--content-gutter) * 2);
   margin: var(--content-gutter);
@@ -124,6 +123,7 @@
 }
 
 .article-cover {
+  view-transition-class: entry-image;
   width: 100%;
   aspect-ratio: 16 / 9;
   display: block;
