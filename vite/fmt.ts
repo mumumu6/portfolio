@@ -11,5 +11,6 @@ export const fmt = {
     '.wrangler/',
     'dist/',
     'dev-dist/',
+    'src/collections/content/generated/trap-posts.json',
   ],
 } satisfies NonNullable<ViteUserConfig['fmt']>
