@@ -139,6 +139,12 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll(
 />
 <link rel="canonical" href={canonical} />
 <link rel="sitemap" href="/sitemap-index.xml" />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title="mumumuのブログ"
+  href="/rss.xml"
+/>
 {import.meta.env.PROD && <link rel="manifest" href="/manifest.webmanifest" />}
 <meta property="og:site_name" content="mumumu6" />
 <meta property="og:title" content={title} />
