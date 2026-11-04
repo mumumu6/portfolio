@@ -51,16 +51,20 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
 >
   <article id="article-page" class={styles.articlePage}>
     <div class={styles.articleHero}>
-      <ResponsiveImage
-        fit="cover"
-        className={styles.articleCover}
-        transitionName={entryTransitionName(transitionHref, 'image')}
-        src={data.cover}
-        sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 862px) calc(100vw - 42px), (max-width: 1232px) 778px, min(calc(100vw - 454px), 1398px)"
-        alt={data.coverAlt}
-        loading="eager"
-        fetchPriority="high"
-      />
+      <div
+        class={styles.articleImageFrame}
+        style={`view-transition-name: ${entryTransitionName(transitionHref, 'image')}`}
+      >
+        <ResponsiveImage
+          fit="cover"
+          className={styles.articleCover}
+          src={data.cover}
+          sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 862px) calc(100vw - 42px), (max-width: 1232px) 778px, min(calc(100vw - 454px), 1398px)"
+          alt={data.coverAlt}
+          loading="eager"
+          fetchPriority="high"
+        />
+      </div>
       <header class={styles.articleHeader}>
         <h1
           style={`view-transition-name: ${entryTransitionName(transitionHref, 'title')}`}

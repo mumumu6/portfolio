@@ -52,6 +52,11 @@
   transform: rotate(0deg) scale(1);
 }
 
+/* テーマ変更時は記事画像などもページ全体のスナップショットに含める。 */
+:root[data-theme-transitioning] [style*='view-transition-name'] {
+  view-transition-name: none !important;
+}
+
 :root[data-theme-transitioning]::view-transition-old(root),
 :root[data-theme-transitioning]::view-transition-new(root) {
   animation: none;

@@ -7,9 +7,15 @@
   width: calc(100% - var(--content-gutter) * 2);
   margin: var(--content-gutter);
   overflow: hidden;
-  border: 1px solid var(--line-strong);
   border-radius: 14px;
   isolation: isolate;
+}
+
+.article-image-frame {
+  view-transition-class: entry-image;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: inherit;
 }
 
 .article-theme-toggle {
@@ -123,7 +129,6 @@
 }
 
 .article-cover {
-  view-transition-class: entry-image;
   width: 100%;
   aspect-ratio: 16 / 9;
   display: block;
