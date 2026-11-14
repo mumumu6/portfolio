@@ -44,6 +44,7 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3)
   schemaType="BlogPosting"
   tags={data.tags}
   readingMinutes={readingMinutes}
+  markdownUrl={`/blog/${post.id}.md`}
   breadcrumbs={[
     { name: 'ホーム', href: '/' },
     { name: 'ブログ', href: '/blog/' },

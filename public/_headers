@@ -10,8 +10,20 @@
 /blog/*
   Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=86400
 
+/blog/*.md
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=3600, stale-while-revalidate=86400
+
+/llms*.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=3600, stale-while-revalidate=86400
+
 /works/*
   Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=86400
+
+/works/*.md
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=3600, stale-while-revalidate=86400
 
 /experience/
   Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=86400

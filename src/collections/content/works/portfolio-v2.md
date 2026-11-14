@@ -8,7 +8,6 @@ tags:
   - TypeScript
   - Cloudflare Workers
 cover:
-  # 公開時にページのスクリーンショットへ差し替える。
   src: ./assets/portfolio-v2-cover.png
   alt: Portfolio v2のOGP画像
 gallery: []
@@ -32,7 +31,7 @@ comments:
 highlights:
   - Markdownで管理するWorksと自サイトの記事
   - プロフィール・制作物・活動履歴をつなぐフィード形式のUI
-  - astroで軽量なサイトを生成
+  - Astroで軽量なサイトを生成
   - Cloudflare Workers へのデプロイ
 ---
 
@@ -46,4 +45,4 @@ Astroで静的サイトとして生成し、Worksと自サイトの記事はMark
 
 ## これから
 
-この欄には、追加した機能やUIを見直した理由を書いていく予定です。カバー画像は公開時のスクリーンショットに差し替えます。
+Works・Blog・活動履歴をMarkdownからまとめて表示し、更新内容をサイト全体へ反映する構成にしています。今後も機能やUIを見直した記録をここに追記していきます。

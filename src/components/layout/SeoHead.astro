@@ -20,6 +20,7 @@ type Props = {
     | undefined
   tags?: string[] | undefined
   readingMinutes?: number | undefined
+  markdownUrl?: string | undefined
   breadcrumbs?: { name: string; href: string }[] | undefined
 }
 
@@ -34,6 +35,7 @@ const {
   schemaType = 'WebPage',
   tags = [],
   readingMinutes,
+  markdownUrl,
   breadcrumbs = [],
 } = Astro.props
 
@@ -138,6 +140,13 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll(
   content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
 />
 <link rel="canonical" href={canonical} />
+{markdownUrl && (
+  <link
+    rel="alternate"
+    type="text/markdown"
+    href={new URL(markdownUrl, Astro.site ?? Astro.url.origin)}
+  />
+)}
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
   rel="alternate"
