@@ -7,7 +7,8 @@
         "http://localhost/blog/",
         "http://localhost/blog/gocon-2026/",
         "http://localhost/works/",
-        "http://localhost/works/portfolio-v2/"
+        "http://localhost/works/portfolio-v2/",
+        "http://localhost/thoughts/"
       ],
       "numberOfRuns": 1
     },
