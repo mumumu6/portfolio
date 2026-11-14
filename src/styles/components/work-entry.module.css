@@ -14,13 +14,13 @@
 
 .work-note-preview strong {
   color: var(--text-soft);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 
 .work-note-preview > span > span {
   display: -webkit-box;
   overflow: hidden;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.55;
   line-clamp: 2;
   -webkit-box-orient: vertical;
