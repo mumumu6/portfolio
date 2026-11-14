@@ -48,7 +48,7 @@ const wrapperAttributes = href
     src={image.src}
     alt={image.alt}
     widths={[320, 480, 640, 960]}
-    sizes={sizes}
+    sizes={priority ? sizes : 'auto, 100vw'}
     loading={priority ? 'eager' : 'lazy'}
     fetchPriority={priority ? 'high' : 'low'}
   />
