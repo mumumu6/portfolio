@@ -168,7 +168,7 @@ for (const item of items) {
     let generated = previousImage
     if (!canReuse) {
       // Keep image downloads sequential to avoid sending a burst of requests to the source host.
-      // eslint-disable-next-line no-await-in-loop -- Preserve sequential downloads.
+      // oxlint-disable-next-line no-await-in-loop -- Preserve sequential downloads.
       generated = await downloadImage(imageUrl, postId)
       for (const file of expectedFiles) existingFiles.add(file)
     }

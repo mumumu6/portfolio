@@ -18,8 +18,6 @@
 .link-preview-card {
   position: relative;
   display: grid;
-  gap: 0;
-  align-items: stretch;
   grid-template-columns: minmax(0, 1fr);
   min-height: 80px;
   padding: 0;

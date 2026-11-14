@@ -55,9 +55,11 @@ const { showProfileHeader = true, ...seoProps } = Astro.props
         if (!('serviceWorker' in navigator)) return
         void navigator.serviceWorker.register('/sw.js', { scope: '/' })
       }
-      if ('requestIdleCallback' in window)
-        window.requestIdleCallback(registerServiceWorker, { timeout: 1200 })
-      else setTimeout(registerServiceWorker, 1200)
+      if (import.meta.env.PROD) {
+        if ('requestIdleCallback' in window)
+          window.requestIdleCallback(registerServiceWorker, { timeout: 1200 })
+        else setTimeout(registerServiceWorker, 1200)
+      }
     </script>
   </body>
 </html>

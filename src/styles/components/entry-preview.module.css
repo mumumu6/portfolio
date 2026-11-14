@@ -4,7 +4,6 @@
   width: min(100%, 630px);
   aspect-ratio: 16 / 9;
   min-width: 0;
-  max-width: 100%;
   display: block;
   margin-top: 14px;
   overflow: hidden;

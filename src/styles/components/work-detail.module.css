@@ -76,7 +76,6 @@
 .work-thread-cover {
   width: min(100%, 680px);
   height: auto;
-  display: block;
   margin-top: 14px;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
