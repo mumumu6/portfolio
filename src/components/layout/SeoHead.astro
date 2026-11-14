@@ -22,6 +22,7 @@ type Props = {
   readingMinutes?: number | undefined
   markdownUrl?: string | undefined
   breadcrumbs?: { name: string; href: string }[] | undefined
+  noindex?: boolean | undefined
 }
 
 const {
@@ -37,6 +38,7 @@ const {
   readingMinutes,
   markdownUrl,
   breadcrumbs = [],
+  noindex = false,
 } = Astro.props
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
@@ -137,9 +139,9 @@ const structuredDataJson = JSON.stringify(structuredData).replaceAll(
 <meta name="theme-color" content="#090d12" data-theme-color />
 <meta
   name="robots"
-  content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+  content={`${noindex ? 'noindex' : 'index'}, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1`}
 />
-<link rel="canonical" href={canonical} />
+{!noindex && <link rel="canonical" href={canonical} />}
 {markdownUrl && (
   <link
     rel="alternate"

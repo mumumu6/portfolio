@@ -1,0 +1,19 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import styles from '@/styles/components/not-found.module.css'
+---
+
+<BaseLayout
+  title="ページが見つかりません | mumumu"
+  description="お探しのページは見つかりませんでした。"
+  noindex
+>
+  <section class={styles.notFound} aria-labelledby="not-found-title">
+    <p class={styles.eyebrow}>404 · PAGE NOT FOUND</p>
+    <h1 id="not-found-title">ページが見つかりません</h1>
+    <p>URLが変更されたか、ページが公開されていない可能性があります。</p>
+    <a class={styles.homeLink} href="/">
+      トップページへ戻る
+    </a>
+  </section>
+</BaseLayout>
