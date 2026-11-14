@@ -6,6 +6,7 @@
 
 /
   Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=86400
+  Link: </llms.txt>; rel="describedby"; type="text/plain", </sitemap-index.xml>; rel="sitemap", </rss.xml>; rel="alternate"; type="application/rss+xml"; title="mumumu blog"
 
 /blog/*
   Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=86400
