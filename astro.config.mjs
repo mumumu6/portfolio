@@ -35,8 +35,8 @@ const runtimeCaching = [
     handler: 'CacheFirst',
     options: {
       cacheName: 'mumumu-portfolio-assets-v5',
-      // 全ページで使う画像候補も保持できるよう、現在の生成物数より余裕を持たせる。
-      expiration: { maxEntries: 500 },
+      // responsive 候補と今後の生成アセットを保持できるよう、生成物数に余裕を持たせる。
+      expiration: { maxEntries: 600 },
       cacheableResponse: { statuses: [200] },
     },
   },
