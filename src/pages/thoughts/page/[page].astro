@@ -1,0 +1,32 @@
+---
+import ThoughtsArchive from '@/components/layout/ThoughtsArchive.astro'
+import { aiContentRepository } from '@/repository/astro/ai'
+import {
+  paginateThoughts,
+  thoughtsPerPage,
+} from '@/repository/thoughts-pagination'
+
+export async function getStaticPaths() {
+  const thoughts = await aiContentRepository.listThoughts()
+  const pages = paginateThoughts(thoughts, thoughtsPerPage)
+
+  return pages.slice(1).map((pageThoughts, index) => ({
+    params: { page: String(index + 2) },
+    props: {
+      thoughts: pageThoughts,
+      page: index + 2,
+      totalPages: pages.length,
+      total: thoughts.length,
+    },
+  }))
+}
+
+const { thoughts, page, totalPages, total } = Astro.props
+---
+
+<ThoughtsArchive
+  thoughts={thoughts}
+  page={page}
+  totalPages={totalPages}
+  total={total}
+/>
