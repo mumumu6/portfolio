@@ -1,5 +1,6 @@
 import type { APIRoute, GetStaticPaths } from 'astro'
 import { workRepository, type WorkDocument } from '@/repository/astro/work'
+import { toDiscoveryMarkdown } from '@/repository/astro/discovery-markdown'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const works = await workRepository.listDocuments()
@@ -39,7 +40,7 @@ export const GET: APIRoute = ({ props, site }) => {
         ]
       : []),
     '',
-    work.body ?? '',
+    toDiscoveryMarkdown(work.body ?? ''),
     '',
   ].join('\n')
 

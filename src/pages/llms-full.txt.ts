@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
 import { blogRepository } from '@/repository/astro/blog'
 import { workRepository } from '@/repository/astro/work'
+import { toDiscoveryMarkdown } from '@/repository/astro/discovery-markdown'
 
 const blogSection = (
   post: Awaited<ReturnType<typeof blogRepository.listDocuments>>[number],
@@ -13,7 +14,7 @@ const blogSection = (
   `- 公開日: ${post.data.publishedAt.toISOString().slice(0, 10)}`,
   `- 概要: ${post.data.description}`,
   '',
-  post.body ?? '',
+  toDiscoveryMarkdown(post.body ?? ''),
   '',
 ]
 
@@ -44,7 +45,7 @@ const workSection = (
         ...work.data.links.map((link) => `- [${link.label}](${link.href})`),
       ]
     : []),
-  work.body ?? '',
+  toDiscoveryMarkdown(work.body ?? ''),
   '',
   '---',
   '',
