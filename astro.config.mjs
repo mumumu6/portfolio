@@ -56,9 +56,8 @@ export default defineConfig({
     ],
   },
   build: {
-    // 小さなページ用スタイルをインライン化し、CSS の追加取得を待たずに遷移する。
-    // 大きなスタイルは別ファイルにしてキャッシュを利用する。
-    inlineStylesheets: 'auto',
+    // スタイルを HTML にインライン化し、初回描画で CSS の追加取得を待たない。
+    inlineStylesheets: 'always',
   },
   vite: {
     devtools: true,
