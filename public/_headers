@@ -32,6 +32,9 @@
 /thoughts/
   Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=86400
 
+/thoughts/page/*
+  Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=86400
+
 /sw.js
   Cache-Control: no-cache, must-revalidate
   Service-Worker-Allowed: /
