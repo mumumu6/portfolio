@@ -40,9 +40,6 @@ const pageTitle =
   schemaType="CollectionPage"
 >
   <nav class={paginationStyles.pagination} aria-label="Thoughtsのページ">
-    <span>
-      {page} / {totalPages}
-    </span>
     <div>
       {Array.from({ length: totalPages }, (_, index) => index + 1).map(
         (pageNumber) => (
@@ -84,9 +81,6 @@ const pageTitle =
   </div>
 
   <nav class={paginationStyles.pagination} aria-label="Thoughtsのページ">
-    <span>
-      {page} / {totalPages}
-    </span>
     <div>
       {Array.from({ length: totalPages }, (_, index) => index + 1).map(
         (pageNumber) => (

@@ -9,11 +9,30 @@ import styles from '@/styles/components/not-found.module.css'
   noindex
 >
   <section class={styles.notFound} aria-labelledby="not-found-title">
-    <p class={styles.eyebrow}>404 · PAGE NOT FOUND</p>
-    <h1 id="not-found-title">ページが見つかりません</h1>
-    <p>URLが変更されたか、ページが公開されていない可能性があります。</p>
-    <a class={styles.homeLink} href="/">
-      トップページへ戻る
-    </a>
+    <div class={styles.message}>
+      <h1 id="not-found-title">ページが見つかりません</h1>
+      <p class={styles.description}>
+        URLが変わったか、公開が終了した可能性があります。
+      </p>
+    </div>
+
+    <figure class={styles.errorIllustration} aria-hidden="true">
+      <svg viewBox="34 8 190 200" fill="none">
+        <path class={styles.paperUnderlay} d="M98 37h116v151H98V37Z" />
+        <path
+          class={styles.paperUnderlayRule}
+          d="M118 87h82M116 102h90M124 117h80"
+        />
+        <g class={styles.paper}>
+          <path class={styles.paperOutline} d="M58 22h98l38 38v142H58V22Z" />
+          <path class={styles.paperFold} d="M156 22v38h38z" />
+          <path class={styles.paperFoldLine} d="M156 22v38h38" />
+          <path class={styles.paperRule} d="M82 88h74M82 104h90" />
+          <text class={styles.pageCode} x="82" y="157">
+            404
+          </text>
+        </g>
+      </svg>
+    </figure>
   </section>
 </BaseLayout>
