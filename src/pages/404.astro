@@ -9,11 +9,14 @@ import styles from '@/styles/components/not-found.module.css'
   noindex
 >
   <section class={styles.notFound} aria-labelledby="not-found-title">
-    <p class={styles.eyebrow}>404 · PAGE NOT FOUND</p>
+    <p class={styles.eyebrow}>
+      <span class={styles.statusMark} aria-hidden="true"></span>
+      PAGE / ERROR
+    </p>
+    <p class={styles.code}>404</p>
     <h1 id="not-found-title">ページが見つかりません</h1>
-    <p>URLが変更されたか、ページが公開されていない可能性があります。</p>
-    <a class={styles.homeLink} href="/">
-      トップページへ戻る
-    </a>
+    <p class={styles.message}>
+      URLが変わったか、ページが公開されていないようです。
+    </p>
   </section>
 </BaseLayout>
